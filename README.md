@@ -1,8 +1,6 @@
 # Password Manager
 
-This is a project showcasing the Google Tink encryption library.  I made this to learn more about encryption and how to implement it into a Java program.  This application is
-designed to accept input from the user, encrypt whatever data is deemed necessary, and store it on a database (or locally) for later retrieval.  Whenever the encrypted data is 
-requested, this program will also decrypt the data using the saved Keyset.
+This is a project showcasing the Google Tink encryption library.  I made this to learn more about encryption and how to implement it into a Java program.  More information is coming soon.
 
 ## Description
 
