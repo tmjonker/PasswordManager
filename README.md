@@ -30,8 +30,8 @@ Coming soon.
 
 Contributors names and contact info
 
-ex. Tim Jonker
-ex. tmjonker1@outlook.com
+* Tim Jonker
+  - tmjonker1@outlook.com
 
 ## Version History
 
