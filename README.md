@@ -1,7 +1,6 @@
 # Password Manager
 
-This is a project utilizing both the Google Tink and Jasypt libraries.  I made this to learn more about encryption and how to implement it into a Java program.  
-More information is coming soon.
+This is a project utilizing both the Google Tink and Jasypt libraries.  I made this to learn more about encryption and how to implement it into a Java program.  More information is coming soon.
 
 ## Description
 
