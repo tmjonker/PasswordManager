@@ -78,17 +78,31 @@ public class NewAccountWindow extends DefaultWindow {
     }
 
     protected void onOkButtonClick() {
-        if (!password1Field.getText().equals(password2Field.getText()))
-            new MessageBox("Passwords do not match.", "ERROR");
-        else {
+
+        if (checkUserInput()) {
             try {
-                new UserHandler(TinkPasswordVault.encryptCredentials(usernameField.getText().getBytes(),
+                TinkPasswordVault tinkVault = new TinkPasswordVault();
+                new UserHandler(tinkVault.encryptCredentials(usernameField.getText().getBytes(),
                         password1Field.getText().getBytes()));
                 new MessageBox("User " + usernameField.getText() + "has been created.", "Success");
                 stage.close();
             } catch (GeneralSecurityException | IOException ex) {
                 ex.printStackTrace();
             }
+        }
+    }
+
+    private boolean checkUserInput() {
+
+        if (!password1Field.getText().equals(password2Field.getText())) {
+            new MessageBox("Passwords do not match.", "ERROR");
+            return false;
+        } else if (usernameField.getText().contains(" ")
+                || password1Field.getText().contains(" ") || password2Field.getText().contains(" ")) {
+            new MessageBox("No spaces are allowed.", "Error");
+            return false;
+        } else {
+            return true;
         }
     }
 }

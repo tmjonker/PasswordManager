@@ -9,7 +9,14 @@ import java.security.GeneralSecurityException;
 
 public class TinkPasswordVault {
 
-    public static User encryptCredentials(byte[] username, byte[] password)
+    String keysetFileName;
+
+    public TinkPasswordVault() {
+
+        keysetFileName = "keysets/";
+    }
+
+    public User encryptCredentials(byte[] username, byte[] password)
             throws GeneralSecurityException, IOException {
         TinkConfig.register();
         KeysetHandle keysetHandle = KeysetHandle.generateNew(AesGcmKeyManager.aes128GcmTemplate());
@@ -24,14 +31,20 @@ public class TinkPasswordVault {
         return new User(e_un, e_pw);
     }
 
-    private static void saveKeysetHandle(KeysetHandle keysetHandle, byte[] username) throws IOException {
-        String keysetFileName = username + ".json";
-        CleartextKeysetHandle.write(keysetHandle, JsonKeysetWriter.withFile(new File(keysetFileName)));
+    private void saveKeysetHandle(KeysetHandle keysetHandle, byte[] username) {
+
+        keysetFileName = keysetFileName + username + ".json";
+
+        try {
+            CleartextKeysetHandle.write(keysetHandle, JsonKeysetWriter.withFile(new File(keysetFileName)));
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
     }
 
-    private static void saveCipherText(User user) {
+    private void saveCipherText(User user) {
         try {
-            String filename = user.getUsername() + ".pm";
+            String filename = user.getE_username() + ".pm";
             FileOutputStream fileOutputStream =
                     new FileOutputStream(new File(filename));
             ObjectOutputStream outputStream = new ObjectOutputStream(fileOutputStream);
@@ -41,13 +54,12 @@ public class TinkPasswordVault {
         }
     }
 
-    private static KeysetHandle loadKeysetHandle(String username) throws GeneralSecurityException, IOException {
-        String keysetFileName = username + ".json";
+    private KeysetHandle loadKeysetHandle(String username) throws GeneralSecurityException, IOException {
 
         return CleartextKeysetHandle.read(JsonKeysetReader.withFile(new File(keysetFileName)));
     }
 
-    private static User loadUserLogin(String username) {
+    private User loadUserLogin(String username) {
         User user = null;
         try {
             String filename = username + ".pm";
@@ -60,12 +72,12 @@ public class TinkPasswordVault {
         return user;
     }
 
-    public static String verifyPassword(String username) throws GeneralSecurityException, IOException {
+    public String verifyPassword(String username) throws GeneralSecurityException, IOException {
         KeysetHandle keysetHandle = loadKeysetHandle(username);
         User user = loadUserLogin(username);
 
         Aead aead = keysetHandle.getPrimitive(Aead.class);
-        byte[] decrypted = aead.decrypt(user.getPassword(), user.getUsername());
+        byte[] decrypted = aead.decrypt(user.getE_password(), user.getE_username());
         return new String(decrypted, StandardCharsets.UTF_8);
     }
 }
