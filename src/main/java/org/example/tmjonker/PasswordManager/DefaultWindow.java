@@ -20,7 +20,7 @@ import org.controlsfx.control.StatusBar;
  * All other components of GUI must be defined and created by subclasses.
  */
 
-public interface DefaultWindow {
+abstract class DefaultWindow {
 
     MenuBar menuBar = new MenuBar();
     Menu fileMenu = new Menu("_File");
@@ -31,7 +31,7 @@ public interface DefaultWindow {
     StatusBar statusBar = new StatusBar();
     BorderPane borderPane = new BorderPane();
 
-    default Scene generateStructure(int width, int height) {
+    public Scene generateStructure(int width, int height) {
         menuBar.getMenus().add(fileMenu);
         fileMenu.getItems().add(newAccountItem);
         fileMenu.getItems().add(separatorItem);
@@ -49,21 +49,21 @@ public interface DefaultWindow {
         return new Scene(borderPane, width, height);
     }
 
-    default void onNewAccount() {
+    protected void onNewAccount() {
         new NewAccountWindow();
     }
 
-    default void disableCloseMenuItem() {
+    protected void disableCloseMenuItem() {
         closeMenuItem.setDisable(true);
     }
 
-    default void onExit() {
+    protected void onExit() {
         System.exit(0);
     }
 
-    void onClose();
+    abstract void onClose();
 
-    default void prepareStage(Stage stage, Scene scene) {
+    protected void prepareStage(Stage stage, Scene scene) {
         stage.setScene(scene);
         stage.setTitle("Password Manager");
         stage.show();

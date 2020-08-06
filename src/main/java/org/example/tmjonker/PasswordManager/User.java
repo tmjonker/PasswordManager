@@ -4,19 +4,25 @@ import java.io.Serializable;
 
 public class User implements Serializable {
 
-    private final byte[] password;
-    private final String username;
+    private final byte[] e_password;
+    private final byte[] e_username;
+    private int identifier;
 
-    public User(byte[] password, String username) {
-        this.password = password;
-        this.username = username;
+    public User(byte[] username, byte[] password) {
+        e_password = password;
+        e_username = username;
     }
 
-    public String getUsername() {
-        return username;
+    public byte[] getUsername() {
+        return e_username;
     }
 
     public byte[] getPassword() {
-        return password;
+        return e_password;
+    }
+
+    public void setIdentifier(int num) {
+
+        identifier = num;
     }
 }
