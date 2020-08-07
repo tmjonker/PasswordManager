@@ -80,20 +80,18 @@ public class NewAccountWindow extends DefaultWindow {
     protected void onOkButtonClick() {
 
         UserHandler userHandler = new UserHandler();
-        if (!userHandler.checkExists(usernameField.getText().getBytes())) {
+        if (!userHandler.checkExists(usernameField.getText())) {
             if (checkUserInput()) {
+
                 try {
-
-                    TinkPasswordVault tinkVault = new TinkPasswordVault();
-
-                    userHandler.storeNewUser(tinkVault.encryptCredentials(usernameField.getText().
-                                    toLowerCase().getBytes(), password1Field.getText().getBytes()));
-
-                    new MessageBox("User " + usernameField.getText() + " has been created.", "Success");
-                    stage.close();
-                } catch (GeneralSecurityException | IOException ex) {
+                    userHandler.storeNewUser(usernameField.getText().getBytes(),
+                            password1Field.getText().getBytes());
+                } catch (IOException | GeneralSecurityException ex) {
                     ex.printStackTrace();
                 }
+
+                new MessageBox("User " + usernameField.getText() + " has been created.", "Success");
+                stage.close();
             }
         } else
             new MessageBox("Username already exists!", "Error");

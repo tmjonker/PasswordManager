@@ -2,9 +2,9 @@ package org.example.tmjonker.PasswordManager;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.security.GeneralSecurityException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 
 public class UserHandler {
 
@@ -13,30 +13,39 @@ public class UserHandler {
 
     private Map<String, User> userHashMap = new HashMap<>();
 
-    private int userIdentifier;
+    private int nextUserIdentifier;
 
     public UserHandler() {
 
-        userIdentifier = PropertiesHandler.getAccountsNum();
+        nextUserIdentifier = PropertiesHandler.getAccountsNum() + 1;
     }
+    /*
+    storeNewUser:
+    Creates new User object, creates and sets the identifier variable for the User, encrypt's the user's password,
+    and stores the User object in a hashmap that is saved to disk.
+     */
+    public void storeNewUser(byte[] username, byte[] password) throws IOException, GeneralSecurityException {
 
-    public void storeNewUser(User user) {
+        User user = new User(username, null);
+        user.setIdentifier(nextUserIdentifier);
 
-        String un = convertUtf8(user.getUsername());
+        TinkPasswordVault tinkVault = new TinkPasswordVault();
+        user.setE_password(tinkVault.encryptCredentials(user, password));
 
-        PropertiesHandler.incrementAccountsNum(userIdentifier + 1);
-        userHashMap.put(un, user);
+        String usernameString = convertUtf8(username);
+
+        PropertiesHandler.incrementAccountsNum(nextUserIdentifier);
+
+        userHashMap.put(usernameString, user);
         saveUserFile(userHashMap);
     }
 
-    public boolean checkExists(byte[] username) {
+    public boolean checkExists(String username) {
 
-        if (!loadUserFile())
+        if (loadUserFile())
             return false;
 
-        String un = convertUtf8(username);
-
-        return userHashMap.containsKey(un);
+        return userHashMap.containsKey(username);
     }
 
     private boolean loadUserFile() {
@@ -45,19 +54,24 @@ public class UserHandler {
             FileInputStream inputStream = new FileInputStream(USER_FILE);
             ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
             userHashMap = (HashMap<String, User>) objectInputStream.readObject();
-            return true;
+            return false;
         } catch (IOException | ClassNotFoundException ex) {
 
             ex.printStackTrace();
         }
-        return false;
+        return true;
     }
 
-    public boolean validateReturningUser(User user) {
+    public boolean validateReturningUser(String username, byte[] password)
+            throws IOException, GeneralSecurityException {
 
-        if (!loadUserFile()) return false;
+        if (loadUserFile()) return false;
 
-        return true;
+        User user = userHashMap.get(username);
+
+        TinkPasswordVault tinkVault = new TinkPasswordVault();
+
+        return tinkVault.verifyPassword(user, password);
     }
 
     private void saveUserFile(Map<String, User> userHashMap) {

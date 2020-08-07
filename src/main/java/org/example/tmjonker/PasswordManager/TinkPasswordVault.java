@@ -6,33 +6,49 @@ import com.google.crypto.tink.config.TinkConfig;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
+import java.util.Arrays;
 
 public class TinkPasswordVault {
 
     String keysetFileName;
 
-    public TinkPasswordVault() {
+    public TinkPasswordVault() throws GeneralSecurityException{
 
         keysetFileName = "keysets/";
+        TinkConfig.register();
     }
 
-    public User encryptCredentials(byte[] username, byte[] password)
+    public byte[] encryptCredentials(byte[] username, byte[] password)
             throws GeneralSecurityException, IOException {
-        TinkConfig.register();
+
         KeysetHandle keysetHandle = KeysetHandle.generateNew(AesGcmKeyManager.aes128GcmTemplate());
 
-        saveKeysetHandle(keysetHandle, username);
+        //saveKeysetHandle(keysetHandle, username);
 
         Aead aead = keysetHandle.getPrimitive(Aead.class);
 
-        byte[] e_pw = aead.encrypt(password, username);
-
-        return new User(username, e_pw);
+        return aead.encrypt(password, username);
     }
 
-    private void saveKeysetHandle(KeysetHandle keysetHandle, byte[] username) {
+    public byte[] encryptCredentials(User user, byte[] password)
+            throws GeneralSecurityException, IOException {
 
-        keysetFileName = keysetFileName + username + ".json";
+        TinkConfig.register();
+        KeysetHandle keysetHandle = KeysetHandle.generateNew(AesGcmKeyManager.aes128GcmTemplate());
+
+        saveKeysetHandle(keysetHandle, user.getIdentifier());
+
+        Aead aead = keysetHandle.getPrimitive(Aead.class);
+
+        return aead.encrypt(password, user.getUsername());
+    }
+    /*
+    saveKeysetHandle:
+    Keysets are named based on the identifier contained in each User object.
+     */
+    private void saveKeysetHandle(KeysetHandle keysetHandle, int identifier) {
+
+        keysetFileName = keysetFileName + identifier + ".json";
 
         try {
             CleartextKeysetHandle.write(keysetHandle, JsonKeysetWriter.withFile(new File(keysetFileName)));
@@ -41,41 +57,25 @@ public class TinkPasswordVault {
         }
     }
 
-    private void saveCipherText(User user) {
-        try {
-            String filename = user.getUsername() + ".pm";
-            FileOutputStream fileOutputStream =
-                    new FileOutputStream(new File(filename));
-            ObjectOutputStream outputStream = new ObjectOutputStream(fileOutputStream);
-            outputStream.writeObject(user);
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-    }
+    private KeysetHandle loadKeysetHandle(int identifier) throws GeneralSecurityException, IOException {
 
-    private KeysetHandle loadKeysetHandle() throws GeneralSecurityException, IOException {
+        keysetFileName = keysetFileName + identifier + ".json";
 
         return CleartextKeysetHandle.read(JsonKeysetReader.withFile(new File(keysetFileName)));
     }
 
-    private User loadUserLogin(String username) {
-        User user = null;
-        try {
-            String filename = username + ".pm";
-            FileInputStream fileInputStream = new FileInputStream(new File(filename));
-            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
-            user = (User) objectInputStream.readObject();
-        } catch (IOException | ClassNotFoundException ex) {
-            ex.printStackTrace();
-        }
-        return user;
-    }
+    /*
+    verifyPassword:
+    Method argument password is the password entered by the user when they try to log in.  It is compared to the
+    password that is stored in the User argument.
+    */
+    public boolean verifyPassword(User user, byte[] password) throws GeneralSecurityException, IOException {
 
-    public boolean verifyPassword(byte[] username, byte[] password) throws GeneralSecurityException, IOException {
-        KeysetHandle keysetHandle = loadKeysetHandle();
+        KeysetHandle keysetHandle = loadKeysetHandle(user.getIdentifier());
 
         Aead aead = keysetHandle.getPrimitive(Aead.class);
-        //byte[] decrypted = aead.decrypt(user.getE_password(), user.getE_username());
-        return true;
+        byte[] decrypted = aead.decrypt(user.getE_password(), user.getUsername());
+
+        return Arrays.equals(decrypted, password);
     }
 }

@@ -74,17 +74,19 @@ public class LoginWindow extends DefaultWindow {
 
     private void onOkButtonClick() {
 
-        if (checkUserInput()) {
-            try {
+        UserHandler userHandler = new UserHandler();
 
-                TinkPasswordVault tinkVault = new TinkPasswordVault();
-                UserHandler userHandler = new UserHandler();
-                System.out.println(userHandler.validateReturningUser(tinkVault.encryptCredentials(usernameField.getText().getBytes(),
-                        passwordField.getText().getBytes())));
-            } catch (GeneralSecurityException | IOException ex) {
-                ex.printStackTrace();
+        if (userHandler.checkExists(usernameField.getText())) {
+            if (checkUserInput()) {
+                try {
+
+                    System.out.println(userHandler.validateReturningUser(usernameField.getText(), passwordField.getText().getBytes()));
+                } catch (GeneralSecurityException | IOException ex) {
+                    ex.printStackTrace();
+                }
             }
-        }
+        } else
+            new MessageBox("User " + usernameField.getText() + " does not exist.", "Error");
     }
 
     private boolean checkUserInput() {
