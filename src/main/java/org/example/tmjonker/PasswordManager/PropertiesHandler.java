@@ -8,17 +8,12 @@ import java.util.Properties;
 
 public class PropertiesHandler {
 
-    Properties configFile = new Properties();
+    static Properties configFile = new Properties();
 
-    private final String CONFIG_FILE_NAME = "config.properties";
-    private final File CONFIG_FILE = new File(CONFIG_FILE_NAME);
+    private static final String CONFIG_FILE_NAME = "config.properties";
+    private static final File CONFIG_FILE = new File(CONFIG_FILE_NAME);
 
-    public PropertiesHandler() {
-
-        loadProperties();
-    }
-
-    private void loadProperties() {
+    private static void loadProperties() {
 
         try {
             FileInputStream fileStream = new FileInputStream(CONFIG_FILE);
@@ -28,13 +23,14 @@ public class PropertiesHandler {
         }
     }
 
-    public void incrementAccountsNum(int accountsNum) {
+    public static void incrementAccountsNum(int accountsNum) {
 
+        loadProperties();
         configFile.setProperty("accounts", Integer.toString(accountsNum));
         saveProperties();
     }
 
-    private void saveProperties() {
+    private static void saveProperties() {
 
         try {
             FileOutputStream outputStream = new FileOutputStream(CONFIG_FILE);
@@ -44,8 +40,9 @@ public class PropertiesHandler {
         }
     }
 
-    public int getAccountsNum() {
+    public static int getAccountsNum() {
 
+        loadProperties();
         return Integer.parseInt(configFile.getProperty("accounts"));
     }
 }

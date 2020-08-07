@@ -11,34 +11,56 @@ public class UserHandler {
     private final String USER_FILE_NAME = "users/User.pm";
     private final File USER_FILE = new File(USER_FILE_NAME);
 
-    private Map<Integer, User> userHashMap = new HashMap<>();
+    private Map<String, User> userHashMap = new HashMap<>();
 
-    private int nextUserIdentifier;
+    private int userIdentifier;
 
-    public UserHandler(String username, String password) {
+    public UserHandler() {
 
+        userIdentifier = PropertiesHandler.getAccountsNum();
     }
 
-    public UserHandler(User user) {
+    public void storeNewUser(User user) {
 
-        PropertiesHandler propertiesHandler = new PropertiesHandler();
-        nextUserIdentifier = propertiesHandler.getAccountsNum() + 1;
-        propertiesHandler.incrementAccountsNum(nextUserIdentifier);
-        storeNewUser(user);
-    }
+        String un = convertUtf8(user.getUsername());
 
-    private void storeNewUser(User user) {
-
-        userHashMap.put(user.getIdentifier(), user);
+        PropertiesHandler.incrementAccountsNum(userIdentifier + 1);
+        userHashMap.put(un, user);
         saveUserFile(userHashMap);
     }
 
-    public void loadReturningUser() {
+    public boolean checkExists(byte[] username) {
 
+        if (!loadUserFile())
+            return false;
 
+        String un = convertUtf8(username);
+
+        return userHashMap.containsKey(un);
     }
 
-    private void saveUserFile(Map<Integer, User> userHashMap) {
+    private boolean loadUserFile() {
+
+        try {
+            FileInputStream inputStream = new FileInputStream(USER_FILE);
+            ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
+            userHashMap = (HashMap<String, User>) objectInputStream.readObject();
+            return true;
+        } catch (IOException | ClassNotFoundException ex) {
+
+            ex.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean validateReturningUser(User user) {
+
+        if (!loadUserFile()) return false;
+
+        return true;
+    }
+
+    private void saveUserFile(Map<String, User> userHashMap) {
 
         try {
             FileOutputStream outputStream = new FileOutputStream(USER_FILE);

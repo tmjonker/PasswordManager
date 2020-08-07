@@ -26,9 +26,8 @@ public class TinkPasswordVault {
         Aead aead = keysetHandle.getPrimitive(Aead.class);
 
         byte[] e_pw = aead.encrypt(password, username);
-        byte[] e_un = aead.encrypt(username, password);
 
-        return new User(e_un, e_pw);
+        return new User(username, e_pw);
     }
 
     private void saveKeysetHandle(KeysetHandle keysetHandle, byte[] username) {
@@ -44,7 +43,7 @@ public class TinkPasswordVault {
 
     private void saveCipherText(User user) {
         try {
-            String filename = user.getE_username() + ".pm";
+            String filename = user.getUsername() + ".pm";
             FileOutputStream fileOutputStream =
                     new FileOutputStream(new File(filename));
             ObjectOutputStream outputStream = new ObjectOutputStream(fileOutputStream);
@@ -54,7 +53,7 @@ public class TinkPasswordVault {
         }
     }
 
-    private KeysetHandle loadKeysetHandle(String username) throws GeneralSecurityException, IOException {
+    private KeysetHandle loadKeysetHandle() throws GeneralSecurityException, IOException {
 
         return CleartextKeysetHandle.read(JsonKeysetReader.withFile(new File(keysetFileName)));
     }
@@ -72,12 +71,11 @@ public class TinkPasswordVault {
         return user;
     }
 
-    public String verifyPassword(String username) throws GeneralSecurityException, IOException {
-        KeysetHandle keysetHandle = loadKeysetHandle(username);
-        User user = loadUserLogin(username);
+    public boolean verifyPassword(byte[] username, byte[] password) throws GeneralSecurityException, IOException {
+        KeysetHandle keysetHandle = loadKeysetHandle();
 
         Aead aead = keysetHandle.getPrimitive(Aead.class);
-        byte[] decrypted = aead.decrypt(user.getE_password(), user.getE_username());
-        return new String(decrypted, StandardCharsets.UTF_8);
+        //byte[] decrypted = aead.decrypt(user.getE_password(), user.getE_username());
+        return true;
     }
 }
