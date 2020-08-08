@@ -1,7 +1,7 @@
 package org.example.tmjonker.PasswordManager.User;
 
 import org.example.tmjonker.PasswordManager.Properties.PropertiesHandler;
-import org.example.tmjonker.PasswordManager.TinkPasswordVault;
+import org.example.tmjonker.PasswordManager.Encryption.*;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -45,7 +45,7 @@ public class UserHandler {
 
     public boolean checkExists(String username) {
 
-        if (loadUserFile())
+        if (!loadUserFile())
             return false;
 
         return userHashMap.containsKey(username);
@@ -57,12 +57,12 @@ public class UserHandler {
             FileInputStream inputStream = new FileInputStream(USER_FILE);
             ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
             userHashMap = (HashMap<String, User>) objectInputStream.readObject();
-            return false;
+            return true;
         } catch (IOException | ClassNotFoundException ex) {
 
             ex.printStackTrace();
         }
-        return true;
+        return false;
     }
 
     public boolean validateReturningUser(String username, byte[] password)

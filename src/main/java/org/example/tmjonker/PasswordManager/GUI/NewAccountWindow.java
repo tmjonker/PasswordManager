@@ -79,25 +79,23 @@ public class NewAccountWindow extends DefaultWindow {
     protected void onOkButtonClick() {
 
         UserHandler userHandler = new UserHandler();
-        if (!userHandler.checkExists(usernameField.getText())) {
-            if (checkUserInput()) {
 
-                try {
-                    userHandler.storeNewUser(usernameField.getText().getBytes(),
-                            password1Field.getText().getBytes());
-                } catch (IOException | GeneralSecurityException ex) {
-                    ex.printStackTrace();
-                }
+        if (checkUserInput(userHandler.checkExists(usernameField.getText()))) {
 
-                new MessageBox("User " + usernameField.getText() + " has been created.", "Success");
-                onClose();
+            try {
+                userHandler.storeNewUser(usernameField.getText().getBytes(),
+                        password1Field.getText().getBytes());
+            } catch (IOException | GeneralSecurityException ex) {
+                ex.printStackTrace();
             }
-        } else
-            clearFields();
-            new MessageBox("Username already exists!", "Error");
+
+            new MessageBox("User " + usernameField.getText() + " has been created.", "Success");
+            onClose();
+        }
+
     }
 
-    private boolean checkUserInput() {
+    private boolean checkUserInput(boolean exists) {
 
         if (!password1Field.getText().equals(password2Field.getText())) {
             clearFields();
@@ -108,9 +106,11 @@ public class NewAccountWindow extends DefaultWindow {
             clearFields();
             new MessageBox("No spaces are allowed.", "Error");
             return false;
-        } else {
-            return true;
-        }
+        } else if (exists) {
+            clearFields();
+            new MessageBox("Username already exists!", "Error");
+            return false;
+        } else return true;
     }
 
     private void clearFields() {
