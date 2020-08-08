@@ -10,7 +10,7 @@ public class PropertiesHandler {
 
     static Properties configFile = new Properties();
 
-    private static final String CONFIG_FILE_NAME = "config.properties";
+    private static final String CONFIG_FILE_NAME = "config/config.properties";
     private static final File CONFIG_FILE = new File(CONFIG_FILE_NAME);
 
     private static void loadProperties() {
