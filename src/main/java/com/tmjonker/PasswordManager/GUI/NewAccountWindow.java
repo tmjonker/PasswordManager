@@ -1,6 +1,6 @@
 package com.tmjonker.PasswordManager.GUI;
 
-import com.tmjonker.PasswordManager.User.UserHandler;
+import com.tmjonker.PasswordManager.Users.UserHandler;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;

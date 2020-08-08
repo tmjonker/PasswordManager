@@ -3,8 +3,8 @@ package com.tmjonker.PasswordManager.GUI;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import com.tmjonker.PasswordManager.Credential.Credential;
-import com.tmjonker.PasswordManager.Credential.Type;
+import com.tmjonker.PasswordManager.Credentials.Credential;
+import com.tmjonker.PasswordManager.Credentials.Type;
 
 import java.net.URI;
 

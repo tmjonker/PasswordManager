@@ -1,4 +1,4 @@
-package com.tmjonker.PasswordManager.Credential;
+package com.tmjonker.PasswordManager.Credentials;
 
 public enum Type {
 

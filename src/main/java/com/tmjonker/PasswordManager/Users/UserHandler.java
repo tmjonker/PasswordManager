@@ -1,4 +1,4 @@
-package com.tmjonker.PasswordManager.User;
+package com.tmjonker.PasswordManager.Users;
 
 import com.tmjonker.PasswordManager.Encryption.TinkPasswordVault;
 import com.tmjonker.PasswordManager.Properties.PropertiesHandler;

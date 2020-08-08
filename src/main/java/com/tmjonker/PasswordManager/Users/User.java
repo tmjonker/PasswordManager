@@ -1,4 +1,4 @@
-package com.tmjonker.PasswordManager.User;
+package com.tmjonker.PasswordManager.Users;
 
 import java.io.Serializable;
 
