@@ -1,6 +1,6 @@
 # Password Manager
 
-This is a project utilizing both the Google Tink and Jasypt libraries.  I made this to experiment with encryption and how to implement it into a Java program.  Also, I wanted to dabble with inheritance using Abstract classes.  More information is coming soon.
+This is a project utilizing both the Google Tink and Jasypt libraries.  I made this to experiment with encryption and to get a feel for incorporating more inheritance and polymorphism into my work.  Right now, the program will allow you to create a new user and then log in as that user.  Soon, you will be able to store website and application credentials.
 
 ## Description
 
@@ -10,7 +10,6 @@ Coming soon.
 
 ### Dependencies
 
-* MySQL-connector-java
 * Google Tink
 * JavaFX 14
 * Jasypt
@@ -20,6 +19,7 @@ Coming soon.
 * It can be unzipped into any folder on your computer.
 * Maven is the build tool.  The POM.xml is included with this repository.
 * Build it with whicher IDE you choose.
+  * If you're using IntelliJ, make sure to include 
 
 
 ### Executing program
