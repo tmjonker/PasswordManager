@@ -1,5 +1,6 @@
-package org.example.tmjonker.PasswordManager.GUI;
+package com.tmjonker.PasswordManager.GUI;
 
+import com.tmjonker.PasswordManager.User.UserHandler;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -11,7 +12,6 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import org.example.tmjonker.PasswordManager.User.UserHandler;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;

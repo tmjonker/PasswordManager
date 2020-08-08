@@ -1,4 +1,4 @@
-package org.example.tmjonker.PasswordManager.Credential;
+package com.tmjonker.PasswordManager.Credential;
 
 public class Credential {
 

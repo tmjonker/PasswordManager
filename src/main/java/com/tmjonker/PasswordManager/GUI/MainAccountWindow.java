@@ -1,10 +1,10 @@
-package org.example.tmjonker.PasswordManager.GUI;
+package com.tmjonker.PasswordManager.GUI;
 
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import org.example.tmjonker.PasswordManager.Credential.Credential;
-import org.example.tmjonker.PasswordManager.Credential.Type;
+import com.tmjonker.PasswordManager.Credential.Credential;
+import com.tmjonker.PasswordManager.Credential.Type;
 
 import java.net.URI;
 

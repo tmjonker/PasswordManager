@@ -1,4 +1,4 @@
-package org.example.tmjonker.PasswordManager.Main;
+package com.tmjonker.PasswordManager.Main;
 
 import java.io.File;
 

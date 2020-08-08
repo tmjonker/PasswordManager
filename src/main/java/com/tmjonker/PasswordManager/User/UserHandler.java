@@ -1,6 +1,7 @@
-package org.example.tmjonker.PasswordManager.User;
+package com.tmjonker.PasswordManager.User;
 
-import org.example.tmjonker.PasswordManager.Properties.PropertiesHandler;
+import com.tmjonker.PasswordManager.Encryption.TinkPasswordVault;
+import com.tmjonker.PasswordManager.Properties.PropertiesHandler;
 import org.example.tmjonker.PasswordManager.Encryption.*;
 
 import java.io.*;

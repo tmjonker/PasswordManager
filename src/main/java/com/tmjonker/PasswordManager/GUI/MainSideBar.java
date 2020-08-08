@@ -1,4 +1,4 @@
-package org.example.tmjonker.PasswordManager.GUI;
+package com.tmjonker.PasswordManager.GUI;
 
 public class MainSideBar {
 

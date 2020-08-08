@@ -1,4 +1,4 @@
-package org.example.tmjonker.PasswordManager.Encryption;
+package com.tmjonker.PasswordManager.Encryption;
 
 import org.jasypt.util.password.BasicPasswordEncryptor;
 import org.jasypt.util.text.BasicTextEncryptor;
