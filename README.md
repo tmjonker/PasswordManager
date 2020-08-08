@@ -2,8 +2,7 @@
 
 This is a project utilizing both the Google Tink and Jasypt libraries.  I made this to experiment with encryption and to get a feel for incorporating more inheritance and polymorphism into my work.  Right now, the program will allow you to create a new user and then log in as that user.  Soon, you will be able to store website and application credentials.
 
-![Login Screen](https://github.com/tmjonker/PasswordManager/blob/master/Images/Login.PNG)   
-![New user](https://github.com/tmjonker/PasswordManager/blob/master/Images/NewUser1.PNG)
+![Login Screen](https://github.com/tmjonker/PasswordManager/blob/master/Images/Login.PNG)              ![New user](https://github.com/tmjonker/PasswordManager/blob/master/Images/NewUser1.PNG)
 
 ## Description
 
