@@ -1,4 +1,4 @@
-package org.example.tmjonker.PasswordManager;
+package org.example.tmjonker.PasswordManager.GUI;
 
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -10,7 +10,7 @@ import org.controlsfx.control.StatusBar;
 /**
  * Subclasses inherit borderPane from DefaultWindow.  borderPane.top and borderPane.bottom are already
  * defined in the superclass with the menuBar on top and the statusBar on the bottom..
- * In the subclasses, you only have to implement borderPane.center/.right/.left.
+ * In the subclasses, you have to implement borderPane.center/.right/.left.
  *
  * Subclasses must define a Stage.  Subclasses must request Scene from DefaultWindow using
  * generateStructure(stage, width, height).
@@ -39,6 +39,7 @@ public class DefaultWindow {
 
         exitMenuItem.setOnAction(e -> onExit());
         newAccountItem.setOnAction(e -> onNewAccount());
+        closeMenuItem.setOnAction(e -> onClose());
 
         statusBar.setText("");
         borderPane.setTop(menuBar);

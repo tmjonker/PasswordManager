@@ -1,8 +1,10 @@
-package org.example.tmjonker.PasswordManager;
+package org.example.tmjonker.PasswordManager.Encryption;
 
 import com.google.crypto.tink.*;
 import com.google.crypto.tink.aead.AesGcmKeyManager;
 import com.google.crypto.tink.config.TinkConfig;
+import org.example.tmjonker.PasswordManager.User.User;
+
 import java.io.*;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;

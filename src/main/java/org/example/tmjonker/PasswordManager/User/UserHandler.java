@@ -1,4 +1,7 @@
-package org.example.tmjonker.PasswordManager;
+package org.example.tmjonker.PasswordManager.User;
+
+import org.example.tmjonker.PasswordManager.Properties.PropertiesHandler;
+import org.example.tmjonker.PasswordManager.TinkPasswordVault;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;

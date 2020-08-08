@@ -1,15 +1,15 @@
-package org.example.tmjonker.PasswordManager;
+package org.example.tmjonker.PasswordManager.Credential;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 
 public class WebsiteCredential extends Credential {
 
-    private URI webURL;
+    private URI url;
 
     public WebsiteCredential(String url, String username, String password) throws URISyntaxException {
 
-        webURL = new URI(url);
+        this.url = new URI(url);
         super.username = username.getBytes();
         super.e_password = password.getBytes();
         super.type = Type.WEBSITE;
@@ -17,11 +17,11 @@ public class WebsiteCredential extends Credential {
 
     public void setWebURL(String url) throws URISyntaxException {
 
-        webURL = new URI(url);
+        this.url = new URI(url);
     }
 
     public URI getWebURL() {
 
-        return webURL;
+        return url;
     }
 }

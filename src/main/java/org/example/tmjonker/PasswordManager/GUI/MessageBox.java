@@ -1,4 +1,4 @@
-package org.example.tmjonker.PasswordManager;
+package org.example.tmjonker.PasswordManager.GUI;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
