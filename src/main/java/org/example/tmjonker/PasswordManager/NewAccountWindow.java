@@ -1,6 +1,5 @@
 package org.example.tmjonker.PasswordManager;
 
-import com.google.protobuf.Message;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -12,7 +11,6 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import org.example.tmjonker.PasswordManager.MessageBox;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -30,6 +28,9 @@ public class NewAccountWindow extends DefaultWindow {
     Button cancelButton;
 
     public NewAccountWindow() {
+
+        newAccountItem.setDisable(true); // disables the "New Account" option in the File menu.
+
         Text title = new Text("Create a new account");
         title.setFont(Font.font("Arial", FontWeight.BOLD, 16));
 
@@ -77,6 +78,10 @@ public class NewAccountWindow extends DefaultWindow {
         stage.close();
     }
 
+    /*
+    onOkButtonClick:
+    userHandler.checkExists to check if username has already been used.  If it has been used, an error message pops up.
+     */
     protected void onOkButtonClick() {
 
         UserHandler userHandler = new UserHandler();
@@ -94,20 +99,30 @@ public class NewAccountWindow extends DefaultWindow {
                 stage.close();
             }
         } else
+            clearFields();
             new MessageBox("Username already exists!", "Error");
     }
 
     private boolean checkUserInput() {
 
         if (!password1Field.getText().equals(password2Field.getText())) {
+            clearFields();
             new MessageBox("Passwords do not match.", "ERROR");
             return false;
         } else if (usernameField.getText().contains(" ")
                 || password1Field.getText().contains(" ") || password2Field.getText().contains(" ")) {
+            clearFields();
             new MessageBox("No spaces are allowed.", "Error");
             return false;
         } else {
             return true;
         }
+    }
+
+    private void clearFields() {
+
+        usernameField.clear();
+        password1Field.clear();
+        password2Field.clear();
     }
 }

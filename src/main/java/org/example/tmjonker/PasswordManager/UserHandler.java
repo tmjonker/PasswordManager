@@ -13,7 +13,7 @@ public class UserHandler {
 
     private Map<String, User> userHashMap = new HashMap<>();
 
-    private int nextUserIdentifier;
+    private final int nextUserIdentifier;
 
     public UserHandler() {
 

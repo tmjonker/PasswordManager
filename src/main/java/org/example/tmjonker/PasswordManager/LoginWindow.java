@@ -75,17 +75,18 @@ public class LoginWindow extends DefaultWindow {
     private void onOkButtonClick() {
 
         UserHandler userHandler = new UserHandler();
-
         if (userHandler.checkExists(usernameField.getText())) {
             if (checkUserInput()) {
                 try {
+                    userHandler.validateReturningUser(usernameField.getText(), passwordField.getText().getBytes());
+                    clearFields();
 
-                    System.out.println(userHandler.validateReturningUser(usernameField.getText(), passwordField.getText().getBytes()));
                 } catch (GeneralSecurityException | IOException ex) {
                     ex.printStackTrace();
                 }
             }
         } else
+            clearFields();
             new MessageBox("User " + usernameField.getText() + " does not exist.", "Error");
     }
 
@@ -93,10 +94,17 @@ public class LoginWindow extends DefaultWindow {
 
         if (usernameField.getText().contains(" ")
                 || passwordField.getText().contains(" ")) {
+            clearFields();
             new MessageBox("No spaces are allowed.", "Error");
             return false;
         } else {
             return true;
         }
+    }
+
+    private void clearFields() {
+
+        usernameField.clear();
+        passwordField.clear();
     }
 }

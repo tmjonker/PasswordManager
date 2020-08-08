@@ -4,10 +4,10 @@ import java.io.Serializable;
 
 public class User implements Serializable {
 
-    private byte[] e_password;
-    private byte[] username;
+    private byte[] e_password; //encrypted password
+    private final byte[] username;
 
-    private int identifier;
+    private int identifier; // unique identifier. Used to link user to password list.
 
     public User(byte[] username, byte[] password) {
         e_password = password;

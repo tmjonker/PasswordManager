@@ -4,7 +4,6 @@ import com.google.crypto.tink.*;
 import com.google.crypto.tink.aead.AesGcmKeyManager;
 import com.google.crypto.tink.config.TinkConfig;
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
 
@@ -12,12 +11,16 @@ public class TinkPasswordVault {
 
     String keysetFileName;
 
-    public TinkPasswordVault() throws GeneralSecurityException{
+    public TinkPasswordVault() throws GeneralSecurityException {
 
         keysetFileName = "keysets/";
         TinkConfig.register();
     }
 
+    /*
+    encryptCredentials(byte[], byte[]):
+    Possible future functionality?
+     */
     public byte[] encryptCredentials(byte[] username, byte[] password)
             throws GeneralSecurityException, IOException {
 
@@ -30,10 +33,13 @@ public class TinkPasswordVault {
         return aead.encrypt(password, username);
     }
 
+    /*
+    encryptCredentials(User, byte[]):
+    Primary usage is to encrypt the master password for the user(s) that use this program.
+     */
     public byte[] encryptCredentials(User user, byte[] password)
             throws GeneralSecurityException, IOException {
 
-        TinkConfig.register();
         KeysetHandle keysetHandle = KeysetHandle.generateNew(AesGcmKeyManager.aes128GcmTemplate());
 
         saveKeysetHandle(keysetHandle, user.getIdentifier());
@@ -67,7 +73,7 @@ public class TinkPasswordVault {
     /*
     verifyPassword:
     Method argument password is the password entered by the user when they try to log in.  It is compared to the
-    password that is stored in the User argument.
+    password that is stored in the User object.
     */
     public boolean verifyPassword(User user, byte[] password) throws GeneralSecurityException, IOException {
 
