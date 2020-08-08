@@ -67,29 +67,34 @@ public class LoginWindow extends DefaultWindow {
     private void onOkButtonClick() {
 
         UserHandler userHandler = new UserHandler();
-        if (userHandler.checkExists(usernameField.getText())) {
-            if (checkUserInput()) {
-                try {
-                    userHandler.validateReturningUser(usernameField.getText(), passwordField.getText().getBytes());
-                    clearFields();
+        if (checkUserInput(userHandler.checkExists(usernameField.getText()))) {
+            try {
+                userHandler.validateReturningUser(usernameField.getText(), passwordField.getText().getBytes());
+                clearFields();
 
-                } catch (GeneralSecurityException | IOException ex) {
-                    ex.printStackTrace();
-                }
+            } catch (GeneralSecurityException | IOException ex) {
+                ex.printStackTrace();
             }
-        } else
-            clearFields();
-            new MessageBox("User " + usernameField.getText() + " does not exist.", "Error");
+        }
     }
 
-    private boolean checkUserInput() {
+    /*
+    checkUserInput:
+    Checks if user input contains any blank spaces and checks to see if the username that the user input has already
+    been created.
+     */
+    private boolean checkUserInput(Boolean exists) {
 
         if (usernameField.getText().contains(" ")
                 || passwordField.getText().contains(" ")) {
             clearFields();
             new MessageBox("No spaces are allowed.", "Error");
             return false;
-        } else {
+        } else if (!exists){
+            clearFields();
+            new MessageBox("User " + usernameField.getText() + " does not exist.", "Error");
+            return false;
+        }else {
             return true;
         }
     }
