@@ -19,13 +19,10 @@ import java.security.GeneralSecurityException;
  */
 public class LoginWindow extends DefaultWindow {
 
-    Stage stage;
-
     TextField usernameField;
     PasswordField passwordField;
 
     public LoginWindow(Stage stage) {
-        this.stage = stage;
 
         disableCloseMenuItem();
 
@@ -62,14 +59,9 @@ public class LoginWindow extends DefaultWindow {
         VBox mainVBox = new VBox(10);
         mainVBox.getChildren().addAll(titleBox, fieldBox, buttonBox);
 
-        borderPane.setCenter(mainVBox);
+        setCenter(mainVBox);
 
         prepareStage(stage, generateStructure(300, 170));
-    }
-
-    @Override
-    public void onClose() {
-        stage.close();
     }
 
     private void onOkButtonClick() {

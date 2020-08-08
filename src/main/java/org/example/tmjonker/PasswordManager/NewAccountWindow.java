@@ -18,8 +18,6 @@ import java.security.GeneralSecurityException;
 
 public class NewAccountWindow extends DefaultWindow {
 
-    Stage stage = new Stage();
-
     TextField usernameField;
     TextField password1Field;
     TextField password2Field;
@@ -29,7 +27,7 @@ public class NewAccountWindow extends DefaultWindow {
 
     public NewAccountWindow() {
 
-        newAccountItem.setDisable(true); // disables the "New Account" option in the File menu.
+        disableNewMenuItem();
 
         Text title = new Text("Create a new account");
         title.setFont(Font.font("Arial", FontWeight.BOLD, 16));
@@ -68,14 +66,9 @@ public class NewAccountWindow extends DefaultWindow {
         gridPane.add(password2Field, 0, 3);
         gridPane.add(buttonBox, 0,4);
 
-        borderPane.setCenter(gridPane);
+        setCenter(gridPane);
 
-        prepareStage(stage, generateStructure(250, 250));
-    }
-
-    @Override
-    protected void onClose() {
-        stage.close();
+        prepareStage(new Stage(), generateStructure(250, 250));
     }
 
     /*
@@ -96,7 +89,7 @@ public class NewAccountWindow extends DefaultWindow {
                 }
 
                 new MessageBox("User " + usernameField.getText() + " has been created.", "Success");
-                stage.close();
+                onClose();
             }
         } else
             clearFields();
