@@ -74,9 +74,9 @@ public class NewAccountWindow extends DefaultWindow {
 
         setCenter(gridPane);
 
-        Platform.runLater(() -> gridPane.requestFocus());
-
         Platform.runLater(() -> {
+
+            Platform.runLater(() -> gridPane.requestFocus());
 
             Thread newThread = new Thread(new FormValidator());
             newThread.start();

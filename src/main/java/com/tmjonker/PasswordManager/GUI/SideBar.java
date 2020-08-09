@@ -9,11 +9,22 @@ import org.controlsfx.control.StatusBar;
 public class SideBar {
 
     VBox mainBox = new VBox(10);
+    private StatusBar statusBar;
 
     public SideBar() {
 
         mainBox.setMinWidth(90);
         mainBox.setAlignment(Pos.TOP_CENTER);
+    }
+
+    protected void setStatusBar(StatusBar statusBar) {
+
+        this.statusBar = statusBar;
+    }
+
+    protected StatusBar getStatusBar() {
+
+        return statusBar;
     }
 
     protected void addToMainBox(Node node) {

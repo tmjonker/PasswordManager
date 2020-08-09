@@ -6,11 +6,9 @@ import org.controlsfx.control.StatusBar;
 
 public class MainSideBar extends SideBar {
 
-    private StatusBar statusBar;
-
     public MainSideBar(StatusBar statusBar) {
 
-        this.statusBar = statusBar;
+        setStatusBar(statusBar);
 
         Button addButton = new Button("Add");
         addButton.setMinWidth(60);
@@ -32,6 +30,6 @@ public class MainSideBar extends SideBar {
 
     private void setStatusBarText(String text) {
 
-        statusBar.setText(text);
+        getStatusBar().setText(text);
     }
 }

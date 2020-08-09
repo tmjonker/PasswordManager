@@ -69,15 +69,15 @@ public class LoginWindow extends DefaultWindow {
 
         setCenter(mainVBox);
 
-        Platform.runLater(() -> mainVBox.requestFocus()); // Sets focus to the mainBox node upon program start.
-
-        prepareStage(stage, generateStructure(300, 170));
-
         Platform.runLater(() -> {
+
+            mainVBox.requestFocus();
 
             Thread newThread = new Thread(new FormValidator());
             newThread.start();
         });
+
+        prepareStage(stage, generateStructure(300, 170));
     }
 
     private void onOkButtonClick() {
