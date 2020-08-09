@@ -14,6 +14,10 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.text.Normalizer;
+import java.util.AbstractCollection;
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  *
@@ -22,6 +26,7 @@ public class LoginWindow extends DefaultWindow {
 
     TextField usernameField;
     PasswordField passwordField;
+    Button okButton;
 
     public LoginWindow(Stage stage) {
 
@@ -31,7 +36,7 @@ public class LoginWindow extends DefaultWindow {
         title.setFont(Font.font("Arial", FontWeight.BOLD, 16));
         VBox titleBox = new VBox(title);
         titleBox.setAlignment(Pos.CENTER);
-        titleBox.setPadding(new Insets(10, 0 ,0, 0));
+        titleBox.setPadding(new Insets(10, 0, 0, 0));
 
         usernameField = new TextField();
         usernameField.setMaxWidth(100);
@@ -48,13 +53,15 @@ public class LoginWindow extends DefaultWindow {
         fieldBox.setAlignment(Pos.CENTER);
         fieldBox.setPadding(new Insets(0, 0, 0, 0));
 
-        Button okButton = new Button("Ok");
-        Platform.runLater(() -> okButton.requestFocus());
+        okButton = new Button("Ok");
+        okButton.setMinWidth(60);
         okButton.setOnAction(e -> onOkButtonClick());
+        okButton.setOnMouseEntered(e -> setStatusBarText("Login as " + usernameField.getText()));
+        okButton.setOnMouseExited(e -> setStatusBarText(""));
 
         HBox buttonBox = new HBox(10);
         buttonBox.getChildren().add(okButton);
-        buttonBox.setPadding(new Insets(2,0,10,0));
+        buttonBox.setPadding(new Insets(2, 0, 10, 0));
         buttonBox.setAlignment(Pos.CENTER);
 
         VBox mainVBox = new VBox(10);
@@ -62,7 +69,15 @@ public class LoginWindow extends DefaultWindow {
 
         setCenter(mainVBox);
 
+        Platform.runLater(() -> mainVBox.requestFocus()); // Sets focus to the mainBox node upon program start.
+
         prepareStage(stage, generateStructure(300, 170));
+
+        Platform.runLater(() -> {
+
+            Thread newThread = new Thread(new FormValidator());
+            newThread.start();
+        });
     }
 
     private void onOkButtonClick() {
@@ -72,7 +87,7 @@ public class LoginWindow extends DefaultWindow {
             try {
                 userHandler.validateReturningUser(usernameField.getText(), passwordField.getText().getBytes());
                 clearFields();
-
+                new MainAccountWindow(getStage());
             } catch (GeneralSecurityException | IOException ex) {
                 ex.printStackTrace();
             }
@@ -104,5 +119,19 @@ public class LoginWindow extends DefaultWindow {
 
         usernameField.clear();
         passwordField.clear();
+    }
+
+    public class FormValidator implements Runnable{
+
+        @Override
+        public void run() {
+            while (true)
+                checkFilled();
+        }
+
+        private void checkFilled() {
+
+            okButton.setDisable(usernameField.getText().isEmpty() || passwordField.getText().isEmpty());
+        }
     }
 }

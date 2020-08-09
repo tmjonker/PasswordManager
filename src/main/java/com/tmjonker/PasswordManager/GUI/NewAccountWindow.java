@@ -46,11 +46,16 @@ public class NewAccountWindow extends DefaultWindow {
         password2Field.setFocusTraversable(true);
 
         okButton = new Button("Ok");
-        Platform.runLater(() -> okButton.requestFocus());
+        okButton.setMinWidth(60);
         okButton.setOnAction(e -> onOkButtonClick());
+        okButton.setOnMouseEntered(e -> setStatusBarText("Create user " + usernameField.getText()));
+        okButton.setOnMouseExited(e -> setStatusBarText(""));
 
         cancelButton = new Button("Cancel");
+        cancelButton.setMinWidth(60);
         cancelButton.setOnAction(e -> onClose());
+        cancelButton.setOnMouseEntered(e -> setStatusBarText("Cancel"));
+        cancelButton.setOnMouseExited(e -> setStatusBarText(""));
 
         HBox buttonBox = new HBox(10);
         buttonBox.getChildren().addAll(okButton,cancelButton);
@@ -68,6 +73,14 @@ public class NewAccountWindow extends DefaultWindow {
         gridPane.add(buttonBox, 0,4);
 
         setCenter(gridPane);
+
+        Platform.runLater(() -> gridPane.requestFocus());
+
+        Platform.runLater(() -> {
+
+            Thread newThread = new Thread(new FormValidator());
+            newThread.start();
+        });
 
         prepareStage(new Stage(), generateStructure(250, 250));
     }
@@ -118,5 +131,20 @@ public class NewAccountWindow extends DefaultWindow {
         usernameField.clear();
         password1Field.clear();
         password2Field.clear();
+    }
+
+    public class FormValidator implements Runnable{
+
+        @Override
+        public void run() {
+            while (true)
+                checkFilled();
+        }
+
+        private void checkFilled() {
+
+            okButton.setDisable(usernameField.getText().isEmpty() || password1Field.getText().isEmpty() ||
+                    password2Field.getText().isEmpty());
+        }
     }
 }

@@ -7,6 +7,10 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import org.controlsfx.control.StatusBar;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Subclasses inherit borderPane from DefaultWindow.  borderPane.top and borderPane.bottom are already
  * defined in the superclass with the menuBar on top and the statusBar on the bottom..
@@ -53,15 +57,41 @@ public class DefaultWindow {
         borderPane.setCenter(node);
     }
 
+    protected void setLeft(SideBar sideBar) {
+
+        borderPane.setLeft(sideBar.getMainBox());
+    }
+
     private void setStage(Stage stage) {
 
         this.stage = stage;
+    }
+
+    protected void setStatusBarText(String text) {
+
+        getStatusBar().setText(text);
+    }
+
+    protected void centerStage() {
+
+        stage.centerOnScreen();
+    }
+
+    protected StatusBar getStatusBar() {
+
+        return statusBar;
+    }
+
+    protected Stage getStage() {
+
+        return stage;
     }
 
     protected void prepareStage(Stage aStage, Scene scene) {
         setStage(aStage);
         stage.setScene(scene);
         stage.setTitle("Password Manager");
+        centerStage();
         stage.show();
     }
 
