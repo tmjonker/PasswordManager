@@ -12,6 +12,9 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.awt.event.WindowStateListener;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.text.Normalizer;
@@ -26,11 +29,13 @@ public class LoginWindow extends DefaultWindow {
 
     TextField usernameField;
     PasswordField passwordField;
-    Button okButton;
+    Button okButton = implementOkButton();
+    boolean isClosing;
 
     public LoginWindow(Stage stage) {
 
-        disableCloseMenuItem();
+        disableCloseMenuItem(true);
+        disableLogOutMenuItem(true);
 
         Text title = new Text("Login");
         title.setFont(Font.font("Arial", FontWeight.BOLD, 16));
@@ -53,19 +58,16 @@ public class LoginWindow extends DefaultWindow {
         fieldBox.setAlignment(Pos.CENTER);
         fieldBox.setPadding(new Insets(0, 0, 0, 0));
 
-        okButton = new Button("Ok");
-        okButton.setMinWidth(60);
         okButton.setOnAction(e -> onOkButtonClick());
         okButton.setOnMouseEntered(e -> setStatusBarText("Login as " + usernameField.getText()));
         okButton.setOnMouseExited(e -> setStatusBarText(""));
 
-        HBox buttonBox = new HBox(10);
-        buttonBox.getChildren().add(okButton);
-        buttonBox.setPadding(new Insets(2, 0, 10, 0));
-        buttonBox.setAlignment(Pos.CENTER);
+        addToButtonBox(okButton);
+        setPaddingButtonBox(2, 0, 10, 0);
+        setAlignmentButtonBox(Pos.CENTER);
 
         VBox mainVBox = new VBox(10);
-        mainVBox.getChildren().addAll(titleBox, fieldBox, buttonBox);
+        mainVBox.getChildren().addAll(titleBox, fieldBox, getButtonBox());
 
         setCenter(mainVBox);
 
@@ -77,7 +79,13 @@ public class LoginWindow extends DefaultWindow {
             newThread.start();
         });
 
-        prepareStage(stage, generateStructure(300, 170));
+        prepareStage(stage, generateStructure(300, 170, false));
+
+        stage.setOnCloseRequest(e -> { // If user closes window, isClosing == true.
+            isClosing = true;
+        });
+
+        stage.setResizable(false);
     }
 
     private void onOkButtonClick() {
@@ -121,11 +129,12 @@ public class LoginWindow extends DefaultWindow {
         passwordField.clear();
     }
 
-    public class FormValidator implements Runnable{
+    public class FormValidator implements Runnable {
 
         @Override
         public void run() {
-            while (true)
+
+            while (!isClosing) // Keeps running as long as window is open.
                 checkFilled();
         }
 

@@ -1,15 +1,19 @@
 package com.tmjonker.PasswordManager.GUI;
 
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import de.jensd.fx.glyphs.fontawesome.utils.FontAwesomeIconFactory;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.controlsfx.control.StatusBar;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Subclasses inherit borderPane from DefaultWindow.  borderPane.top and borderPane.bottom are already
@@ -26,30 +30,87 @@ public class DefaultWindow {
 
     private final MenuBar menuBar = new MenuBar();
     private final Menu fileMenu = new Menu("_File");
+    private final Menu editMenu = new Menu("_Edit");
+    private final Menu accountMenu = new Menu("_Account");
+    private final Menu helpMenu = new Menu("_Help");
     private final MenuItem newAccountItem = new MenuItem("_New Account");
+    private final MenuItem logOutMenuItem = new MenuItem("_Log Out");
     private final SeparatorMenuItem separatorItem = new SeparatorMenuItem();
     private final MenuItem closeMenuItem = new MenuItem("_Close Window");
     private final MenuItem exitMenuItem = new MenuItem("E_xit Program");
+    private final ToolBar toolBar = new ToolBar();
+    private final VBox topVbox = new VBox();
+    private final HBox buttonBox = new HBox(10);
     private final StatusBar statusBar = new StatusBar();
     private final BorderPane borderPane = new BorderPane();
     private Stage stage;
 
-    protected Scene generateStructure(int width, int height) {
-        menuBar.getMenus().add(fileMenu);
-        fileMenu.getItems().add(newAccountItem);
-        fileMenu.getItems().add(separatorItem);
-        fileMenu.getItems().add(closeMenuItem);
-        fileMenu.getItems().add(exitMenuItem);
+    protected void setAlignmentButtonBox(Pos position) {
+
+        buttonBox.setAlignment(position);
+    }
+
+    protected void setPaddingButtonBox(int top, int left, int bottom, int right) {
+
+        buttonBox.setPadding(new Insets(top, left, bottom, right));
+    }
+
+    protected HBox getButtonBox() {
+
+        return buttonBox;
+    }
+
+    protected Button implementOkButton() {
+
+        Button okButton;
+        okButton = new Button("Ok");
+        okButton.setMinWidth(60);
+        return okButton;
+    }
+
+    protected Button implementCancelButton() {
+
+        Button cancelButton;
+        cancelButton = new Button("Cancel");
+        cancelButton.setMinWidth(60);
+        return cancelButton;
+    }
+
+    protected void addToButtonBox(Button button) {
+
+        buttonBox.getChildren().add(button);
+    }
+
+    protected Scene generateStructure(int width, int height, boolean hasToolBar) {
+
+        menuBar.getMenus().addAll(fileMenu, editMenu, accountMenu, helpMenu);
+        fileMenu.getItems().addAll(closeMenuItem, exitMenuItem);
+        accountMenu.getItems().addAll(newAccountItem, logOutMenuItem);
 
         exitMenuItem.setOnAction(e -> onExit());
         newAccountItem.setOnAction(e -> onNewAccount());
         closeMenuItem.setOnAction(e -> onClose());
 
+        topVbox.getChildren().add(menuBar);
+        if (hasToolBar)
+            implementToolBar();
+
         statusBar.setText("");
-        borderPane.setTop(menuBar);
+        borderPane.setTop(topVbox);
         borderPane.setBottom(statusBar);
 
         return new Scene(borderPane, width, height);
+    }
+
+    private void implementToolBar() {
+
+        Button addButton = ButtonCreator.generateButton(new Image("add_24px.png"));
+        Button editButton = ButtonCreator.generateButton(new Image("edit_file_24px.png"));
+        Button removeButton = ButtonCreator.generateButton(new Image("delete_24px.png"));
+
+        toolBar.getItems().addAll(addButton, editButton, removeButton);
+
+        topVbox.getChildren().add(toolBar);
     }
 
     protected void setCenter(Node node) {
@@ -88,6 +149,7 @@ public class DefaultWindow {
     }
 
     protected void prepareStage(Stage aStage, Scene scene) {
+
         setStage(aStage);
         stage.setScene(scene);
         stage.setTitle("Password Manager");
@@ -96,20 +158,27 @@ public class DefaultWindow {
     }
 
     protected void onNewAccount() {
+
         new NewAccountWindow();
     }
 
     protected void onClose() {
+
         stage.close();
     }
 
-    protected void disableCloseMenuItem() {
-        closeMenuItem.setDisable(true);
+    protected void disableCloseMenuItem(boolean disabled) {
+        closeMenuItem.setDisable(disabled);
     }
 
-    protected void disableNewMenuItem() {
+    protected void disableLogOutMenuItem(boolean disabled) {
 
-        newAccountItem.setDisable(true); // disables the "New Account" option in the File menu.
+        logOutMenuItem.setDisable(disabled);
+    }
+
+    protected void disableNewMenuItem(boolean disabled) {
+
+        newAccountItem.setDisable(disabled); // disables the "New Account" option in the File menu.
     }
 
     protected void onExit() {

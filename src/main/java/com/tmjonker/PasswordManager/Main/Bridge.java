@@ -7,6 +7,7 @@ import com.tmjonker.PasswordManager.GUI.LoginWindow;
 public class Bridge extends Application {
 
     public void start(Stage stage) throws Exception {
+
         new LoginWindow(stage);
     }
 

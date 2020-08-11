@@ -1,35 +1,45 @@
 package com.tmjonker.PasswordManager.GUI;
 
-import javafx.geometry.Pos;
-import javafx.scene.control.Button;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeView;
+import javafx.scene.layout.VBox;
 import org.controlsfx.control.StatusBar;
 
 public class MainSideBar extends SideBar {
+
+    TreeItem<String> websites, applications, email, financial, games;
+
+    TreeItem<String> root = new TreeItem<>("All Passwords");
 
     public MainSideBar(StatusBar statusBar) {
 
         setStatusBar(statusBar);
 
-        Button addButton = new Button("Add");
-        addButton.setMinWidth(60);
-        addButton.setAlignment(Pos.CENTER);
-        addButton.setOnMouseEntered(e -> setStatusBarText("Add new credential"));
-        addButton.setOnMouseExited(e -> setStatusBarText(""));
+        websites = generateTreeItem("Website Passwords", root);
+        applications = generateTreeItem("Application Passwords", root);
+        email = generateTreeItem("Email Passwords", root);
+        financial = generateTreeItem("Financial Passwords", root);
+        games = generateTreeItem("Game Passwords", root);
 
-        Button removeButton = new Button("Remove");
-        removeButton.setMinWidth(60);
-        removeButton.setAlignment(Pos.CENTER);
-        removeButton.setOnMouseEntered(e -> setStatusBarText("Remove existing credential"));
-        removeButton.setOnMouseExited(e -> setStatusBarText(""));
+        root.setExpanded(true);
 
-        addToMainBox(addButton);
-        addToMainBox(removeButton);
+        TreeView<String> treeView = new TreeView<>(root);
 
-        setMainBoxPadding(40, 0, 0, 0);
+        addToMainBox(treeView);
+
+        treeView.prefHeightProperty().bind(getMainBox().heightProperty()); // Sets treeView to fill mainBox.
     }
 
     private void setStatusBarText(String text) {
 
         getStatusBar().setText(text);
+    }
+
+    private TreeItem<String> generateTreeItem(String text, TreeItem<String> parent) {
+
+        TreeItem<String> treeItem = new TreeItem<>(text);
+        treeItem.setExpanded(true);
+        parent.getChildren().add(treeItem);
+        return treeItem;
     }
 }

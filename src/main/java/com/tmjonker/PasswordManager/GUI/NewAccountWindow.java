@@ -23,12 +23,15 @@ public class NewAccountWindow extends DefaultWindow {
     TextField password1Field;
     TextField password2Field;
 
-    Button okButton;
-    Button cancelButton;
+    Button okButton = implementOkButton();
+    Button cancelButton = implementCancelButton();
+
+    boolean isClosing;
 
     public NewAccountWindow() {
 
-        disableNewMenuItem();
+        disableNewMenuItem(true);
+        disableLogOutMenuItem(true);
 
         Text title = new Text("Create a new account");
         title.setFont(Font.font("Arial", FontWeight.BOLD, 16));
@@ -45,21 +48,17 @@ public class NewAccountWindow extends DefaultWindow {
         password2Field.setPromptText("Confirm Password");
         password2Field.setFocusTraversable(true);
 
-        okButton = new Button("Ok");
-        okButton.setMinWidth(60);
         okButton.setOnAction(e -> onOkButtonClick());
         okButton.setOnMouseEntered(e -> setStatusBarText("Create user " + usernameField.getText()));
         okButton.setOnMouseExited(e -> setStatusBarText(""));
 
-        cancelButton = new Button("Cancel");
-        cancelButton.setMinWidth(60);
         cancelButton.setOnAction(e -> onClose());
         cancelButton.setOnMouseEntered(e -> setStatusBarText("Cancel"));
         cancelButton.setOnMouseExited(e -> setStatusBarText(""));
 
-        HBox buttonBox = new HBox(10);
-        buttonBox.getChildren().addAll(okButton,cancelButton);
-        buttonBox.setAlignment(Pos.CENTER);
+        addToButtonBox(okButton);
+        addToButtonBox(cancelButton);
+        setAlignmentButtonBox(Pos.CENTER);
 
         GridPane gridPane = new GridPane();
         gridPane.setAlignment(Pos.CENTER);
@@ -70,7 +69,7 @@ public class NewAccountWindow extends DefaultWindow {
         gridPane.add(usernameField, 0, 1);
         gridPane.add(password1Field, 0, 2);
         gridPane.add(password2Field, 0, 3);
-        gridPane.add(buttonBox, 0,4);
+        gridPane.add(getButtonBox(), 0,4);
 
         setCenter(gridPane);
 
@@ -82,7 +81,13 @@ public class NewAccountWindow extends DefaultWindow {
             newThread.start();
         });
 
-        prepareStage(new Stage(), generateStructure(250, 250));
+        prepareStage(new Stage(), generateStructure(250, 250, false));
+
+        getStage().setOnCloseRequest(e -> {
+            isClosing = true;
+        });
+
+        getStage().setResizable(false);
     }
 
     /*
@@ -137,7 +142,7 @@ public class NewAccountWindow extends DefaultWindow {
 
         @Override
         public void run() {
-            while (true)
+            while (!isClosing)
                 checkFilled();
         }
 
