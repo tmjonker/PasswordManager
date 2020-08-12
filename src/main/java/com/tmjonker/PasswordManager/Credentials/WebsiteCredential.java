@@ -7,9 +7,13 @@ public class WebsiteCredential extends Credential {
 
     private URI url;
 
-    public WebsiteCredential(String url, String username, String password) throws URISyntaxException {
+    public WebsiteCredential(String url, String username, String password) {
 
-        this.url = new URI(url);
+        try {
+            this.url = new URI(url);
+        } catch (URISyntaxException ex) {
+            ex.printStackTrace();
+        }
         super.username = username.getBytes();
         super.e_password = password.getBytes();
         super.type = Type.WEBSITE;

@@ -47,7 +47,7 @@ public class MainAccountWindow extends DefaultWindow {
 
         setCenter(scrollPane);
 
-        prepareStage(stage, generateStructure(800,600, true));
+        prepareStage(stage, generateStructure(1000,600, true));
         stage.setResizable(true);
     }
 }

@@ -47,17 +47,22 @@ public class LoginWindow extends DefaultWindow {
         usernameField.setMaxWidth(100);
         usernameField.setPromptText("Username");
         usernameField.setFocusTraversable(true);
+        usernameField.textProperty().addListener((observable, oldValue, newValue) -> {
+            okButton.setDisable(newValue.trim().isEmpty());
+        });
 
         passwordField = new PasswordField();
         passwordField.setMaxWidth(100);
         passwordField.setPromptText("Password");
         passwordField.setFocusTraversable(true);
 
+
         HBox fieldBox = new HBox(10);
         fieldBox.getChildren().addAll(usernameField, passwordField);
         fieldBox.setAlignment(Pos.CENTER);
         fieldBox.setPadding(new Insets(0, 0, 0, 0));
 
+        okButton.setDisable(true);
         okButton.setOnAction(e -> onOkButtonClick());
         okButton.setOnMouseEntered(e -> setStatusBarText("Login as " + usernameField.getText()));
         okButton.setOnMouseExited(e -> setStatusBarText(""));
@@ -71,13 +76,7 @@ public class LoginWindow extends DefaultWindow {
 
         setCenter(mainVBox);
 
-        Platform.runLater(() -> {
-
-            mainVBox.requestFocus();
-
-            Thread newThread = new Thread(new FormValidator());
-            newThread.start();
-        });
+        Platform.runLater(() -> mainVBox.requestFocus());
 
         prepareStage(stage, generateStructure(300, 170, false));
 
@@ -129,18 +128,4 @@ public class LoginWindow extends DefaultWindow {
         passwordField.clear();
     }
 
-    public class FormValidator implements Runnable {
-
-        @Override
-        public void run() {
-
-            while (!isClosing) // Keeps running as long as window is open.
-                checkFilled();
-        }
-
-        private void checkFilled() {
-
-            okButton.setDisable(usernameField.getText().isEmpty() || passwordField.getText().isEmpty());
-        }
-    }
 }

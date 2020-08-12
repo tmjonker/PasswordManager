@@ -8,7 +8,6 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -29,20 +28,24 @@ import org.controlsfx.control.StatusBar;
 public class DefaultWindow {
 
     private final MenuBar menuBar = new MenuBar();
+
     private final Menu fileMenu = new Menu("_File");
     private final Menu editMenu = new Menu("_Edit");
     private final Menu accountMenu = new Menu("_Account");
     private final Menu helpMenu = new Menu("_Help");
+
     private final MenuItem newAccountItem = new MenuItem("_New Account");
     private final MenuItem logOutMenuItem = new MenuItem("_Log Out");
-    private final SeparatorMenuItem separatorItem = new SeparatorMenuItem();
     private final MenuItem closeMenuItem = new MenuItem("_Close Window");
     private final MenuItem exitMenuItem = new MenuItem("E_xit Program");
+
     private final ToolBar toolBar = new ToolBar();
+    private final StatusBar statusBar = new StatusBar();
+
     private final VBox topVbox = new VBox();
     private final HBox buttonBox = new HBox(10);
-    private final StatusBar statusBar = new StatusBar();
     private final BorderPane borderPane = new BorderPane();
+
     private Stage stage;
 
     protected void setAlignmentButtonBox(Pos position) {
@@ -105,8 +108,19 @@ public class DefaultWindow {
     private void implementToolBar() {
 
         Button addButton = ButtonCreator.generateButton(new Image("add_24px.png"));
+        addButton.setOnAction(e -> ToolBarHandler.onAddButtonClick());
+        addButton.setOnMouseEntered(e -> setStatusBarText("Add a new credential"));
+        addButton.setOnMouseExited(e -> setStatusBarText(""));
+
         Button editButton = ButtonCreator.generateButton(new Image("edit_file_24px.png"));
+        editButton.setOnAction(e -> ToolBarHandler.onEditButtonClick());
+        editButton.setOnMouseEntered(e -> setStatusBarText("Edit the selected credential"));
+        editButton.setOnMouseExited(e -> setStatusBarText(""));
+
         Button removeButton = ButtonCreator.generateButton(new Image("delete_24px.png"));
+        removeButton.setOnAction(e -> ToolBarHandler.onRemoveButtonClick());
+        removeButton.setOnMouseEntered(e -> setStatusBarText("Remove the selected credential"));
+        removeButton.setOnMouseExited(e -> setStatusBarText(""));
 
         toolBar.getItems().addAll(addButton, editButton, removeButton);
 
@@ -153,6 +167,7 @@ public class DefaultWindow {
         setStage(aStage);
         stage.setScene(scene);
         stage.setTitle("Password Manager");
+        stage.getIcons().add(new Image("password_16px.png"));
         centerStage();
         stage.show();
     }

@@ -27,7 +27,7 @@ public class MainSideBar extends SideBar {
 
         addToMainBox(treeView);
 
-        treeView.prefHeightProperty().bind(getMainBox().heightProperty()); // Sets treeView to fill mainBox.
+        //treeView.prefHeightProperty().bind(getMainBox().heightProperty()); // Sets treeView to fill mainBox.
     }
 
     private void setStatusBarText(String text) {

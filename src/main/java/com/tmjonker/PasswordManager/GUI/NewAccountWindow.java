@@ -12,6 +12,7 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 
@@ -38,6 +39,9 @@ public class NewAccountWindow extends DefaultWindow {
         usernameField = new TextField();
         usernameField.setPromptText("Username");
         usernameField.setFocusTraversable(true);
+        usernameField.textProperty().addListener((observable, oldValue, newValue) -> {
+            okButton.setDisable(newValue.trim().isEmpty());
+        });
 
         password1Field = new PasswordField();
         password1Field.setPromptText("Password");
@@ -47,6 +51,7 @@ public class NewAccountWindow extends DefaultWindow {
         password2Field.setPromptText("Confirm Password");
         password2Field.setFocusTraversable(true);
 
+        okButton.setDisable(true);
         okButton.setOnAction(e -> onOkButtonClick());
         okButton.setOnMouseEntered(e -> setStatusBarText("Create user " + usernameField.getText()));
         okButton.setOnMouseExited(e -> setStatusBarText(""));
@@ -123,6 +128,9 @@ public class NewAccountWindow extends DefaultWindow {
             clearFields();
             new MessageBox("No spaces are allowed.", "Error");
             return false;
+        } else if (password1Field.getText().trim().isEmpty() || password2Field.getText().trim().isEmpty()) {
+            new MessageBox("Both password fields must be filled in.", "Error");
+            return false;
         } else if (exists) {
             clearFields();
             new MessageBox("Username already exists!", "Error");
@@ -147,8 +155,8 @@ public class NewAccountWindow extends DefaultWindow {
 
         private void checkFilled() {
 
-            okButton.setDisable(usernameField.getText().isEmpty() || password1Field.getText().isEmpty() ||
-                    password2Field.getText().isEmpty());
+            okButton.setDisable(usernameField.getText().trim().isEmpty() || password1Field.getText().trim().isEmpty()
+                    || password2Field.getText().trim().isEmpty());
         }
     }
 }

@@ -1,6 +1,5 @@
 package com.tmjonker.PasswordManager.GUI;
 
-import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.layout.VBox;
 import org.controlsfx.control.StatusBar;
@@ -12,7 +11,6 @@ public class SideBar {
 
     public SideBar() {
 
-        VBox.setVgrow(mainBox, javafx.scene.layout.Priority.ALWAYS);
     }
 
     protected void setStatusBar(StatusBar statusBar) {
@@ -33,10 +31,5 @@ public class SideBar {
     protected VBox getMainBox() {
 
         return mainBox;
-    }
-
-    protected void setMainBoxPadding(int top, int left, int bottom, int right) {
-
-        mainBox.setPadding(new Insets(top, left, bottom, right));
     }
 }
