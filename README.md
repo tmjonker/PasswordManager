@@ -4,7 +4,6 @@ This is a project utilizing the Google Tink library.  I made this to experiment 
 
 Soon, you will be able to store website and application credentials.
 
-![Login Screen](https://github.com/tmjonker/PasswordManager/blob/master/Images/Login.PNG)              ![New user](https://github.com/tmjonker/PasswordManager/blob/master/Images/NewUser1.PNG)
 
 ## Description
 
