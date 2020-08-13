@@ -1,11 +1,14 @@
 package com.tmjonker.PasswordManager.Users;
 
+import com.google.crypto.tink.KeysetHandle;
+
 import java.io.Serializable;
 
 public class User implements Serializable {
 
     private byte[] e_password; //encrypted password
     private final byte[] username;
+    private KeysetHandle kh;
 
     private int identifier; // unique identifier. Used to link user to password list.
 

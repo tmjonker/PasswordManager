@@ -89,12 +89,15 @@ public class LoginWindow extends DefaultWindow {
 
     private void onOkButtonClick() {
 
-        UserHandler userHandler = new UserHandler();
-        if (checkUserInput(userHandler.checkExists(usernameField.getText()))) {
+        String lowercase = usernameField.getText().toLowerCase();
+
+        if (checkUserInput(getUserHandler().checkExists(lowercase))) {
             try {
-                userHandler.validateReturningUser(usernameField.getText(), passwordField.getText().getBytes());
-                clearFields();
-                new MainAccountWindow(getStage());
+                if (getUserHandler().validateReturningUser(lowercase, passwordField.getText().getBytes()))
+                    new MainAccountWindow(getStage());
+                else {
+                    new ErrorDialog("The password that you entered is incorrect.", "Error");
+                }
             } catch (GeneralSecurityException | IOException ex) {
                 ex.printStackTrace();
             }
@@ -111,11 +114,11 @@ public class LoginWindow extends DefaultWindow {
         if (usernameField.getText().contains(" ")
                 || passwordField.getText().contains(" ")) {
             clearFields();
-            new MessageBox("No spaces are allowed.", "Error");
+            new ErrorDialog("No spaces are allowed.", "Error");
             return false;
         } else if (!exists){
+            new ErrorDialog("User " + usernameField.getText() + " does not exist.", "Error");
             clearFields();
-            new MessageBox("User " + usernameField.getText() + " does not exist.", "Error");
             return false;
         }else {
             return true;

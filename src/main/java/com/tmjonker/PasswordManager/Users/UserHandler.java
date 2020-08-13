@@ -1,6 +1,6 @@
 package com.tmjonker.PasswordManager.Users;
 
-import com.tmjonker.PasswordManager.Encryption.TinkPasswordVault;
+import com.tmjonker.PasswordManager.Encryption.EncryptionHandler;
 import com.tmjonker.PasswordManager.Properties.PropertiesHandler;
 
 import java.io.*;
@@ -16,12 +16,8 @@ public class UserHandler {
 
     private Map<String, User> userHashMap = new HashMap<>();
 
-    private final int nextUserIdentifier;
+    private int nextUserIdentifier;
 
-    public UserHandler() {
-
-        nextUserIdentifier = PropertiesHandler.getAccountsNum() + 1;
-    }
     /*
     storeNewUser:
     Creates new User object, creates and sets the identifier variable for the User, encrypt's the user's password,
@@ -29,11 +25,13 @@ public class UserHandler {
      */
     public void storeNewUser(byte[] username, byte[] password) throws IOException, GeneralSecurityException {
 
+        nextUserIdentifier = PropertiesHandler.getAccountsNum() + 1;
+
+        EncryptionHandler encryptionHandler = new EncryptionHandler();
+
         User user = new User(username, null);
         user.setIdentifier(nextUserIdentifier);
-
-        TinkPasswordVault tinkVault = new TinkPasswordVault();
-        user.setE_password(tinkVault.encryptCredentials(user, password));
+        user.setE_password(encryptionHandler.encryptCredentials(username, password, user.getIdentifier()));
 
         String usernameString = convertUtf8(username);
 
@@ -68,13 +66,12 @@ public class UserHandler {
     public boolean validateReturningUser(String username, byte[] password)
             throws IOException, GeneralSecurityException {
 
-        if (loadUserFile()) return false;
+        if (!loadUserFile()) return false;
 
         User user = userHashMap.get(username);
+        EncryptionHandler encryptionHandler = new EncryptionHandler();
 
-        TinkPasswordVault tinkVault = new TinkPasswordVault();
-
-        return tinkVault.verifyPassword(user, password);
+        return encryptionHandler.verifyPassword(user, password);
     }
 
     private void saveUserFile(Map<String, User> userHashMap) {

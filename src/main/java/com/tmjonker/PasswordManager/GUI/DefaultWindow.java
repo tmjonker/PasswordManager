@@ -1,7 +1,6 @@
 package com.tmjonker.PasswordManager.GUI;
 
-import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
-import de.jensd.fx.glyphs.fontawesome.utils.FontAwesomeIconFactory;
+import com.tmjonker.PasswordManager.Users.UserHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -47,6 +46,8 @@ public class DefaultWindow {
     private final BorderPane borderPane = new BorderPane();
 
     private Stage stage;
+
+    UserHandler userHandler = new UserHandler();
 
     protected void setAlignmentButtonBox(Pos position) {
 
@@ -170,6 +171,7 @@ public class DefaultWindow {
         stage.getIcons().add(new Image("password_16px.png"));
         centerStage();
         stage.show();
+        stage.setOnCloseRequest(e -> System.exit(0));
     }
 
     protected void onNewAccount() {
@@ -198,5 +200,10 @@ public class DefaultWindow {
 
     protected void onExit() {
         System.exit(0);
+    }
+
+    protected UserHandler getUserHandler() {
+
+        return userHandler;
     }
 }

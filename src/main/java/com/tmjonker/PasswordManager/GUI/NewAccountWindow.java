@@ -12,7 +12,6 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-import javax.swing.*;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 
@@ -100,18 +99,15 @@ public class NewAccountWindow extends DefaultWindow {
      */
     protected void onOkButtonClick() {
 
-        UserHandler userHandler = new UserHandler();
-
-        if (checkUserInput(userHandler.checkExists(usernameField.getText()))) {
+        if (checkUserInput(getUserHandler().checkExists(usernameField.getText()))) {
 
             try {
-                userHandler.storeNewUser(usernameField.getText().getBytes(),
+                getUserHandler().storeNewUser(usernameField.getText().getBytes(),
                         password1Field.getText().getBytes());
             } catch (IOException | GeneralSecurityException ex) {
                 ex.printStackTrace();
             }
-
-            new MessageBox("User " + usernameField.getText() + " has been created.", "Success");
+            new SuccessDialog("User " + usernameField.getText() + " has been created.", "Success");
             onClose();
         }
 
@@ -121,19 +117,19 @@ public class NewAccountWindow extends DefaultWindow {
 
         if (!password1Field.getText().equals(password2Field.getText())) {
             clearFields();
-            new MessageBox("Passwords do not match.", "ERROR");
+            new ErrorDialog("Passwords do not match.", "ERROR");
             return false;
         } else if (usernameField.getText().contains(" ")
                 || password1Field.getText().contains(" ") || password2Field.getText().contains(" ")) {
             clearFields();
-            new MessageBox("No spaces are allowed.", "Error");
+            new ErrorDialog("No spaces are allowed.", "Error");
             return false;
         } else if (password1Field.getText().trim().isEmpty() || password2Field.getText().trim().isEmpty()) {
-            new MessageBox("Both password fields must be filled in.", "Error");
+            new ErrorDialog("Both password fields must be filled in.", "Error");
             return false;
         } else if (exists) {
             clearFields();
-            new MessageBox("Username already exists!", "Error");
+            new ErrorDialog("Username already exists!", "Error");
             return false;
         } else return true;
     }
