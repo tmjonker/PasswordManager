@@ -1,6 +1,6 @@
-package com.tmjonker.PasswordManager.GUI;
+package com.tmjonker.passwordmanager.gui;
 
-import com.tmjonker.PasswordManager.Users.UserHandler;
+import com.tmjonker.passwordmanager.users.UserHandler;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -13,6 +13,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.controlsfx.control.StatusBar;
+
+import java.io.IOException;
 
 /**
  * Subclasses inherit borderPane from DefaultWindow.  borderPane.top and borderPane.bottom are already
@@ -48,7 +50,17 @@ public class DefaultWindow {
 
     private Stage stage;
 
-    UserHandler userHandler = new UserHandler();
+    UserHandler userHandler;
+
+    public DefaultWindow() {
+
+        try {
+            userHandler = new UserHandler();
+        } catch (IOException ex) {
+            new ExceptionDialog(ex);
+            System.exit(0);
+        }
+    }
 
     protected void setAlignmentButtonBox(Pos position) {
 

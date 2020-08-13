@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.tmjonker</groupId>
-    <artifactId>PasswordManager</artifactId>
+    <artifactId>passwordmanager</artifactId>
     <version>1.0-SNAPSHOT</version>
     <name>Password Manager</name>
     <packaging>jar</packaging>

@@ -1,9 +1,9 @@
-package com.tmjonker.PasswordManager.GUI;
+package com.tmjonker.passwordmanager.gui;
 
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import com.tmjonker.PasswordManager.Credentials.Credential;
-import com.tmjonker.PasswordManager.Credentials.Type;
+import com.tmjonker.passwordmanager.credentials.Credential;
+import com.tmjonker.passwordmanager.credentials.Type;
 import javafx.stage.Stage;
 
 import java.net.URI;

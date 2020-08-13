@@ -1,4 +1,4 @@
-package com.tmjonker.PasswordManager.Users;
+package com.tmjonker.passwordmanager.users;
 
 import com.google.crypto.tink.KeysetHandle;
 

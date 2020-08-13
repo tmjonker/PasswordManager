@@ -1,4 +1,4 @@
-package com.tmjonker.PasswordManager.GUI;
+package com.tmjonker.passwordmanager.gui;
 
 import javafx.application.Platform;
 import javafx.geometry.Pos;
@@ -98,18 +98,21 @@ public class NewAccountWindow extends DefaultWindow {
      */
     protected void onOkButtonClick() {
 
-        if (checkUserInput(getUserHandler().checkExists(usernameField.getText()))) {
+        try {
+            if (checkUserInput(getUserHandler().checkUsernameAvailability(usernameField.getText()))) {
 
-            try {
-                getUserHandler().storeNewUser(usernameField.getText().getBytes(),
-                        password1Field.getText().getBytes());
-            } catch (IOException | GeneralSecurityException ex) {
-                ex.printStackTrace();
+                try {
+                    getUserHandler().storeNewUser(usernameField.getText().getBytes(),
+                            password1Field.getText().getBytes());
+                    new SuccessDialog("User " + usernameField.getText() + " has been created.", "Success");
+                    onClose();
+                } catch (GeneralSecurityException ex) {
+                    ex.printStackTrace();
+                }
             }
-            new SuccessDialog("User " + usernameField.getText() + " has been created.", "Success");
-            onClose();
+        } catch (IOException | ClassNotFoundException ex) {
+            new ExceptionDialog(ex);
         }
-
     }
 
     private boolean checkUserInput(boolean exists) {

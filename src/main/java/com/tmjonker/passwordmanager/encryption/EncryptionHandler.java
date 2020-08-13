@@ -1,9 +1,9 @@
-package com.tmjonker.PasswordManager.Encryption;
+package com.tmjonker.passwordmanager.encryption;
 
 import com.google.crypto.tink.*;
 import com.google.crypto.tink.aead.AesGcmKeyManager;
 import com.google.crypto.tink.config.TinkConfig;
-import com.tmjonker.PasswordManager.Users.User;
+import com.tmjonker.passwordmanager.users.User;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -28,7 +28,7 @@ public class EncryptionHandler {
     /**
      * Creates instance of EncryptionHandler, generates folder path that will be used to store
      * the KeysetHandle, and registers TinkConfig to enable encryption/decryption.
-     * @throws GeneralSecurityException if unable to register TinkConfig.
+     * @throws GeneralSecurityException
      */
     public EncryptionHandler() throws GeneralSecurityException {
 
@@ -42,10 +42,10 @@ public class EncryptionHandler {
      * @param password      the password that was entered by the user for the credential.
      * @param identifier    the unique identifier associated with the user.
      * @return              returns an encrypted version of the password entered by the user.
-     * @throws GeneralSecurityException if unable to encrypt.
+     * @throws GeneralSecurityException
      */
     public byte[] encryptCredentials(byte[] username, byte[] password, int identifier)
-            throws GeneralSecurityException {
+            throws GeneralSecurityException, IOException {
 
         KeysetHandle keysetHandle = KeysetHandle.generateNew(AesGcmKeyManager.aes128GcmTemplate());
         saveKeysetHandle(keysetHandle, identifier);
@@ -59,25 +59,22 @@ public class EncryptionHandler {
      * @param keysetHandle  the KeysetHandle that is to be stored on local disk drive.
      * @param identifier    the unique identifier associated with the user that is used as the name of the file.
      */
-    private void saveKeysetHandle(KeysetHandle keysetHandle, int identifier) {
+    private void saveKeysetHandle(KeysetHandle keysetHandle, int identifier) throws IOException {
 
         Path dirPath = Paths.get(keysetFileName);
         keysetFileName = keysetFileName + identifier + ".json";
         File keysetFile = new File(keysetFileName);
 
-        try {
-            CleartextKeysetHandle.write(keysetHandle, JsonKeysetWriter.withFile(keysetFile));
-            Files.setAttribute(dirPath, "dos:hidden",
-                    true, LinkOption.NOFOLLOW_LINKS); // hides the keysetFile after stored on disk.
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
+        CleartextKeysetHandle.write(keysetHandle, JsonKeysetWriter.withFile(keysetFile));
+        Files.setAttribute(dirPath, "dos:hidden",
+                true, LinkOption.NOFOLLOW_LINKS); // hides the keysetFile after stored on disk.
+
     }
 
     /**
      * Loads the KeysetHandle that was stored on the local disk drive.
-     * @param identifier    the unique identifier of the user.
-     * @return              returns the KeysetHandle object that was loaded from disk storage.
+     * @param identifier                    the unique identifier of the user.
+     * @return                              returns the KeysetHandle object that was loaded from disk storage.
      * @throws GeneralSecurityException
      * @throws IOException
      */

@@ -1,16 +1,14 @@
-package com.tmjonker.PasswordManager.GUI;
+package com.tmjonker.passwordmanager.gui;
 
-import com.tmjonker.PasswordManager.Credentials.Credential;
-import com.tmjonker.PasswordManager.Credentials.CredentialHandler;
-import com.tmjonker.PasswordManager.Credentials.Type;
-import com.tmjonker.PasswordManager.Credentials.WebsiteCredential;
-import javafx.scene.Node;
+import com.tmjonker.passwordmanager.credentials.Credential;
+import com.tmjonker.passwordmanager.credentials.CredentialHandler;
+import com.tmjonker.passwordmanager.credentials.Type;
+import com.tmjonker.passwordmanager.credentials.WebsiteCredential;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
-import javafx.util.Pair;
 
 import java.util.ArrayList;
 import java.util.List;

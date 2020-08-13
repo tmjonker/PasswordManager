@@ -1,4 +1,4 @@
-package com.tmjonker.PasswordManager.Main;
+package com.tmjonker.passwordmanager.main;
 
 public class Main {
 

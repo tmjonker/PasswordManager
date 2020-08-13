@@ -1,6 +1,8 @@
-package com.tmjonker.PasswordManager.Main;
+package com.tmjonker.passwordmanager.main;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
@@ -28,6 +30,13 @@ public class FileStructureCreator {
         hideFolder(makeDirectory("keysets"));
         hideFolder(makeDirectory("users"));
         hideFolder(makeDirectory("credentials"));
+
+        try {
+            FileOutputStream fileOutputStream = new FileOutputStream(new File(path + "\\users\\user.pm"));
+            fileOutputStream.flush();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
     }
 
     /**

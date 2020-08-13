@@ -1,8 +1,8 @@
-package com.tmjonker.PasswordManager.Main;
+package com.tmjonker.passwordmanager.main;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
-import com.tmjonker.PasswordManager.GUI.LoginWindow;
+import com.tmjonker.passwordmanager.gui.LoginWindow;
 
 public class Bridge extends Application {
 

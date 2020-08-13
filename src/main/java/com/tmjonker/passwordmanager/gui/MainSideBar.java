@@ -1,4 +1,4 @@
-package com.tmjonker.PasswordManager.GUI;
+package com.tmjonker.passwordmanager.gui;
 
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;

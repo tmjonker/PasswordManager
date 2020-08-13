@@ -1,6 +1,5 @@
-package com.tmjonker.PasswordManager.Encryption;
+package com.tmjonker.passwordmanager.encryption;
 
-import org.jasypt.util.password.BasicPasswordEncryptor;
 import org.jasypt.util.text.BasicTextEncryptor;
 
 public class JasyptPasswordVault {

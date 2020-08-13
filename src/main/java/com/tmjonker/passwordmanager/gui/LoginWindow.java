@@ -1,6 +1,5 @@
-package com.tmjonker.PasswordManager.GUI;
+package com.tmjonker.passwordmanager.gui;
 
-import com.tmjonker.PasswordManager.Users.UserHandler;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -12,15 +11,8 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
-import java.awt.event.WindowStateListener;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.text.Normalizer;
-import java.util.AbstractCollection;
-import java.util.ArrayList;
-import java.util.Collection;
 
 /**
  *
@@ -95,17 +87,21 @@ public class LoginWindow extends DefaultWindow {
 
         String lowercase = usernameField.getText().toLowerCase();
 
-        if (checkUserInput(getUserHandler().checkExists(lowercase))) {
-            try {
-                if (getUserHandler().validateReturningUser(lowercase, passwordField.getText().getBytes())) {
-                    new MainAccountWindow(new Stage());
-                    onClose();
-                } else {
-                    new ErrorDialog("The password that you entered is incorrect.", "Error");
+        try {
+            if (checkUserInput(getUserHandler().checkUsernameAvailability(lowercase))) {
+                try {
+                    if (getUserHandler().validateReturningUser(lowercase, passwordField.getText().getBytes())) {
+                        new MainAccountWindow(new Stage());
+                        onClose();
+                    } else {
+                        new ErrorDialog("The password that you entered is incorrect.", "Error");
+                    }
+                } catch (GeneralSecurityException | IOException | ClassNotFoundException ex) {
+                    new ExceptionDialog(ex);
                 }
-            } catch (GeneralSecurityException | IOException ex) {
-                ex.printStackTrace();
             }
+        } catch (IOException | ClassNotFoundException ex) {
+            new ExceptionDialog(ex);
         }
     }
 

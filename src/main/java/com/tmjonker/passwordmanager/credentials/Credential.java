@@ -1,4 +1,4 @@
-package com.tmjonker.PasswordManager.Credentials;
+package com.tmjonker.passwordmanager.credentials;
 
 public class Credential {
 

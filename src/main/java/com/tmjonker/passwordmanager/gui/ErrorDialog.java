@@ -1,4 +1,4 @@
-package com.tmjonker.PasswordManager.GUI;
+package com.tmjonker.passwordmanager.gui;
 
 import javafx.scene.control.Alert;
 import javafx.scene.image.Image;

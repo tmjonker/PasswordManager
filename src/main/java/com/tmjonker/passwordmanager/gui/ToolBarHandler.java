@@ -1,7 +1,4 @@
-package com.tmjonker.PasswordManager.GUI;
-
-import javafx.scene.control.Dialog;
-import javafx.scene.control.TextInputDialog;
+package com.tmjonker.passwordmanager.gui;
 
 public class ToolBarHandler {
 

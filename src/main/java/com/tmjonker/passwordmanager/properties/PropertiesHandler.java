@@ -1,4 +1,4 @@
-package com.tmjonker.PasswordManager.Properties;
+package com.tmjonker.passwordmanager.properties;
 
 import java.io.File;
 import java.io.FileInputStream;
