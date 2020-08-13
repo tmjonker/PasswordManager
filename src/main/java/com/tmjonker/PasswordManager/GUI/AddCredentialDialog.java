@@ -75,9 +75,6 @@ public class AddCredentialDialog {
         gridPane.add(new Label("Password:"), 0, 2);
         gridPane.add(passwordField, 1, 2);
 
-        Node addButton = inputDialog.getDialogPane().lookupButton(addButtonType);
-        addButton.setDisable(true);
-
         inputDialog.getDialogPane().setContent(gridPane);
 
         inputDialog.setResultConverter(inputButton -> {

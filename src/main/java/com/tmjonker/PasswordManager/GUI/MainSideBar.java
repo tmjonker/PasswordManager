@@ -2,13 +2,11 @@ package com.tmjonker.PasswordManager.GUI;
 
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
-import javafx.scene.layout.VBox;
 import org.controlsfx.control.StatusBar;
 
 public class MainSideBar extends SideBar {
 
     TreeItem<String> websites, applications, email, financial, games;
-
     TreeItem<String> root = new TreeItem<>("All Passwords");
 
     public MainSideBar(StatusBar statusBar) {
@@ -28,11 +26,6 @@ public class MainSideBar extends SideBar {
         addToMainBox(treeView);
 
         //treeView.prefHeightProperty().bind(getMainBox().heightProperty()); // Sets treeView to fill mainBox.
-    }
-
-    private void setStatusBarText(String text) {
-
-        getStatusBar().setText(text);
     }
 
     private TreeItem<String> generateTreeItem(String text, TreeItem<String> parent) {

@@ -76,15 +76,19 @@ public class LoginWindow extends DefaultWindow {
 
         setCenter(mainVBox);
 
-        Platform.runLater(() -> mainVBox.requestFocus());
+        Platform.runLater(() -> {
+
+            mainVBox.requestFocus();
+
+            Thread newThread = new Thread(new FormValidator());
+            newThread.start();
+        });
 
         prepareStage(stage, generateStructure(300, 170, false));
-
+        stage.setResizable(false);
         stage.setOnCloseRequest(e -> { // If user closes window, isClosing == true.
             isClosing = true;
         });
-
-        stage.setResizable(false);
     }
 
     private void onOkButtonClick() {
@@ -93,9 +97,10 @@ public class LoginWindow extends DefaultWindow {
 
         if (checkUserInput(getUserHandler().checkExists(lowercase))) {
             try {
-                if (getUserHandler().validateReturningUser(lowercase, passwordField.getText().getBytes()))
-                    new MainAccountWindow(getStage());
-                else {
+                if (getUserHandler().validateReturningUser(lowercase, passwordField.getText().getBytes())) {
+                    new MainAccountWindow(new Stage());
+                    onClose();
+                } else {
                     new ErrorDialog("The password that you entered is incorrect.", "Error");
                 }
             } catch (GeneralSecurityException | IOException ex) {
@@ -131,4 +136,18 @@ public class LoginWindow extends DefaultWindow {
         passwordField.clear();
     }
 
+    public class FormValidator implements Runnable {
+
+        @Override
+        public void run() {
+            while (!isClosing)
+                checkFilled();
+        }
+
+        private void checkFilled() {
+
+            okButton.setDisable(usernameField.getText().trim().isEmpty()
+                    || passwordField.getText().trim().isEmpty());
+        }
+    }
 }

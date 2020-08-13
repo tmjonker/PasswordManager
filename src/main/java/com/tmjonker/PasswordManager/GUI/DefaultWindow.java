@@ -1,6 +1,7 @@
 package com.tmjonker.PasswordManager.GUI;
 
 import com.tmjonker.PasswordManager.Users.UserHandler;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -171,7 +172,7 @@ public class DefaultWindow {
         stage.getIcons().add(new Image("password_16px.png"));
         centerStage();
         stage.show();
-        stage.setOnCloseRequest(e -> System.exit(0));
+        Platform.runLater(() -> stage.setOnCloseRequest(e -> System.exit(0)));
     }
 
     protected void onNewAccount() {

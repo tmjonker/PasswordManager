@@ -1,6 +1,5 @@
 package com.tmjonker.PasswordManager.GUI;
 
-import com.tmjonker.PasswordManager.Users.UserHandler;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -78,6 +77,8 @@ public class NewAccountWindow extends DefaultWindow {
 
         Platform.runLater(() -> {
 
+            getStage().setOnCloseRequest(e -> isClosing = true);
+
             Platform.runLater(() -> gridPane.requestFocus());
 
             Thread newThread = new Thread(new FormValidator());
@@ -85,12 +86,10 @@ public class NewAccountWindow extends DefaultWindow {
         });
 
         prepareStage(new Stage(), generateStructure(250, 250, false));
-
+        getStage().setResizable(false);
         getStage().setOnCloseRequest(e -> {
             isClosing = true;
         });
-
-        getStage().setResizable(false);
     }
 
     /*
@@ -116,32 +115,39 @@ public class NewAccountWindow extends DefaultWindow {
     private boolean checkUserInput(boolean exists) {
 
         if (!password1Field.getText().equals(password2Field.getText())) {
-            clearFields();
             new ErrorDialog("Passwords do not match.", "ERROR");
+            clearPasswordFields();
             return false;
         } else if (usernameField.getText().contains(" ")
                 || password1Field.getText().contains(" ") || password2Field.getText().contains(" ")) {
-            clearFields();
             new ErrorDialog("No spaces are allowed.", "Error");
+            clearAllFields();
             return false;
         } else if (password1Field.getText().trim().isEmpty() || password2Field.getText().trim().isEmpty()) {
             new ErrorDialog("Both password fields must be filled in.", "Error");
+            clearPasswordFields();
             return false;
         } else if (exists) {
-            clearFields();
             new ErrorDialog("Username already exists!", "Error");
+            clearAllFields();
             return false;
         } else return true;
     }
 
-    private void clearFields() {
+    private void clearAllFields() {
 
         usernameField.clear();
         password1Field.clear();
         password2Field.clear();
     }
 
-    public class FormValidator implements Runnable{
+    private void clearPasswordFields() {
+
+        password1Field.clear();
+        password2Field.clear();
+    }
+
+    public class FormValidator implements Runnable {
 
         @Override
         public void run() {
