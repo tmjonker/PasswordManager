@@ -106,6 +106,7 @@ public class DefaultWindow {
 
         exitMenuItem.setOnAction(e -> onExit());
         newAccountItem.setOnAction(e -> onNewAccount());
+        logOutMenuItem.setOnAction(e -> onLogOut());
         closeMenuItem.setOnAction(e -> onClose());
 
         topVbox.getChildren().add(menuBar);
@@ -190,6 +191,13 @@ public class DefaultWindow {
     protected void onNewAccount() {
 
         new NewAccountWindow();
+    }
+
+    protected void onLogOut() {
+
+        stage.close();
+        new SuccessDialog("You have successfully logged out.", "Success");
+        new LoginWindow(new Stage());
     }
 
     protected void onClose() {

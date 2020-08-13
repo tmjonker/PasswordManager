@@ -1,7 +1,6 @@
 package com.tmjonker.passwordmanager.main;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -22,8 +21,8 @@ public class FileStructureCreator {
     String path = System.getProperty("user.dir");
 
     /**
-     * Creates a new instance of FileStructureCreator, creates folder for keyset, user, and credential
-     * storage.
+     * Creates a new instance of FileStructureCreator, creates folder for keyset, user, credential
+     * folders, and then creates a default user.pm file if one doesn't already exist.
      */
     public FileStructureCreator() {
 
@@ -32,8 +31,11 @@ public class FileStructureCreator {
         hideFolder(makeDirectory("credentials"));
 
         try {
-            FileOutputStream fileOutputStream = new FileOutputStream(new File(path + "\\users\\user.pm"));
-            fileOutputStream.flush();
+            File userFile = new File(path + "\\users\\user.pm");
+            if (!userFile.exists()) {
+                FileOutputStream fileOutputStream = new FileOutputStream(userFile);
+                fileOutputStream.flush();
+            }
         } catch (IOException ex) {
             ex.printStackTrace();
         }

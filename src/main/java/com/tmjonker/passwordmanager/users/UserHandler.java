@@ -23,14 +23,14 @@ public class UserHandler {
      * @param nextUserIdentifier    the unique identifier for the next User to be created.  Based on the total
      *                              number of Users that have been created.
      */
-    private final String USER_FILE_NAME = System.getProperty("user.dir") + "\\users\\User.pm";
+    private final String USER_FILE_NAME = System.getProperty("user.dir") + "\\users\\user.pm";
     private final File USER_FILE = new File(USER_FILE_NAME);
     private Map<String, User> userHashMap = new HashMap<>();
     private int nextUserIdentifier;
 
     public UserHandler() throws IOException {
 
-        if (!loadUserFile()) throw new IOException();
+        loadUserFile();
     }
 
     /**
@@ -42,16 +42,14 @@ public class UserHandler {
     public void storeNewUser(byte[] username, byte[] password) throws GeneralSecurityException, IOException {
 
         nextUserIdentifier = PropertiesHandler.getAccountsNum() + 1;
-
-        EncryptionHandler encryptionHandler = new EncryptionHandler();
+        PropertiesHandler.incrementAccountsNum(nextUserIdentifier);
 
         User user = new User(username, null);
         user.setIdentifier(nextUserIdentifier);
+        EncryptionHandler encryptionHandler = new EncryptionHandler();
         user.setE_password(encryptionHandler.encryptCredentials(username, password, user.getIdentifier()));
 
         String usernameString = convertUtf8(username);
-
-        PropertiesHandler.incrementAccountsNum(nextUserIdentifier);
 
         userHashMap.put(usernameString, user);
         saveUserFile(userHashMap);
@@ -63,22 +61,21 @@ public class UserHandler {
      * @return              true if the username is available for creation; false if username is not available or if
      *                      the users.pm file could not be loaded.
      */
-    public boolean checkUsernameAvailability(String username) throws IOException, ClassNotFoundException {
+    public boolean checkUsernameAvailability(String username) throws IOException {
 
-        if (!loadUserFile())
-            throw new IOException();
-        else
-            return userHashMap.containsKey(username);
+        loadUserFile();
+
+        return userHashMap.containsKey(username);
 
     }
 
     /**
-     *
+     * Loads the
      * @return
      * @throws IOException
      * @throws ClassNotFoundException
      */
-    private boolean loadUserFile() throws IOException {
+    private void loadUserFile() throws IOException {
 
         FileInputStream inputStream = new FileInputStream(USER_FILE);
         ObjectInputStream objectInputStream = null;
@@ -89,14 +86,12 @@ public class UserHandler {
         } catch (EOFException | ClassNotFoundException ex) {
             ex.printStackTrace();
         }
-
-        return userHashMap != null;
     }
 
-    public boolean validateReturningUser(String username, byte[] password)
-            throws IOException, GeneralSecurityException, ClassNotFoundException {
+    public boolean validateReturningUser(String username, byte[] password) throws GeneralSecurityException,
+            IOException {
 
-        if (!loadUserFile()) return false;
+        loadUserFile();
 
         User user = userHashMap.get(username);
         EncryptionHandler encryptionHandler = new EncryptionHandler();

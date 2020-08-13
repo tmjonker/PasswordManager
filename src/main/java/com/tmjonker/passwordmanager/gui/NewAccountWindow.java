@@ -110,7 +110,7 @@ public class NewAccountWindow extends DefaultWindow {
                     ex.printStackTrace();
                 }
             }
-        } catch (IOException | ClassNotFoundException ex) {
+        } catch (IOException ex) {
             new ExceptionDialog(ex);
         }
     }

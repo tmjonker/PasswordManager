@@ -11,8 +11,11 @@ import java.net.URI;
 public class MainAccountWindow extends DefaultWindow {
 
     private final SideBar sideBar = new MainSideBar(getStatusBar());
+    private final Stage stage;
 
     public MainAccountWindow(Stage stage) {
+
+        this.stage = stage;
 
         disableNewMenuItem(true);
         disableLogOutMenuItem(false);

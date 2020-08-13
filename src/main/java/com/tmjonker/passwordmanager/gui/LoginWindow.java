@@ -86,7 +86,6 @@ public class LoginWindow extends DefaultWindow {
     private void onOkButtonClick() {
 
         String lowercase = usernameField.getText().toLowerCase();
-
         try {
             if (checkUserInput(getUserHandler().checkUsernameAvailability(lowercase))) {
                 try {
@@ -96,11 +95,11 @@ public class LoginWindow extends DefaultWindow {
                     } else {
                         new ErrorDialog("The password that you entered is incorrect.", "Error");
                     }
-                } catch (GeneralSecurityException | IOException | ClassNotFoundException ex) {
+                } catch (GeneralSecurityException | IOException ex) {
                     new ExceptionDialog(ex);
                 }
             }
-        } catch (IOException | ClassNotFoundException ex) {
+        } catch (IOException ex) {
             new ExceptionDialog(ex);
         }
     }
