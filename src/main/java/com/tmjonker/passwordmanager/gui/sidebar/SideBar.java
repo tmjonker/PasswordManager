@@ -1,4 +1,4 @@
-package com.tmjonker.passwordmanager.gui;
+package com.tmjonker.passwordmanager.gui.sidebar;
 
 import javafx.scene.Node;
 import javafx.scene.layout.VBox;
@@ -28,7 +28,7 @@ public class SideBar {
         mainBox.getChildren().add(node);
     }
 
-    protected VBox getMainBox() {
+    public VBox getMainBox() {
 
         return mainBox;
     }

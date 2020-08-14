@@ -1,7 +1,11 @@
-package com.tmjonker.passwordmanager.gui;
+package com.tmjonker.passwordmanager.gui.window;
 
+import com.tmjonker.passwordmanager.gui.dialog.ExceptionDialog;
+import com.tmjonker.passwordmanager.gui.dialog.SuccessDialog;
+import com.tmjonker.passwordmanager.gui.sidebar.SideBar;
+import com.tmjonker.passwordmanager.gui.toolbar.ButtonCreator;
+import com.tmjonker.passwordmanager.gui.toolbar.ToolBarHandler;
 import com.tmjonker.passwordmanager.users.UserHandler;
-import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -185,12 +189,11 @@ public class DefaultWindow {
         stage.getIcons().add(new Image("password_16px.png"));
         centerStage();
         stage.show();
-        Platform.runLater(() -> stage.setOnCloseRequest(e -> System.exit(0)));
     }
 
     protected void onNewAccount() {
 
-        new NewAccountWindow();
+        new NewAccountWindow(stage);
     }
 
     protected void onLogOut() {

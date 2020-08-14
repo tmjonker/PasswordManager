@@ -1,4 +1,6 @@
-package com.tmjonker.passwordmanager.gui;
+package com.tmjonker.passwordmanager.gui.toolbar;
+
+import com.tmjonker.passwordmanager.gui.dialog.AddCredentialDialog;
 
 public class ToolBarHandler {
 

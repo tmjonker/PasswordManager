@@ -6,24 +6,24 @@ import java.io.Serializable;
 
 public class User implements Serializable {
 
-    private byte[] e_password; //encrypted password
+    private byte[] password; //encrypted password
     private final byte[] username;
     private KeysetHandle kh;
 
     private int identifier; // unique identifier. Used to link user to password list.
 
     public User(byte[] username, byte[] password) {
-        e_password = password;
+        this.password = password;
         this.username = username;
     }
 
-    public byte[] getE_password() {
-        return e_password;
+    public byte[] getPassword() {
+        return password;
     }
 
-    public void setE_password(byte[] password) {
+    public void setPassword(byte[] password) {
 
-        e_password = password;
+        this.password = password;
     }
 
     public byte[] getUsername() {

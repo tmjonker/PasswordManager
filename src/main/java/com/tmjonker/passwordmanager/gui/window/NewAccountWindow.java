@@ -1,5 +1,8 @@
-package com.tmjonker.passwordmanager.gui;
+package com.tmjonker.passwordmanager.gui.window;
 
+import com.tmjonker.passwordmanager.gui.dialog.ErrorDialog;
+import com.tmjonker.passwordmanager.gui.dialog.ExceptionDialog;
+import com.tmjonker.passwordmanager.gui.dialog.SuccessDialog;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -15,7 +18,7 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 
 
-public class NewAccountWindow extends DefaultWindow {
+public class NewAccountWindow extends DefaultWindow implements WindowShell  {
 
     TextField usernameField;
     TextField password1Field;
@@ -24,9 +27,13 @@ public class NewAccountWindow extends DefaultWindow {
     Button okButton = implementOkButton();
     Button cancelButton = implementCancelButton();
 
+    Stage stage;
+
     boolean isClosing;
 
-    public NewAccountWindow() {
+    public NewAccountWindow(Stage stage) {
+
+        this.stage = stage;
 
         disableNewMenuItem(true);
         disableLogOutMenuItem(true);
@@ -54,7 +61,7 @@ public class NewAccountWindow extends DefaultWindow {
         okButton.setOnMouseEntered(e -> setStatusBarText("Create user " + usernameField.getText()));
         okButton.setOnMouseExited(e -> setStatusBarText(""));
 
-        cancelButton.setOnAction(e -> onClose());
+        cancelButton.setOnAction(e -> onCancelButtonClick());
         cancelButton.setOnMouseEntered(e -> setStatusBarText("Cancel"));
         cancelButton.setOnMouseExited(e -> setStatusBarText(""));
 
@@ -77,19 +84,15 @@ public class NewAccountWindow extends DefaultWindow {
 
         Platform.runLater(() -> {
 
-            getStage().setOnCloseRequest(e -> isClosing = true);
-
             Platform.runLater(() -> gridPane.requestFocus());
 
             Thread newThread = new Thread(new FormValidator());
             newThread.start();
         });
 
-        prepareStage(new Stage(), generateStructure(250, 250, false));
+        prepareStage(stage, generateStructure(300, 250, false));
         getStage().setResizable(false);
-        getStage().setOnCloseRequest(e -> {
-            isClosing = true;
-        });
+        stage.setOnCloseRequest(e -> onStageCloseRequest());
     }
 
     /*
@@ -98,14 +101,18 @@ public class NewAccountWindow extends DefaultWindow {
      */
     protected void onOkButtonClick() {
 
-        try {
-            if (checkUserInput(getUserHandler().checkUsernameAvailability(usernameField.getText()))) {
+        String username = usernameField.getText().toLowerCase();
+        String password1 = password1Field.getText();
+        String password2 = password2Field.getText();
 
+        try {
+            if (checkUserInput(username, password1, password2)) {
                 try {
-                    getUserHandler().storeNewUser(usernameField.getText().getBytes(),
-                            password1Field.getText().getBytes());
-                    new SuccessDialog("User " + usernameField.getText() + " has been created.", "Success");
-                    onClose();
+                    getUserHandler().storeUser(getUserHandler().createUser(username.getBytes(),
+                            password1.getBytes()));
+                    new SuccessDialog("User " + username + " has been created.", "Success");
+                    stage.close(); // Closes stage.
+                    new LoginWindow(new Stage()); // Creates new stage.
                 } catch (GeneralSecurityException ex) {
                     ex.printStackTrace();
                 }
@@ -115,22 +122,27 @@ public class NewAccountWindow extends DefaultWindow {
         }
     }
 
-    private boolean checkUserInput(boolean exists) {
+    private void onCancelButtonClick() {
 
-        if (!password1Field.getText().equals(password2Field.getText())) {
+        new LoginWindow(stage);
+    }
+
+    private boolean checkUserInput(String username, String password1, String password2) throws IOException {
+
+        if (!password1.equals(password2)) {
             new ErrorDialog("Passwords do not match.", "ERROR");
             clearPasswordFields();
             return false;
-        } else if (usernameField.getText().contains(" ")
-                || password1Field.getText().contains(" ") || password2Field.getText().contains(" ")) {
+        } else if (username.contains(" ")
+                || password1.contains(" ") || password2.contains(" ")) {
             new ErrorDialog("No spaces are allowed.", "Error");
             clearAllFields();
             return false;
-        } else if (password1Field.getText().trim().isEmpty() || password2Field.getText().trim().isEmpty()) {
+        } else if (password1.trim().isEmpty() || password2.trim().isEmpty()) {
             new ErrorDialog("Both password fields must be filled in.", "Error");
             clearPasswordFields();
             return false;
-        } else if (exists) {
+        } else if (getUserHandler().checkUsernameExists(username)) {
             new ErrorDialog("Username already exists!", "Error");
             clearAllFields();
             return false;
@@ -148,6 +160,13 @@ public class NewAccountWindow extends DefaultWindow {
 
         password1Field.clear();
         password2Field.clear();
+    }
+
+    @Override
+    public void onStageCloseRequest() {
+
+        isClosing = true;
+        System.exit(0);
     }
 
     public class FormValidator implements Runnable {

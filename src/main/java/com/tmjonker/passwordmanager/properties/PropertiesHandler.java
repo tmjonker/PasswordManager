@@ -23,10 +23,11 @@ public class PropertiesHandler {
         }
     }
 
-    public static void incrementAccountsNum(int accountsNum) {
+    public static void incrementAccountsNum() {
 
         loadProperties();
-        configFile.setProperty("accounts", Integer.toString(accountsNum));
+        int accounts = Integer.parseInt(configFile.getProperty("accounts")) + 1;
+        configFile.setProperty("accounts", Integer.toString(accounts));
         saveProperties();
     }
 

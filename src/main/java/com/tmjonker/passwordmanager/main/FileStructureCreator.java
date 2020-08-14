@@ -22,23 +22,14 @@ public class FileStructureCreator {
 
     /**
      * Creates a new instance of FileStructureCreator, creates folder for keyset, user, credential
-     * folders, and then creates a default user.pm file if one doesn't already exist.
+     * folders.
      */
     public FileStructureCreator() {
 
-        hideFolder(makeDirectory("keysets"));
-        hideFolder(makeDirectory("users"));
-        hideFolder(makeDirectory("credentials"));
+        makeDirectory("keysets");
+        makeDirectory("users");
+        makeDirectory("credentials");
 
-        try {
-            File userFile = new File(path + "\\users\\user.pm");
-            if (!userFile.exists()) {
-                FileOutputStream fileOutputStream = new FileOutputStream(userFile);
-                fileOutputStream.flush();
-            }
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
     }
 
     /**

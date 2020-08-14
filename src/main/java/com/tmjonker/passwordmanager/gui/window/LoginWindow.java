@@ -1,5 +1,7 @@
-package com.tmjonker.passwordmanager.gui;
+package com.tmjonker.passwordmanager.gui.window;
 
+import com.tmjonker.passwordmanager.gui.dialog.ErrorDialog;
+import com.tmjonker.passwordmanager.gui.dialog.ExceptionDialog;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -17,14 +19,20 @@ import java.security.GeneralSecurityException;
 /**
  *
  */
-public class LoginWindow extends DefaultWindow {
+public class LoginWindow extends DefaultWindow implements WindowShell {
 
     TextField usernameField;
     PasswordField passwordField;
+
     Button okButton = implementOkButton();
+
     boolean isClosing;
 
+    Stage stage;
+
     public LoginWindow(Stage stage) {
+
+        this.stage = stage;
 
         disableCloseMenuItem(true);
         disableLogOutMenuItem(true);
@@ -78,57 +86,55 @@ public class LoginWindow extends DefaultWindow {
 
         prepareStage(stage, generateStructure(300, 170, false));
         stage.setResizable(false);
-        stage.setOnCloseRequest(e -> { // If user closes window, isClosing == true.
-            isClosing = true;
-        });
+        stage.setOnCloseRequest(e -> onStageCloseRequest());
     }
 
     private void onOkButtonClick() {
 
-        String lowercase = usernameField.getText().toLowerCase();
+        String username = usernameField.getText().toLowerCase();
+        String password = passwordField.getText().toLowerCase();
+
         try {
-            if (checkUserInput(getUserHandler().checkUsernameAvailability(lowercase))) {
-                try {
-                    if (getUserHandler().validateReturningUser(lowercase, passwordField.getText().getBytes())) {
-                        new MainAccountWindow(new Stage());
-                        onClose();
-                    } else {
-                        new ErrorDialog("The password that you entered is incorrect.", "Error");
-                    }
-                } catch (GeneralSecurityException | IOException ex) {
-                    new ExceptionDialog(ex);
+            if (checkUserInput(username, password)) {
+                if (getUserHandler().validateReturningUser(username, password.getBytes())) {
+                    new MainAccountWindow(new Stage());
+                    stage.close();
+                } else {
+                    new ErrorDialog("The password that you entered is incorrect.", "Error");
                 }
             }
-        } catch (IOException ex) {
+        } catch(GeneralSecurityException | IOException ex){
             new ExceptionDialog(ex);
         }
     }
 
-    /*
-    checkUserInput:
-    Checks if user input contains any blank spaces and checks to see if the username that the user input has already
-    been created.
-     */
-    private boolean checkUserInput(Boolean exists) {
+    private boolean checkUserInput(String username, String password) throws IOException {
 
-        if (usernameField.getText().contains(" ")
-                || passwordField.getText().contains(" ")) {
-            clearFields();
+        if (username.contains(" ")
+                || password.contains(" ")) {
+            clearAllFields();
             new ErrorDialog("No spaces are allowed.", "Error");
             return false;
-        } else if (!exists){
+        } else if (!getUserHandler().checkUsernameExists(usernameField.getText())) {
             new ErrorDialog("User " + usernameField.getText() + " does not exist.", "Error");
-            clearFields();
+            clearAllFields();
             return false;
-        }else {
+        } else {
             return true;
         }
     }
 
-    private void clearFields() {
+    private void clearAllFields() {
 
         usernameField.clear();
         passwordField.clear();
+    }
+
+    @Override
+    public void onStageCloseRequest() {
+
+        isClosing = true;
+        System.exit(0);
     }
 
     public class FormValidator implements Runnable {
