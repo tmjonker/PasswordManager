@@ -1,21 +1,35 @@
 package com.tmjonker.passwordmanager.gui.toolbar;
 
 import com.tmjonker.passwordmanager.gui.dialog.AddCredentialDialog;
+import com.tmjonker.passwordmanager.users.User;
+import com.tmjonker.passwordmanager.users.UserHandler;
 
 public class ToolBarHandler {
 
-    public static void onAddButtonClick() {
+    private User verifiedUser;
 
-        new AddCredentialDialog();
+    public ToolBarHandler(User user) {
+
+        verifiedUser = user;
     }
 
-    public static void onEditButtonClick() {
+    public void onAddButtonClick() {
+
+        new AddCredentialDialog(verifiedUser);
+    }
+
+    public void onEditButtonClick() {
 
 
     }
 
-    public static void onRemoveButtonClick() {
+    public void onRemoveButtonClick() {
 
 
+    }
+
+    public void setVerifiedUser(User user) {
+
+        verifiedUser = user;
     }
 }

@@ -3,28 +3,22 @@ package com.tmjonker.passwordmanager.gui.window;
 import com.tmjonker.passwordmanager.gui.sidebar.MainSideBar;
 import com.tmjonker.passwordmanager.gui.sidebar.SideBar;
 
+import com.tmjonker.passwordmanager.users.User;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 import com.tmjonker.passwordmanager.credentials.Credential;
 import com.tmjonker.passwordmanager.credentials.Type;
 
-import javafx.stage.Stage;
-
 import java.net.URI;
 
 public class MainAccountWindow extends DefaultWindow implements WindowShell {
 
-    private final SideBar sideBar = new MainSideBar(getStatusBar());
-    private final Stage stage;
+    private final SideBar sideBar;
 
-    public MainAccountWindow(Stage stage) {
+    public MainAccountWindow() {
 
-        this.stage = stage;
-
-        disableNewMenuItem(true);
-        disableLogOutMenuItem(false);
-        disableCloseMenuItem(true);
+        sideBar = new MainSideBar(statusBar);
 
         setLeft(sideBar);
 
@@ -55,10 +49,10 @@ public class MainAccountWindow extends DefaultWindow implements WindowShell {
 
         setCenter(scrollPane);
 
-        prepareStage(stage, generateStructure(1000,600, true));
+        prepareStage(generateStructure(1000,600, true));
+
         stage.setResizable(true);
         stage.setOnCloseRequest(e -> onStageCloseRequest());
-
     }
 
     @Override

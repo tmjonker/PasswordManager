@@ -2,5 +2,5 @@ package com.tmjonker.passwordmanager.credentials;
 
 public enum Type {
 
-    WEBSITE
+    WEBSITE, APPLICATION, EMAIL, GAME
 }

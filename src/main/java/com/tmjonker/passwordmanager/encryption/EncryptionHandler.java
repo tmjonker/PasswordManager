@@ -25,14 +25,14 @@ public class EncryptionHandler {
         TinkConfig.register();
     }
 
-    public byte[] encryptCredentials(byte[] username, byte[] password, int identifier)
+    public byte[] encryptCredentials(String username, byte[] password, int identifier)
             throws GeneralSecurityException, IOException {
 
         KeysetHandle keysetHandle = KeysetHandle.generateNew(AesGcmKeyManager.aes128GcmTemplate());
         saveKeysetHandle(keysetHandle, identifier);
         Aead aead = keysetHandle.getPrimitive(Aead.class);
 
-        return aead.encrypt(password, username);
+        return aead.encrypt(password, username.getBytes());
     }
 
     private void saveKeysetHandle(KeysetHandle keysetHandle, int identifier) throws IOException {
@@ -57,8 +57,16 @@ public class EncryptionHandler {
         KeysetHandle keysetHandle = loadKeysetHandle(user.getIdentifier());
 
         Aead aead = keysetHandle.getPrimitive(Aead.class);
-        byte[] decrypted = aead.decrypt(user.getPassword(), user.getUsername());
+        byte[] decrypted = aead.decrypt(user.getPassword(), user.getUsername().getBytes());
+
+        System.out.println(convertUtf8(password));
+        System.out.println(convertUtf8(decrypted));
 
         return Arrays.equals(decrypted, password);
+    }
+
+    private String convertUtf8(byte[] input) {
+
+        return new String(input, StandardCharsets.UTF_8);
     }
 }

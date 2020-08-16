@@ -1,14 +1,14 @@
 package com.tmjonker.passwordmanager.main;
 
+import com.tmjonker.passwordmanager.gui.window.MainAccountWindow;
 import javafx.application.Application;
 import javafx.stage.Stage;
-import com.tmjonker.passwordmanager.gui.window.LoginWindow;
 
 public class Bridge extends Application {
 
     public void start(Stage stage) throws Exception {
 
-        new LoginWindow(stage);
+        new MainAccountWindow();
     }
 
     public static void main(String[] args) {

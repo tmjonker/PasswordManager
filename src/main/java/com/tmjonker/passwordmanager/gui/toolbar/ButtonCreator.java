@@ -13,4 +13,20 @@ public class ButtonCreator {
 
         return button;
     }
+
+    public static Button generateOkButton() {
+
+        Button okButton;
+        okButton = new Button("Ok");
+        okButton.setMinWidth(60);
+        return okButton;
+    }
+
+    public static Button generateCancelButton() {
+
+        Button cancelButton;
+        cancelButton = new Button("Cancel");
+        cancelButton.setMinWidth(60);
+        return cancelButton;
+    }
 }

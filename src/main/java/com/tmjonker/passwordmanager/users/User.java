@@ -1,18 +1,22 @@
 package com.tmjonker.passwordmanager.users;
 
-import com.google.crypto.tink.KeysetHandle;
+import com.tmjonker.passwordmanager.credentials.Credential;
+import com.tmjonker.passwordmanager.credentials.Type;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class User implements Serializable {
 
     private byte[] password; //encrypted password
-    private final byte[] username;
-    private KeysetHandle kh;
+    private final String username;
+    private Map<Type, ArrayList<Credential>> credentialCollection = new HashMap<>();
 
     private int identifier; // unique identifier. Used to link user to password list.
 
-    public User(byte[] username, byte[] password) {
+    public User(String username, byte[] password) {
         this.password = password;
         this.username = username;
     }
@@ -26,7 +30,7 @@ public class User implements Serializable {
         this.password = password;
     }
 
-    public byte[] getUsername() {
+    public String getUsername() {
         return username;
     }
 

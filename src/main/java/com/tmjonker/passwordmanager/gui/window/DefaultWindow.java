@@ -1,24 +1,23 @@
 package com.tmjonker.passwordmanager.gui.window;
 
-import com.tmjonker.passwordmanager.gui.dialog.ExceptionDialog;
+import com.tmjonker.passwordmanager.gui.dialog.LoginDialog;
+import com.tmjonker.passwordmanager.gui.dialog.NewUserDialog;
 import com.tmjonker.passwordmanager.gui.dialog.SuccessDialog;
 import com.tmjonker.passwordmanager.gui.sidebar.SideBar;
 import com.tmjonker.passwordmanager.gui.toolbar.ButtonCreator;
 import com.tmjonker.passwordmanager.gui.toolbar.ToolBarHandler;
-import com.tmjonker.passwordmanager.users.UserHandler;
+import com.tmjonker.passwordmanager.users.User;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.controlsfx.control.StatusBar;
-
-import java.io.IOException;
 
 /**
  * Subclasses inherit borderPane from DefaultWindow.  borderPane.top and borderPane.bottom are already
@@ -33,87 +32,54 @@ import java.io.IOException;
 
 public class DefaultWindow {
 
-    private final MenuBar menuBar = new MenuBar();
+    protected final String DEFAULT_TITLE = "Password Manager - ";
 
-    private final Menu fileMenu = new Menu("_File");
-    private final Menu editMenu = new Menu("_Edit");
-    private final Menu accountMenu = new Menu("_Account");
-    private final Menu helpMenu = new Menu("_Help");
+    protected final MenuBar menuBar = new MenuBar();
 
-    private final MenuItem newAccountItem = new MenuItem("_New Account");
-    private final MenuItem logOutMenuItem = new MenuItem("_Log Out");
-    private final MenuItem closeMenuItem = new MenuItem("_Close Window");
-    private final MenuItem exitMenuItem = new MenuItem("E_xit Program");
+    protected final Menu fileMenu = new Menu("_File");
+    protected final Menu editMenu = new Menu("_Edit");
+    protected final Menu accountMenu = new Menu("_Account");
+    protected final Menu helpMenu = new Menu("_Help");
 
-    private final ToolBar toolBar = new ToolBar();
-    private final StatusBar statusBar = new StatusBar();
+    protected final MenuItem newAccountItem = new MenuItem("_New Account");
+    protected final MenuItem logInMenuItem = new MenuItem("Log _In");
+    protected final MenuItem logOutMenuItem = new MenuItem("_Log Out");
+    protected final MenuItem exitMenuItem = new MenuItem("E_xit Program");
 
-    private final VBox topVbox = new VBox();
-    private final HBox buttonBox = new HBox(10);
-    private final BorderPane borderPane = new BorderPane();
+    protected Button addButton;
+    protected Button editButton;
+    protected Button removeButton;
 
-    private Stage stage;
+    protected final ToolBar toolBar = new ToolBar();
+    protected final StatusBar statusBar = new StatusBar();
 
-    UserHandler userHandler;
+    protected final VBox topVbox = new VBox();
+    protected final BorderPane borderPane = new BorderPane();
+
+    protected Stage stage;
+
+    protected User verifiedUser;
+
+    protected ToolBarHandler toolBarHandler;
 
     public DefaultWindow() {
 
-        try {
-            userHandler = new UserHandler();
-        } catch (IOException ex) {
-            new ExceptionDialog(ex);
-            System.exit(0);
-        }
-    }
-
-    protected void setAlignmentButtonBox(Pos position) {
-
-        buttonBox.setAlignment(position);
-    }
-
-    protected void setPaddingButtonBox(int top, int left, int bottom, int right) {
-
-        buttonBox.setPadding(new Insets(top, left, bottom, right));
-    }
-
-    protected HBox getButtonBox() {
-
-        return buttonBox;
-    }
-
-    protected Button implementOkButton() {
-
-        Button okButton;
-        okButton = new Button("Ok");
-        okButton.setMinWidth(60);
-        return okButton;
-    }
-
-    protected Button implementCancelButton() {
-
-        Button cancelButton;
-        cancelButton = new Button("Cancel");
-        cancelButton.setMinWidth(60);
-        return cancelButton;
-    }
-
-    protected void addToButtonBox(Button button) {
-
-        buttonBox.getChildren().add(button);
+        stage = new Stage();
     }
 
     protected Scene generateStructure(int width, int height, boolean hasToolBar) {
 
         menuBar.getMenus().addAll(fileMenu, editMenu, accountMenu, helpMenu);
-        fileMenu.getItems().addAll(closeMenuItem, exitMenuItem);
-        accountMenu.getItems().addAll(newAccountItem, logOutMenuItem);
+        fileMenu.getItems().addAll(exitMenuItem);
+        accountMenu.getItems().addAll(logInMenuItem,newAccountItem,logOutMenuItem);
 
         exitMenuItem.setOnAction(e -> onExit());
+        logInMenuItem.setOnAction(e -> onLogIn());
         newAccountItem.setOnAction(e -> onNewAccount());
         logOutMenuItem.setOnAction(e -> onLogOut());
-        closeMenuItem.setOnAction(e -> onClose());
 
         topVbox.getChildren().add(menuBar);
+
         if (hasToolBar)
             implementToolBar();
 
@@ -126,20 +92,24 @@ public class DefaultWindow {
 
     private void implementToolBar() {
 
-        Button addButton = ButtonCreator.generateButton(new Image("add_24px.png"));
-        addButton.setOnAction(e -> ToolBarHandler.onAddButtonClick());
+        toolBarHandler = new ToolBarHandler(null);
+
+        addButton = ButtonCreator.generateButton(new Image("add_24px.png"));
+        addButton.setOnAction(e -> toolBarHandler.onAddButtonClick());
         addButton.setOnMouseEntered(e -> setStatusBarText("Add a new credential"));
         addButton.setOnMouseExited(e -> setStatusBarText(""));
 
-        Button editButton = ButtonCreator.generateButton(new Image("edit_file_24px.png"));
-        editButton.setOnAction(e -> ToolBarHandler.onEditButtonClick());
+        editButton = ButtonCreator.generateButton(new Image("edit_file_24px.png"));
+        editButton.setOnAction(e -> toolBarHandler.onEditButtonClick());
         editButton.setOnMouseEntered(e -> setStatusBarText("Edit the selected credential"));
         editButton.setOnMouseExited(e -> setStatusBarText(""));
 
-        Button removeButton = ButtonCreator.generateButton(new Image("delete_24px.png"));
-        removeButton.setOnAction(e -> ToolBarHandler.onRemoveButtonClick());
+        removeButton = ButtonCreator.generateButton(new Image("delete_24px.png"));
+        removeButton.setOnAction(e -> toolBarHandler.onRemoveButtonClick());
         removeButton.setOnMouseEntered(e -> setStatusBarText("Remove the selected credential"));
         removeButton.setOnMouseExited(e -> setStatusBarText(""));
+
+        setLoggedInConfig(false);
 
         toolBar.getItems().addAll(addButton, editButton, removeButton);
 
@@ -156,14 +126,9 @@ public class DefaultWindow {
         borderPane.setLeft(sideBar.getMainBox());
     }
 
-    private void setStage(Stage stage) {
-
-        this.stage = stage;
-    }
-
     protected void setStatusBarText(String text) {
 
-        getStatusBar().setText(text);
+        statusBar.setText(text);
     }
 
     protected void centerStage() {
@@ -171,63 +136,65 @@ public class DefaultWindow {
         stage.centerOnScreen();
     }
 
-    protected StatusBar getStatusBar() {
+    protected void prepareStage(Scene scene) {
 
-        return statusBar;
-    }
-
-    protected Stage getStage() {
-
-        return stage;
-    }
-
-    protected void prepareStage(Stage aStage, Scene scene) {
-
-        setStage(aStage);
         stage.setScene(scene);
-        stage.setTitle("Password Manager");
+        setStageTitle(DEFAULT_TITLE);
         stage.getIcons().add(new Image("password_16px.png"));
         centerStage();
         stage.show();
     }
 
+    protected void setStageTitle(String text) {
+
+        stage.setTitle(DEFAULT_TITLE + text);
+    }
+
+    protected void onLogIn() {
+
+        LoginDialog loginDialog = new LoginDialog();
+
+        if (loginDialog.getLoggedIn()) {
+            verifiedUser = loginDialog.getVerifiedUser();
+            setStageTitle(verifiedUser.getUsername());
+            new SuccessDialog(verifiedUser.getUsername() + " has been logged in.", "Success");
+            setLoggedInConfig(true);
+        }
+    }
+
+    protected void setLoggedInConfig(boolean result) {
+
+        logInMenuItem.setDisable(result);
+        newAccountItem.setDisable(result);
+        logOutMenuItem.setDisable(!result);
+
+        addButton.setDisable(!result);
+        editButton.setDisable(!result);
+        removeButton.setDisable(!result);
+    }
+
     protected void onNewAccount() {
 
-        new NewAccountWindow(stage);
+        NewUserDialog newUserDialog = new NewUserDialog();
+
+        if (newUserDialog.newUserCreated()) {
+            verifiedUser = newUserDialog.getVerifiedUser();
+            setStageTitle(verifiedUser.getUsername());
+            new SuccessDialog("An account for " + verifiedUser.getUsername() + " has been created.",
+                    "Success");
+            setLoggedInConfig(true);
+        }
     }
 
     protected void onLogOut() {
 
-        stage.close();
+        verifiedUser = null;
+        setStageTitle("");
+        setLoggedInConfig(false);
         new SuccessDialog("You have successfully logged out.", "Success");
-        new LoginWindow(new Stage());
-    }
-
-    protected void onClose() {
-
-        stage.close();
-    }
-
-    protected void disableCloseMenuItem(boolean disabled) {
-        closeMenuItem.setDisable(disabled);
-    }
-
-    protected void disableLogOutMenuItem(boolean disabled) {
-
-        logOutMenuItem.setDisable(disabled);
-    }
-
-    protected void disableNewMenuItem(boolean disabled) {
-
-        newAccountItem.setDisable(disabled); // disables the "New Account" option in the File menu.
     }
 
     protected void onExit() {
         System.exit(0);
-    }
-
-    protected UserHandler getUserHandler() {
-
-        return userHandler;
     }
 }

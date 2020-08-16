@@ -4,19 +4,44 @@ import com.tmjonker.passwordmanager.credentials.Credential;
 import com.tmjonker.passwordmanager.credentials.CredentialHandler;
 import com.tmjonker.passwordmanager.credentials.Type;
 import com.tmjonker.passwordmanager.credentials.WebsiteCredential;
+import com.tmjonker.passwordmanager.users.User;
+import com.tmjonker.passwordmanager.users.UserHandler;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 public class AddCredentialDialog {
 
-    public AddCredentialDialog() {
+    private UserHandler userHandler;
+    private CredentialHandler credentialHandler;
+
+    private User verifiedUser;
+
+    private GridPane gridPane;
+    private Dialog<Credential> inputDialog;
+
+    private ButtonType addButtonType;
+
+    public AddCredentialDialog(User user) {
+
+        try {
+            userHandler = new UserHandler();
+        } catch (IOException | GeneralSecurityException ex) {
+            new ExceptionDialog(ex);
+        }
+
+        credentialHandler = new CredentialHandler();
+
+        verifiedUser = user;
+
         showChoiceDialog();
     }
 
@@ -41,23 +66,38 @@ public class AddCredentialDialog {
 
     private void showAddDialog(Type type) {
 
-        CredentialHandler credentialHandler = new CredentialHandler();
-
-        Dialog<Credential> inputDialog = new Dialog<>();
+        inputDialog = new Dialog<>();
 
         Stage stage = (Stage) inputDialog.getDialogPane().getScene().getWindow();
         stage.getIcons().add(new Image("password_16px.png"));
 
         inputDialog.setTitle("Add a new " + type);
         inputDialog.setHeaderText("Add a new " + type);
-        inputDialog.setGraphic(new ImageView(new Image("website_48px.png")));
 
-        ButtonType addButtonType = new ButtonType("Add", ButtonBar.ButtonData.OK_DONE);
+        addButtonType = new ButtonType("Add", ButtonBar.ButtonData.OK_DONE);
         inputDialog.getDialogPane().getButtonTypes().addAll(addButtonType, ButtonType.CANCEL);
 
-        GridPane gridPane = new GridPane();
+        gridPane = new GridPane();
         gridPane.setHgap(10);
         gridPane.setVgap(10);
+
+        switch (type) {
+            case WEBSITE:
+                        addWebsite();
+                        break;
+            case APPLICATION:
+                        break;
+            case GAME:
+                        break;
+            case EMAIL:
+                        break;
+        }
+
+    }
+
+    private void addWebsite() {
+
+        inputDialog.setGraphic(new ImageView(new Image("website_48px.png")));
 
         TextField urlField = new TextField();
         urlField.setPromptText("URL");
@@ -84,6 +124,11 @@ public class AddCredentialDialog {
 
         Optional<Credential> result = inputDialog.showAndWait();
 
-        result.ifPresent(wc -> credentialHandler.storeCredential(wc));
+        result.ifPresent(wc -> processCredential(wc));
+    }
+
+    private void processCredential(Credential credential) {
+
+        credentialHandler.storeCredential(credential);
     }
 }

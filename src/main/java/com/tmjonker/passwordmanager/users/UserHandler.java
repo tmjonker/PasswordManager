@@ -30,7 +30,10 @@ public class UserHandler {
 
     private final String USER_FILE_NAME = System.getProperty("user.dir") + "\\users\\user.pm";
     private final File USER_FILE = new File(USER_FILE_NAME);
+
     private Map<String, User> userHashMap = new HashMap<>();
+
+    private EncryptionHandler encryptionHandler = new EncryptionHandler();
 
     /**
      * Creates instance of UserHandler and loads the user file from the hard drive.  If file doesn't exist, it
@@ -38,7 +41,7 @@ public class UserHandler {
      *
      * @throws IOException      if there is an issue loading USER_FILE.
      */
-    public UserHandler() throws IOException {
+    public UserHandler() throws IOException, GeneralSecurityException {
 
         if (!USER_FILE.exists()) {
             FileOutputStream fileOutputStream = new FileOutputStream(USER_FILE);
@@ -49,14 +52,11 @@ public class UserHandler {
 
     public void storeUser(User user) throws IOException {
 
-        String usernameString = convertUtf8(user.getUsername());
-        userHashMap.put(usernameString, user);
+        userHashMap.put(user.getUsername(), user);
         saveUserFile(userHashMap);
     }
 
-    public User createUser(byte[] username, byte[] password) throws GeneralSecurityException, IOException {
-
-        EncryptionHandler encryptionHandler = new EncryptionHandler();
+    public User createUser(String username, byte[] password) throws GeneralSecurityException, IOException {
 
         User newUser = new User(username,null);
         newUser.setIdentifier(getIdentifier());
@@ -72,9 +72,8 @@ public class UserHandler {
         return PropertiesHandler.getAccountsNum();
     }
 
-    public boolean checkUsernameExists(String username) throws IOException {
+    public boolean checkUsernameExists(String username) {
 
-        loadUserFile();
         return userHashMap.containsKey(username);
     }
 
@@ -93,25 +92,29 @@ public class UserHandler {
         }
     }
 
-    public boolean validateReturningUser(String username, byte[] password) throws GeneralSecurityException,
+    public boolean validateReturningUser(User desiredUser, byte[] attemptedPassword) throws GeneralSecurityException,
             IOException {
 
-        loadUserFile();
-
-        User currentUser = userHashMap.get(username);
-
-        EncryptionHandler encryptionHandler = new EncryptionHandler();
-
-        if (encryptionHandler.verifyPassword(currentUser, password)) {
-            currentUser.setPassword(encryptionHandler.encryptCredentials(currentUser.getUsername(),
-                    password,
-                    currentUser.getIdentifier())); // re-encrypts password and generates a new Keyset Handle.
-
-            storeUser(currentUser); // saved updated user to file.
-
+        if (encryptionHandler.verifyPassword(desiredUser, attemptedPassword)) {
             return true;
         } else
             return false;
+    }
+
+    public User loadUser(String username) {
+
+        return userHashMap.get(username);
+    }
+
+    public User updateEncryption(User verifiedUser) throws GeneralSecurityException, IOException {
+
+        EncryptionHandler encryptionHandler = new EncryptionHandler();
+        verifiedUser.setPassword(encryptionHandler.encryptCredentials(verifiedUser.getUsername(),
+                verifiedUser.getPassword(),
+                verifiedUser.getIdentifier())); // re-encrypts password and generates a new Keyset Handle.
+        storeUser(verifiedUser);
+
+        return verifiedUser;
     }
 
     private void saveUserFile(Map<String, User> userHashMap) throws IOException {
