@@ -1,9 +1,8 @@
 package com.tmjonker.passwordmanager.gui.window;
 
-import com.tmjonker.passwordmanager.gui.sidebar.MainSideBar;
-import com.tmjonker.passwordmanager.gui.sidebar.SideBar;
-
+import com.tmjonker.passwordmanager.gui.toolbar.ToolBarHandler;
 import com.tmjonker.passwordmanager.users.User;
+import javafx.collections.ObservableList;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
@@ -12,17 +11,20 @@ import com.tmjonker.passwordmanager.credentials.Type;
 
 import java.net.URI;
 
-public class MainAccountWindow extends DefaultWindow implements WindowShell {
+public class InnerContainer {
 
-    private final SideBar sideBar;
+    ScrollPane scrollPane;
 
-    public MainAccountWindow() {
+    protected TableView<Credential> table;
 
-        sideBar = new MainSideBar(statusBar);
+    public InnerContainer() {
 
-        setLeft(sideBar);
+        generateInnerContainer();
+    }
 
-        TableView<Credential> table = new TableView<>();
+    private void generateInnerContainer() {
+
+        table = new TableView<>();
 
         TableColumn<Credential, Type> typeColumn = new TableColumn<>("Type");
         typeColumn.prefWidthProperty().bind(table.widthProperty().multiply(0.20));
@@ -43,21 +45,28 @@ public class MainAccountWindow extends DefaultWindow implements WindowShell {
         table.getColumns().addAll(typeColumn, uriColumn, usernameColumn, passwordColumn);
         table.setFocusTraversable(false);
 
-        ScrollPane scrollPane = new ScrollPane(table);
+        scrollPane = new ScrollPane(table);
         scrollPane.setFitToHeight(true);
         scrollPane.setFitToWidth(true);
-
-        setCenter(scrollPane);
-
-        prepareStage(generateStructure(1000,600, true));
-
-        stage.setResizable(true);
-        stage.setOnCloseRequest(e -> onStageCloseRequest());
     }
 
-    @Override
-    public void onStageCloseRequest() {
+    public TableView<Credential> getTable() {
 
-        System.exit(0);
+        return table;
+    }
+
+    public void setTableContent(ObservableList<Credential> list) {
+
+        table.setItems(list);
+    }
+
+    public InnerContainer getMainAccountWindow() {
+
+        return this;
+    }
+
+    public ScrollPane getScrollPane() {
+
+        return scrollPane;
     }
 }

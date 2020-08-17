@@ -14,9 +14,9 @@ public class WebsiteCredential extends Credential {
         } catch (URISyntaxException ex) {
             ex.printStackTrace();
         }
-        super.username = username.getBytes();
-        super.e_password = password.getBytes();
-        super.type = Type.WEBSITE;
+        this.username = username;
+        this.password = password.getBytes();
+        this.type = Type.WEBSITE;
     }
 
     public void setWebURL(String url) throws URISyntaxException {

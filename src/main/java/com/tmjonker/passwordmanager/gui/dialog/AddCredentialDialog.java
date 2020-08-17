@@ -6,6 +6,7 @@ import com.tmjonker.passwordmanager.credentials.Type;
 import com.tmjonker.passwordmanager.credentials.WebsiteCredential;
 import com.tmjonker.passwordmanager.users.User;
 import com.tmjonker.passwordmanager.users.UserHandler;
+import javafx.event.ActionEvent;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -21,14 +22,15 @@ import java.util.Optional;
 public class AddCredentialDialog {
 
     private UserHandler userHandler;
-    private CredentialHandler credentialHandler;
 
-    private User verifiedUser;
+    private final User verifiedUser;
 
     private GridPane gridPane;
     private Dialog<Credential> inputDialog;
 
     private ButtonType addButtonType;
+
+    private boolean added = false;
 
     public AddCredentialDialog(User user) {
 
@@ -37,8 +39,6 @@ public class AddCredentialDialog {
         } catch (IOException | GeneralSecurityException ex) {
             new ExceptionDialog(ex);
         }
-
-        credentialHandler = new CredentialHandler();
 
         verifiedUser = user;
 
@@ -115,6 +115,21 @@ public class AddCredentialDialog {
 
         inputDialog.getDialogPane().setContent(gridPane);
 
+        Button addButton = (Button) inputDialog.getDialogPane().lookupButton(addButtonType);
+        addButton.addEventFilter(ActionEvent.ACTION, ae -> {
+
+            if (urlField.getText().trim().isEmpty()) {
+                new ErrorDialog("URL field can't be empty.", "Error");
+                ae.consume();
+            } else if (usernameField.getText().trim().isEmpty()) {
+                new ErrorDialog("Username field can't empty.", "Error");
+                ae.consume();
+            } else if (passwordField.getText().trim().isEmpty()) {
+                new ErrorDialog("Password field can't be empty.", "Error");
+                ae.consume();
+            }
+        });
+
         inputDialog.setResultConverter(inputButton -> {
             if (inputButton == addButtonType) {
                 return new WebsiteCredential(urlField.getText(), usernameField.getText(), passwordField.getText());
@@ -124,11 +139,23 @@ public class AddCredentialDialog {
 
         Optional<Credential> result = inputDialog.showAndWait();
 
-        result.ifPresent(wc -> processCredential(wc));
+        result.ifPresent(wc -> {
+            try {
+                userHandler.storeCredential(verifiedUser, wc);
+                added = true;
+            } catch (IOException ex) {
+                new ExceptionDialog(ex);
+            }
+        });
     }
 
-    private void processCredential(Credential credential) {
+    public boolean addedSuccessfully() {
 
-        credentialHandler.storeCredential(credential);
+        return added;
+    }
+
+    public User getVerifiedUser() {
+
+        return verifiedUser;
     }
 }

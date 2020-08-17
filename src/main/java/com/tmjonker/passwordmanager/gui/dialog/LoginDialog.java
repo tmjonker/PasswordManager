@@ -83,7 +83,9 @@ public class LoginDialog {
         });
 
         Optional<User> result = inputDialog.showAndWait();
-        result.ifPresent(user -> finalizeLogin(user));
+        result.ifPresent(user -> {
+            finalizeLogin(user, passwordField.getText().getBytes());
+        });
     }
 
 
@@ -102,12 +104,12 @@ public class LoginDialog {
         return false;
     }
 
-    private void finalizeLogin(User user) {
+    private void finalizeLogin(User user, byte[] password) {
 
         try {
             String username = user.getUsername();
             user = userHandler.loadUser(username);
-            verifiedUser = userHandler.updateEncryption(user);
+            verifiedUser = userHandler.updateEncryption(user, password);
             successful = true;
         } catch (IOException | GeneralSecurityException ex) {
             new ExceptionDialog(ex);

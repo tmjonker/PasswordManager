@@ -2,5 +2,38 @@ package com.tmjonker.passwordmanager.credentials;
 
 public enum Type {
 
-    WEBSITE, APPLICATION, EMAIL, GAME
+    WEBSITE {
+        @Override
+        public String toString() {
+            return "Websites";
+        }
+    }
+    ,
+    APPLICATION {
+        @Override
+        public String toString() {
+            return "Applications";
+        }
+    }
+    ,
+    EMAIL {
+        @Override
+        public String toString() {
+            return "Email";
+        }
+    }
+    ,
+    FINANCIAL {
+        @Override
+        public String toString() {
+            return "Financial";
+        }
+    }
+    ,
+    GAME {
+        @Override
+        public String toString() {
+            return "Games";
+        }
+    }
 }

@@ -43,4 +43,14 @@ public class User implements Serializable {
 
         identifier = num;
     }
+
+    public Map<Type, ArrayList<Credential>> getCredentialCollection() {
+
+        return credentialCollection;
+    }
+
+    public void setCredentialCollection(Map<Type, ArrayList<Credential>> collection) {
+
+        credentialCollection = collection;
+    }
 }

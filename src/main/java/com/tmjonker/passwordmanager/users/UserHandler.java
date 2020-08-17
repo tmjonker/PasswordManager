@@ -1,11 +1,13 @@
 package com.tmjonker.passwordmanager.users;
 
+import com.tmjonker.passwordmanager.credentials.Credential;
+import com.tmjonker.passwordmanager.credentials.Type;
 import com.tmjonker.passwordmanager.encryption.EncryptionHandler;
 import com.tmjonker.passwordmanager.properties.PropertiesHandler;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -18,14 +20,6 @@ import java.util.logging.Logger;
  */
 public class UserHandler {
 
-    /**
-     * @param UH_LOGGER             logger used to log exceptions.
-     * @param USER_FILE_NAME        the path and filename for the file that stores userHashMap.
-     * @param USER_FILE             the file representation of the file that stores userHashMap.
-     * @param userHashMap           the collection that all created Users are stored in.
-     * @param nextUserIdentifier    the unique identifier for the next User to be created.  Based on the total
-     *                              number of Users that have been created.
-     */
     private final Logger UH_LOGGER = Logger.getLogger(UserHandler.class.getName());
 
     private final String USER_FILE_NAME = System.getProperty("user.dir") + "\\users\\user.pm";
@@ -62,8 +56,19 @@ public class UserHandler {
         newUser.setIdentifier(getIdentifier());
         newUser.setPassword(encryptionHandler.encryptCredentials(username, password,
                 newUser.getIdentifier()));
+        newUser.setCredentialCollection(generateCollection());
 
         return newUser;
+    }
+
+    private Map<Type, ArrayList<Credential>> generateCollection() {
+
+        Map<Type, ArrayList<Credential>> collection = new HashMap<>();
+
+        for (Type type : Type.values())
+            collection.put(type, new ArrayList<>());
+
+        return collection;
     }
 
     private int getIdentifier() {
@@ -106,11 +111,11 @@ public class UserHandler {
         return userHashMap.get(username);
     }
 
-    public User updateEncryption(User verifiedUser) throws GeneralSecurityException, IOException {
+    public User updateEncryption(User verifiedUser, byte[] unencryptedPassword) throws GeneralSecurityException, IOException {
 
         EncryptionHandler encryptionHandler = new EncryptionHandler();
         verifiedUser.setPassword(encryptionHandler.encryptCredentials(verifiedUser.getUsername(),
-                verifiedUser.getPassword(),
+                unencryptedPassword,
                 verifiedUser.getIdentifier())); // re-encrypts password and generates a new Keyset Handle.
         storeUser(verifiedUser);
 
@@ -124,8 +129,15 @@ public class UserHandler {
         objectOutputStream.writeObject(userHashMap);
     }
 
-    private String convertUtf8(byte[] input) {
+    public void storeCredential(User user, Credential credential) throws IOException {
 
-        return new String(input, StandardCharsets.UTF_8);
+        Map<Type, ArrayList<Credential>> credentialCollection = user.getCredentialCollection();
+        ArrayList<Credential> credentialList = credentialCollection.get(credential.getType());
+        credentialList.add(credential);
+        credentialCollection.put(credential.getType(), credentialList);
+        user.setCredentialCollection(credentialCollection);
+        System.out.println("added to " + user.getUsername());
+
+        storeUser(user);
     }
 }
