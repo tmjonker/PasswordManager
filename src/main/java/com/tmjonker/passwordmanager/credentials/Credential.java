@@ -1,40 +1,24 @@
 package com.tmjonker.passwordmanager.credentials;
 
-import java.io.Serializable;
+public interface Credential {
 
-public class Credential implements Serializable {
+ void setUsername(String username);
 
- protected String username;
- protected byte[] password;
- protected Type type;
+ void setPassword(byte[] password);
 
- public void setUsername(String username) {
+ void setType(Type type);
 
-  this.username = username;
- }
+ void setIdentifier(int identifier);
 
- public void setPassword(byte[] password) {
+ void setDecryptedPassword(byte[] password);
 
-  this.password = password;
- }
+ String getUsername();
 
- public void setType(Type type) {
+ byte[] getPassword();
 
-  this.type = type;
- }
+ Type getType();
 
- public String getUsername() {
+ String getIdentifier();
 
-  return username;
- }
-
- public byte[] getPassword() {
-
-  return password;
- }
-
- public Type getType() {
-
-  return type;
- }
+ String getDecryptedPassword();
 }

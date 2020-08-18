@@ -14,10 +14,11 @@ public class User implements Serializable {
     private final String username;
     private Map<Type, ArrayList<Credential>> credentialCollection = new HashMap<>();
 
-    private int identifier; // unique identifier. Used to link user to password list.
+    private String identifier; // unique identifier. Used to link user to password list.
 
-    public User(String username, byte[] password) {
-        this.password = password;
+    public User(String username, String password) {
+        if (password != null)
+            this.password = password.getBytes();
         this.username = username;
     }
 
@@ -34,14 +35,14 @@ public class User implements Serializable {
         return username;
     }
 
-    public int getIdentifier() {
+    public String getIdentifier() {
 
         return identifier;
     }
 
     public void setIdentifier(int num) {
 
-        identifier = num;
+        identifier = "u" + num;
     }
 
     public Map<Type, ArrayList<Credential>> getCredentialCollection() {

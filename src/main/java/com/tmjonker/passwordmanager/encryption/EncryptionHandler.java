@@ -3,6 +3,7 @@ package com.tmjonker.passwordmanager.encryption;
 import com.google.crypto.tink.*;
 import com.google.crypto.tink.aead.AesGcmKeyManager;
 import com.google.crypto.tink.config.TinkConfig;
+import com.tmjonker.passwordmanager.credentials.Credential;
 import com.tmjonker.passwordmanager.users.User;
 
 import java.io.*;
@@ -21,11 +22,11 @@ public class EncryptionHandler {
 
     public EncryptionHandler() throws GeneralSecurityException {
 
-        KEYSET_FILE_PATH = System.getProperty("user.dir") + "\\keysets\\";
+        KEYSET_FILE_PATH = System.getProperty("user.dir") + "/keysets/";
         TinkConfig.register();
     }
 
-    public byte[] encryptCredentials(String username, byte[] password, int identifier)
+    public byte[] encryptCredentials(String username, byte[] password, String identifier)
             throws GeneralSecurityException, IOException {
 
         KeysetHandle keysetHandle = KeysetHandle.generateNew(AesGcmKeyManager.aes128GcmTemplate());
@@ -35,7 +36,7 @@ public class EncryptionHandler {
         return aead.encrypt(password, username.getBytes());
     }
 
-    private void saveKeysetHandle(KeysetHandle keysetHandle, int identifier) throws IOException {
+    private void saveKeysetHandle(KeysetHandle keysetHandle, String identifier) throws IOException {
 
         String keysetFileName = KEYSET_FILE_PATH + identifier + ".json";
         File keysetFile = new File(keysetFileName);
@@ -43,7 +44,7 @@ public class EncryptionHandler {
         CleartextKeysetHandle.write(keysetHandle, JsonKeysetWriter.withFile(keysetFile));
     }
 
-    private KeysetHandle loadKeysetHandle(int identifier) throws GeneralSecurityException, IOException {
+    private KeysetHandle loadKeysetHandle(String identifier) throws GeneralSecurityException, IOException {
 
         String keysetFileName = KEYSET_FILE_PATH + identifier + ".json";
         File keysetFile = new File(keysetFileName);
@@ -59,10 +60,16 @@ public class EncryptionHandler {
         Aead aead = keysetHandle.getPrimitive(Aead.class);
         byte[] decrypted = aead.decrypt(user.getPassword(), user.getUsername().getBytes());
 
-        System.out.println(convertUtf8(password));
-        System.out.println(convertUtf8(decrypted));
-
         return Arrays.equals(decrypted, password);
+    }
+
+    public byte[] decryptCredentialPassword(Credential credential) throws GeneralSecurityException, IOException{
+
+        KeysetHandle keysetHandle = loadKeysetHandle(credential.getIdentifier());
+
+        Aead aead = keysetHandle.getPrimitive(Aead.class);
+
+        return aead.decrypt(credential.getPassword(), credential.getUsername().getBytes());
     }
 
     private String convertUtf8(byte[] input) {

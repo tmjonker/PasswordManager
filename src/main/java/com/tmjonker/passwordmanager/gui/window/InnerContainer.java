@@ -10,6 +10,7 @@ import com.tmjonker.passwordmanager.credentials.Credential;
 import com.tmjonker.passwordmanager.credentials.Type;
 
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 
 public class InnerContainer {
 
@@ -32,7 +33,7 @@ public class InnerContainer {
 
         TableColumn<Credential, URI> uriColumn = new TableColumn<>("URL");
         uriColumn.prefWidthProperty().bind(table.widthProperty().multiply(0.40));
-        uriColumn.setCellValueFactory(new PropertyValueFactory<Credential, URI>("uri"));
+        uriColumn.setCellValueFactory(new PropertyValueFactory<Credential, URI>("url"));
 
         TableColumn<Credential, String> usernameColumn = new TableColumn<>("Username");
         usernameColumn.prefWidthProperty().bind(table.widthProperty().multiply(0.20));
@@ -40,7 +41,7 @@ public class InnerContainer {
 
         TableColumn<Credential, String> passwordColumn = new TableColumn<>("Password");
         passwordColumn.prefWidthProperty().bind(table.widthProperty().multiply(0.20));
-        passwordColumn.setCellValueFactory(new PropertyValueFactory<Credential, String>("password"));
+        passwordColumn.setCellValueFactory(new PropertyValueFactory<Credential, String>("decryptedPassword"));
 
         table.getColumns().addAll(typeColumn, uriColumn, usernameColumn, passwordColumn);
         table.setFocusTraversable(false);

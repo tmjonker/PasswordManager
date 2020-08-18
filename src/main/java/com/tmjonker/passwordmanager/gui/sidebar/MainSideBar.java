@@ -2,6 +2,8 @@ package com.tmjonker.passwordmanager.gui.sidebar;
 
 import com.tmjonker.passwordmanager.credentials.Credential;
 import com.tmjonker.passwordmanager.credentials.Type;
+import com.tmjonker.passwordmanager.encryption.EncryptionHandler;
+import com.tmjonker.passwordmanager.gui.dialog.ExceptionDialog;
 import com.tmjonker.passwordmanager.gui.window.MainWindow;
 import com.tmjonker.passwordmanager.users.User;
 import javafx.collections.FXCollections;
@@ -9,19 +11,29 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainSideBar extends SideBar {
 
+    EncryptionHandler encryptionHandler;
+
     private TreeItem<String> websites, applications, email, financial, games;
-    private TreeItem<String> root = new TreeItem<>("All Passwords");
+    private final TreeItem<String> root = new TreeItem<>("All Passwords");
 
     private User verifiedUser;
 
-    private MainWindow mainWindow;
+    private final MainWindow mainWindow;
 
     public MainSideBar(MainWindow window) {
 
+        try {
+            encryptionHandler = new EncryptionHandler();
+        } catch (GeneralSecurityException ex) {
+            new ExceptionDialog(ex);
+        }
         mainWindow = window;
     }
 
@@ -60,8 +72,19 @@ public class MainSideBar extends SideBar {
 
     private ObservableList<Credential> generateObservableList(Type type) {
 
-        List<Credential> list = verifiedUser.getCredentialCollection().get(type);
-        return FXCollections.observableArrayList(list);
+        List<Credential> encryptedList = verifiedUser.getCredentialCollection().get(type);
+        List<Credential> decryptedList = new ArrayList<>();
+
+        for (Credential c : encryptedList) {
+
+            try {
+                c.setDecryptedPassword(encryptionHandler.decryptCredentialPassword(c));
+                decryptedList.add(c);
+            } catch (IOException | GeneralSecurityException ex) {
+                new ExceptionDialog(ex);
+            }
+        }
+        return FXCollections.observableArrayList(decryptedList);
     }
 
     public void setVerifiedUser(User user) {

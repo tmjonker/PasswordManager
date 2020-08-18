@@ -28,8 +28,6 @@ public class FileStructureCreator {
 
         makeDirectory("keysets");
         makeDirectory("users");
-        makeDirectory("credentials");
-
     }
 
     /**
@@ -53,7 +51,7 @@ public class FileStructureCreator {
      */
     private File makeDirectory(String folderName) {
 
-        File folder = new File(path + "\\" + folderName);
+        File folder = new File(path + "/" + folderName);
         folder.mkdir();
 
         return folder;

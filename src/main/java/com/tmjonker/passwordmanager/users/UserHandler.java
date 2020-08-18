@@ -22,7 +22,7 @@ public class UserHandler {
 
     private final Logger UH_LOGGER = Logger.getLogger(UserHandler.class.getName());
 
-    private final String USER_FILE_NAME = System.getProperty("user.dir") + "\\users\\user.pm";
+    private final String USER_FILE_NAME = System.getProperty("user.dir") + "/users/user.pm";
     private final File USER_FILE = new File(USER_FILE_NAME);
 
     private Map<String, User> userHashMap = new HashMap<>();
@@ -52,8 +52,10 @@ public class UserHandler {
 
     public User createUser(String username, byte[] password) throws GeneralSecurityException, IOException {
 
+        PropertiesHandler.incrementAccountsNum(); //increments total # of accounts by 1.
+
         User newUser = new User(username,null);
-        newUser.setIdentifier(getIdentifier());
+        newUser.setIdentifier(PropertiesHandler.getAccountsNum()); // sets identifier as the current total # of accounts.
         newUser.setPassword(encryptionHandler.encryptCredentials(username, password,
                 newUser.getIdentifier()));
         newUser.setCredentialCollection(generateCollection());
@@ -69,12 +71,6 @@ public class UserHandler {
             collection.put(type, new ArrayList<>());
 
         return collection;
-    }
-
-    private int getIdentifier() {
-
-        PropertiesHandler.incrementAccountsNum();
-        return PropertiesHandler.getAccountsNum();
     }
 
     public boolean checkUsernameExists(String username) {

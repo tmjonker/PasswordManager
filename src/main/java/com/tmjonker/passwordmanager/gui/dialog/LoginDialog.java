@@ -77,7 +77,7 @@ public class LoginDialog {
 
         inputDialog.setResultConverter(okButton -> {
             if (okButton == addButtonType) {
-                return new User(usernameField.getText().trim(), passwordField.getText().getBytes());
+                return new User(usernameField.getText().trim(), passwordField.getText());
             }
             return null;
         });
@@ -109,6 +109,7 @@ public class LoginDialog {
         try {
             String username = user.getUsername();
             user = userHandler.loadUser(username);
+            System.out.println(user.hashCode());
             verifiedUser = userHandler.updateEncryption(user, password);
             successful = true;
         } catch (IOException | GeneralSecurityException ex) {

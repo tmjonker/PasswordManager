@@ -31,6 +31,14 @@ public class PropertiesHandler {
         saveProperties();
     }
 
+    public static void incrementCredentialsNum() {
+
+        loadProperties();
+        int credentials = Integer.parseInt(configFile.getProperty("credentials")) + 1;
+        configFile.setProperty("credentials", Integer.toString(credentials));
+        saveProperties();
+    }
+
     private static void saveProperties() {
 
         try {
@@ -45,5 +53,11 @@ public class PropertiesHandler {
 
         loadProperties();
         return Integer.parseInt(configFile.getProperty("accounts"));
+    }
+
+    public static int getCredentialsNum() {
+
+        loadProperties();
+        return Integer.parseInt(configFile.getProperty("credentials"));
     }
 }
