@@ -26,7 +26,6 @@ public class FileStructureCreator {
      */
     public FileStructureCreator() {
 
-        makeDirectory("keysets");
         makeDirectory("users");
     }
 

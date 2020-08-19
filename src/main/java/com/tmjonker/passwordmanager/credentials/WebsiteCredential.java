@@ -13,6 +13,7 @@ public class WebsiteCredential implements Credential, Serializable {
     private Type type;
     private String identifier;
     private String decryptedPassword = null;
+    private String keysetHandleString;
 
     public WebsiteCredential(String url, String username, String password) {
 
@@ -69,6 +70,11 @@ public class WebsiteCredential implements Credential, Serializable {
     }
 
     @Override
+    public void setKeysetHandleString(String keysetHandleString) {
+        this.keysetHandleString = keysetHandleString;
+    }
+
+    @Override
     public String getUsername() {
         return username;
     }
@@ -91,6 +97,11 @@ public class WebsiteCredential implements Credential, Serializable {
     @Override
     public String getDecryptedPassword() {
         return decryptedPassword;
+    }
+
+    @Override
+    public String getKeysetHandleString() {
+        return keysetHandleString;
     }
 
     private String convertUtf8(byte[] input) {

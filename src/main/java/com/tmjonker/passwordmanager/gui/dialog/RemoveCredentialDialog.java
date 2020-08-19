@@ -28,7 +28,7 @@ public class RemoveCredentialDialog {
         this.mainWindow = mainWindow;
 
         verifiedUser = mainWindow.getVerifiedUser();
-        selectedCredential = mainWindow.getInnerContainer().getSelectedRow();
+        selectedCredential = mainWindow.getInnerContainer().getSelectedRow(); // the row that is selected on the table.
 
         try {
             userHandler = new UserHandler();
@@ -50,11 +50,11 @@ public class RemoveCredentialDialog {
         Optional<ButtonType> result = alert.showAndWait();
 
         if (result.get() == ButtonType.OK) {
-            selectedCredential.setDecryptedPassword(null);
+            selectedCredential.setDecryptedPassword(null); //so selectedCredential matches the credential stored in the collection in verifiedUser.
             try {
-                userHandler.removeCredential(verifiedUser, selectedCredential);
+                userHandler.removeCredential(verifiedUser, selectedCredential); //removes credential from collection in verifiedUser.
                 mainWindow.getInnerContainer().setTableContent(credentialHandler
-                        .generateObservableList(selectedCredential.getType(), verifiedUser));
+                        .generateObservableList(selectedCredential.getType(), verifiedUser)); //updates table to reflect removal of credential.
                 new SuccessDialog("That entry has successfully been removed",
                         "Credential has been removed");
             } catch (IOException | GeneralSecurityException ex) {

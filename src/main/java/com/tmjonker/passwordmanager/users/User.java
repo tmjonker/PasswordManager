@@ -16,6 +16,8 @@ public class User implements Serializable {
 
     private String identifier; // unique identifier. Used to link user to password list.
 
+    private String keysetHandleString;
+
     public User(String username, String password) {
         if (password != null)
             this.password = password.getBytes();
@@ -40,6 +42,11 @@ public class User implements Serializable {
         return identifier;
     }
 
+    public String getKeysetHandleString() {
+
+        return keysetHandleString;
+    }
+
     public void setIdentifier(int num) {
 
         identifier = "u" + num;
@@ -53,5 +60,10 @@ public class User implements Serializable {
     public void setCredentialCollection(Map<Type, ArrayList<Credential>> collection) {
 
         credentialCollection = collection;
+    }
+
+    public void setKeysetHandleString(String keysetHandleString) {
+
+        this.keysetHandleString = keysetHandleString;
     }
 }

@@ -78,6 +78,9 @@ public class NewUserDialog {
             } else if(usernameField.getText().contains(" ")) {
                 ae.consume();
                 new ErrorDialog("Username can't contain a space.", "Error");
+            } else if(userHandler.checkUsernameExists(usernameField.getText().trim())) {
+                ae.consume();
+                new ErrorDialog("Username already exists.", "Error");
             }
         });
 

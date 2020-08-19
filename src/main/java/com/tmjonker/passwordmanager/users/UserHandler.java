@@ -58,6 +58,7 @@ public class UserHandler {
         newUser.setIdentifier(PropertiesHandler.getAccountsNum()); // sets identifier as the current total # of accounts.
         newUser.setPassword(encryptionHandler.encryptCredentials(username, password,
                 newUser.getIdentifier()));
+        newUser.setKeysetHandleString(encryptionHandler.getKeysetFileString());
         newUser.setCredentialCollection(generateCollection());
 
         return newUser;
@@ -81,7 +82,7 @@ public class UserHandler {
     private void loadUserFile() throws IOException {
 
         FileInputStream inputStream = new FileInputStream(USER_FILE);
-        ObjectInputStream objectInputStream = null;
+        ObjectInputStream objectInputStream;
 
         try {
             if (USER_FILE.length() != 0) {
@@ -113,6 +114,7 @@ public class UserHandler {
         user.setPassword(encryptionHandler.encryptCredentials(user.getUsername(),
                 unencryptedPassword,
                 user.getIdentifier())); // re-encrypts password and generates a new Keyset Handle.
+        user.setKeysetHandleString(encryptionHandler.getKeysetFileString());
         storeUser(user);
     }
 
@@ -150,7 +152,7 @@ public class UserHandler {
         if (toBeRemoved != null)
             credentialList.remove(toBeRemoved);
 
-        encryptionHandler.deleteKeysetHandle(credential.getIdentifier());
+        encryptionHandler.deleteKeysetHandle(credential.getIdentifier()); // removed keysethandle file from computer.
 
         credentialCollection.put(credential.getType(), credentialList);
         user.setCredentialCollection(credentialCollection);

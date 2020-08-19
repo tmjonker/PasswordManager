@@ -149,6 +149,7 @@ public class AddCredentialDialog {
         result.ifPresent(wc -> {
             try {
                 userHandler.storeCredential(verifiedUser, credentialHandler.finalizeCredential(wc));
+                System.out.println(wc.getKeysetHandleString());
             } catch (IOException | GeneralSecurityException ex) {
                 new ExceptionDialog(ex);
             }

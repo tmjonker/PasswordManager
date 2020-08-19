@@ -14,7 +14,7 @@ import java.util.List;
 
 public class CredentialHandler {
 
-    EncryptionHandler encryptionHandler;
+    private final EncryptionHandler encryptionHandler;
 
     public CredentialHandler() throws GeneralSecurityException {
 
@@ -25,14 +25,16 @@ public class CredentialHandler {
 
         PropertiesHandler.incrementCredentialsNum();
         credential.setIdentifier(PropertiesHandler.getCredentialsNum());
+        credential = encryptCredential(credential);
 
-        return encryptCredential(credential);
+        return credential;
     }
 
     public Credential encryptCredential(Credential credential) throws GeneralSecurityException, IOException{
 
         credential.setPassword(encryptionHandler.encryptCredentials(credential.getUsername(),
                 credential.getPassword(), credential.getIdentifier()));
+        credential.setKeysetHandleString(encryptionHandler.getKeysetFileString());
 
         return credential;
     }

@@ -9,6 +9,7 @@ import com.tmjonker.passwordmanager.users.User;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
@@ -19,13 +20,12 @@ import java.util.Arrays;
 public class EncryptionHandler {
 
     private final String KEYSET_FILE_PATH;
-    private final StringBuilder keysetFileName;
+    private String keysetFileString;
 
 
     public EncryptionHandler() throws GeneralSecurityException {
 
-        KEYSET_FILE_PATH = System.getProperty("user.dir") + "/keysets/";
-        keysetFileName = new StringBuilder(KEYSET_FILE_PATH);
+        KEYSET_FILE_PATH = System.getProperty("user.dir") + "/";
         TinkConfig.register();
     }
 
@@ -41,23 +41,47 @@ public class EncryptionHandler {
 
     private void saveKeysetHandle(KeysetHandle keysetHandle, String identifier) throws IOException {
 
+        StringBuilder keysetFileName = new StringBuilder(KEYSET_FILE_PATH);
         keysetFileName.append(identifier).append(".json");
         File keysetFile = new File(keysetFileName.toString());
 
         CleartextKeysetHandle.write(keysetHandle, JsonKeysetWriter.withFile(keysetFile));
+
+        keysetFileString = keysetHandleToString(keysetFile);
+
+        deleteKeysetHandle(identifier);
     }
 
-    private KeysetHandle loadKeysetHandle(String identifier) throws GeneralSecurityException, IOException {
+    public String getKeysetFileString() {
 
-        keysetFileName.append(identifier).append(".json");
-        File keysetFile = new File(keysetFileName.toString());
-
-        return CleartextKeysetHandle.read(JsonKeysetReader.withFile(keysetFile));
+        return keysetFileString;
     }
 
-    public void deleteKeysetHandle(String identifier) throws GeneralSecurityException, IOException {
+    private KeysetHandle loadKeysetHandle(Credential credential) throws GeneralSecurityException, IOException {
 
+        File keysetFile = keysetHandleJsonCreator(credential.getKeysetHandleString(), credential.getIdentifier());
+        KeysetHandle keysetHandle = CleartextKeysetHandle.read(JsonKeysetReader.withFile(keysetFile));
+
+        deleteKeysetHandle(credential.getIdentifier());
+
+        return keysetHandle;
+    }
+
+    private KeysetHandle loadKeysetHandle(User user) throws GeneralSecurityException, IOException {
+
+        File keysetFile = keysetHandleJsonCreator(user.getKeysetHandleString(), user.getIdentifier());
+        KeysetHandle keysetHandle = CleartextKeysetHandle.read(JsonKeysetReader.withFile(keysetFile));
+
+        deleteKeysetHandle(user.getIdentifier());
+
+        return keysetHandle;
+    }
+
+    public void deleteKeysetHandle(String identifier){
+
+        StringBuilder keysetFileName = new StringBuilder(KEYSET_FILE_PATH);
         keysetFileName.append(identifier).append(".json");
+
         File keysetFile = new File(keysetFileName.toString());
         if (keysetFile.exists())
             keysetFile.delete();
@@ -66,7 +90,7 @@ public class EncryptionHandler {
     public boolean verifyPassword(User user, byte[] password) throws GeneralSecurityException,
             IOException {
 
-        KeysetHandle keysetHandle = loadKeysetHandle(user.getIdentifier());
+        KeysetHandle keysetHandle = loadKeysetHandle(user);
 
         Aead aead = keysetHandle.getPrimitive(Aead.class);
         byte[] decrypted = aead.decrypt(user.getPassword(), user.getUsername().getBytes());
@@ -74,13 +98,40 @@ public class EncryptionHandler {
         return Arrays.equals(decrypted, password);
     }
 
-    public byte[] decryptCredentialPassword(Credential credential) throws GeneralSecurityException, IOException{
+    public byte[] decryptCredentialPassword(Credential credential) throws GeneralSecurityException, IOException {
 
-        KeysetHandle keysetHandle = loadKeysetHandle(credential.getIdentifier());
-
+        KeysetHandle keysetHandle = loadKeysetHandle(credential);
         Aead aead = keysetHandle.getPrimitive(Aead.class);
 
         return aead.decrypt(credential.getPassword(), credential.getUsername().getBytes());
+    }
+
+    private String keysetHandleToString(File file) throws IOException {
+
+        String a;
+        StringBuilder b = new StringBuilder();
+
+        FileReader fileReader = new FileReader(file);
+        BufferedReader bufferedReader = new BufferedReader(fileReader);
+        while ((a = bufferedReader.readLine()) != null)
+            b.append(a).append(System.lineSeparator());
+
+        return b.toString();
+    }
+
+    private File keysetHandleJsonCreator(String keysetString, String identifier) throws IOException {
+
+        StringBuilder keysetFileName = new StringBuilder(KEYSET_FILE_PATH);
+        keysetFileName.append(identifier).append(".json");
+        File keysetFile = new File(keysetFileName.toString());
+
+        FileWriter fileWriter = new FileWriter(keysetFile);
+        BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+
+        bufferedWriter.write(keysetString);
+        bufferedWriter.flush();
+
+        return keysetFile;
     }
 
     private String convertUtf8(byte[] input) {
