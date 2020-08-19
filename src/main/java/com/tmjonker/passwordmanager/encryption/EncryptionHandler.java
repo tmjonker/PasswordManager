@@ -19,10 +19,13 @@ import java.util.Arrays;
 public class EncryptionHandler {
 
     private final String KEYSET_FILE_PATH;
+    private final StringBuilder keysetFileName;
+
 
     public EncryptionHandler() throws GeneralSecurityException {
 
         KEYSET_FILE_PATH = System.getProperty("user.dir") + "/keysets/";
+        keysetFileName = new StringBuilder(KEYSET_FILE_PATH);
         TinkConfig.register();
     }
 
@@ -38,18 +41,26 @@ public class EncryptionHandler {
 
     private void saveKeysetHandle(KeysetHandle keysetHandle, String identifier) throws IOException {
 
-        String keysetFileName = KEYSET_FILE_PATH + identifier + ".json";
-        File keysetFile = new File(keysetFileName);
+        keysetFileName.append(identifier).append(".json");
+        File keysetFile = new File(keysetFileName.toString());
 
         CleartextKeysetHandle.write(keysetHandle, JsonKeysetWriter.withFile(keysetFile));
     }
 
     private KeysetHandle loadKeysetHandle(String identifier) throws GeneralSecurityException, IOException {
 
-        String keysetFileName = KEYSET_FILE_PATH + identifier + ".json";
-        File keysetFile = new File(keysetFileName);
+        keysetFileName.append(identifier).append(".json");
+        File keysetFile = new File(keysetFileName.toString());
 
         return CleartextKeysetHandle.read(JsonKeysetReader.withFile(keysetFile));
+    }
+
+    public void deleteKeysetHandle(String identifier) throws GeneralSecurityException, IOException {
+
+        keysetFileName.append(identifier).append(".json");
+        File keysetFile = new File(keysetFileName.toString());
+        if (keysetFile.exists())
+            keysetFile.delete();
     }
 
     public boolean verifyPassword(User user, byte[] password) throws GeneralSecurityException,

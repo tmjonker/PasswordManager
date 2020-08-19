@@ -5,7 +5,7 @@ public enum Type {
     WEBSITE {
         @Override
         public String toString() {
-            return "Websites";
+            return "Website";
         }
     }
     ,

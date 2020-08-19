@@ -109,8 +109,8 @@ public class LoginDialog {
         try {
             String username = user.getUsername();
             user = userHandler.loadUser(username);
-            System.out.println(user.hashCode());
-            verifiedUser = userHandler.updateEncryption(user, password);
+            userHandler.updateEncryption(user, password);
+            verifiedUser = user;
             successful = true;
         } catch (IOException | GeneralSecurityException ex) {
             new ExceptionDialog(ex);

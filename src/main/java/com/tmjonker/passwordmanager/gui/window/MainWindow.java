@@ -37,7 +37,7 @@ public class MainWindow implements WindowShell{
 
     protected final ToolBar toolBar = new ToolBar();
     protected final StatusBar statusBar = new StatusBar();
-    protected MainSideBar sideBar;
+    protected MainSideBar sideBar = new MainSideBar(this);
 
     protected final VBox topVbox = new VBox();
     protected final BorderPane borderPane = new BorderPane();
@@ -46,19 +46,16 @@ public class MainWindow implements WindowShell{
 
     protected User verifiedUser;
 
-    protected ToolBarHandler toolBarHandler = new ToolBarHandler(this);
-
     protected InnerContainer innerContainer;
 
     public MainWindow() {
 
-        prepareStage(generateStructure(1000, 600, true));
+        prepareStage(generateStructure(1000, 600));
     }
 
-    private Scene generateStructure(int width, int height, boolean hasToolBar) {
+    private Scene generateStructure(int width, int height) {
 
         innerContainer = new InnerContainer();
-        sideBar = new MainSideBar(this);
         menuBar.getMenus().addAll(fileMenu, editMenu, accountMenu, helpMenu);
         fileMenu.getItems().addAll(exitMenuItem);
         accountMenu.getItems().addAll(logInMenuItem,newAccountItem,logOutMenuItem);
@@ -70,8 +67,7 @@ public class MainWindow implements WindowShell{
 
         topVbox.getChildren().add(menuBar);
 
-        if (hasToolBar)
-            implementToolBar();
+        implementToolBar();
 
         statusBar.setText("");
 
@@ -86,17 +82,17 @@ public class MainWindow implements WindowShell{
     private void implementToolBar() {
 
         addButton = ButtonCreator.generateButton(new Image("add_24px.png"));
-        addButton.setOnAction(e -> toolBarHandler.onAddButtonClick());
+        addButton.setOnAction(e -> ToolBarHandler.onAddButtonClick(this));
         addButton.setOnMouseEntered(e -> setStatusBarText("Add a new credential"));
         addButton.setOnMouseExited(e -> setStatusBarText(""));
 
         editButton = ButtonCreator.generateButton(new Image("edit_file_24px.png"));
-        editButton.setOnAction(e -> toolBarHandler.onEditButtonClick());
+        editButton.setOnAction(e -> ToolBarHandler.onEditButtonClick());
         editButton.setOnMouseEntered(e -> setStatusBarText("Edit the selected credential"));
         editButton.setOnMouseExited(e -> setStatusBarText(""));
 
         removeButton = ButtonCreator.generateButton(new Image("delete_24px.png"));
-        removeButton.setOnAction(e -> toolBarHandler.onRemoveButtonClick());
+        removeButton.setOnAction(e -> ToolBarHandler.onRemoveButtonClick(this));
         removeButton.setOnMouseEntered(e -> setStatusBarText("Remove the selected credential"));
         removeButton.setOnMouseExited(e -> setStatusBarText(""));
 
@@ -138,7 +134,7 @@ public class MainWindow implements WindowShell{
         LoginDialog loginDialog = new LoginDialog();
 
         if (loginDialog.getLoggedIn()) {
-            updateVerifiedUser(loginDialog.getVerifiedUser());
+            setVerifiedUser(loginDialog.getVerifiedUser());
             sideBar.generateMainSideBar();
             setLoggedInConfig(true);
 
@@ -167,7 +163,7 @@ public class MainWindow implements WindowShell{
         NewUserDialog newUserDialog = new NewUserDialog();
 
         if (newUserDialog.newUserCreated()) {
-            updateVerifiedUser(newUserDialog.getVerifiedUser());
+            setVerifiedUser(newUserDialog.getVerifiedUser());
             sideBar.generateMainSideBar();
             setLoggedInConfig(true);
 
@@ -181,6 +177,7 @@ public class MainWindow implements WindowShell{
         verifiedUser = null;
         sideBar = new MainSideBar(this);
         borderPane.setLeft(sideBar.getMainBox());
+        innerContainer.setTableContent(null);
         setLoggedInConfig(false);
 
         new SuccessDialog("You have successfully logged out.", "Success");
@@ -200,11 +197,9 @@ public class MainWindow implements WindowShell{
         System.exit(0);
     }
 
-    public void updateVerifiedUser(User user) {
+    public void setVerifiedUser(User user) {
 
         verifiedUser = user;
-        sideBar.setVerifiedUser(verifiedUser);
-        toolBarHandler.setVerifiedUser(verifiedUser);
     }
 
     @Override

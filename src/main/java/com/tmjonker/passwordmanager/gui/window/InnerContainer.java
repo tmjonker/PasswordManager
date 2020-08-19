@@ -1,7 +1,5 @@
 package com.tmjonker.passwordmanager.gui.window;
 
-import com.tmjonker.passwordmanager.gui.toolbar.ToolBarHandler;
-import com.tmjonker.passwordmanager.users.User;
 import javafx.collections.ObservableList;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -10,7 +8,6 @@ import com.tmjonker.passwordmanager.credentials.Credential;
 import com.tmjonker.passwordmanager.credentials.Type;
 
 import java.net.URI;
-import java.nio.charset.StandardCharsets;
 
 public class InnerContainer {
 
@@ -69,5 +66,10 @@ public class InnerContainer {
     public ScrollPane getScrollPane() {
 
         return scrollPane;
+    }
+
+    public Credential getSelectedRow() {
+
+       return table.getSelectionModel().getSelectedItem();
     }
 }

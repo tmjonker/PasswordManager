@@ -107,15 +107,13 @@ public class UserHandler {
         return userHashMap.get(username);
     }
 
-    public User updateEncryption(User verifiedUser, byte[] unencryptedPassword) throws GeneralSecurityException, IOException {
+    public void updateEncryption(User user, byte[] unencryptedPassword) throws GeneralSecurityException, IOException {
 
         EncryptionHandler encryptionHandler = new EncryptionHandler();
-        verifiedUser.setPassword(encryptionHandler.encryptCredentials(verifiedUser.getUsername(),
+        user.setPassword(encryptionHandler.encryptCredentials(user.getUsername(),
                 unencryptedPassword,
-                verifiedUser.getIdentifier())); // re-encrypts password and generates a new Keyset Handle.
-        storeUser(verifiedUser);
-
-        return verifiedUser;
+                user.getIdentifier())); // re-encrypts password and generates a new Keyset Handle.
+        storeUser(user);
     }
 
     private void saveUserFile(Map<String, User> userHashMap) throws IOException {
@@ -132,7 +130,30 @@ public class UserHandler {
         credentialList.add(credential);
         credentialCollection.put(credential.getType(), credentialList);
         user.setCredentialCollection(credentialCollection);
-        System.out.println("added to " + user.getUsername());
+
+        storeUser(user);
+    }
+
+    public void removeCredential(User user, Credential credential) throws IOException, GeneralSecurityException {
+
+        Map<Type, ArrayList<Credential>> credentialCollection = user.getCredentialCollection();
+        ArrayList<Credential> credentialList = credentialCollection.get(credential.getType());
+
+        Credential toBeRemoved = null;
+
+        for (Credential c : credentialList) {
+            if (c.equals(credential)) {
+                toBeRemoved = c;
+            }
+        }
+
+        if (toBeRemoved != null)
+            credentialList.remove(toBeRemoved);
+
+        encryptionHandler.deleteKeysetHandle(credential.getIdentifier());
+
+        credentialCollection.put(credential.getType(), credentialList);
+        user.setCredentialCollection(credentialCollection);
 
         storeUser(user);
     }

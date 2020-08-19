@@ -1,6 +1,7 @@
 package com.tmjonker.passwordmanager.gui.sidebar;
 
 import com.tmjonker.passwordmanager.credentials.Credential;
+import com.tmjonker.passwordmanager.credentials.CredentialHandler;
 import com.tmjonker.passwordmanager.credentials.Type;
 import com.tmjonker.passwordmanager.encryption.EncryptionHandler;
 import com.tmjonker.passwordmanager.gui.dialog.ExceptionDialog;
@@ -18,10 +19,12 @@ import java.util.List;
 
 public class MainSideBar extends SideBar {
 
-    EncryptionHandler encryptionHandler;
+    private CredentialHandler credentialHandler;
 
     private TreeItem<String> websites, applications, email, financial, games;
     private final TreeItem<String> root = new TreeItem<>("All Passwords");
+
+    private TreeView<String> treeView;
 
     private User verifiedUser;
 
@@ -30,7 +33,7 @@ public class MainSideBar extends SideBar {
     public MainSideBar(MainWindow window) {
 
         try {
-            encryptionHandler = new EncryptionHandler();
+            credentialHandler= new CredentialHandler();
         } catch (GeneralSecurityException ex) {
             new ExceptionDialog(ex);
         }
@@ -49,17 +52,17 @@ public class MainSideBar extends SideBar {
 
         root.setExpanded(true);
 
-        TreeView<String> treeView = new TreeView<>(root);
+        treeView = new TreeView<>(root);
 
         treeView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue.equals(websites)) {
-                mainWindow.getInnerContainer().setTableContent(generateObservableList(Type.WEBSITE));
+                mainWindow.getInnerContainer()
+                        .setTableContent(credentialHandler.generateObservableList(Type.WEBSITE, verifiedUser));
+            } else {
+                mainWindow.getInnerContainer().setTableContent(null);
             }
         });
-
         addToMainBox(treeView);
-
-        //treeView.prefHeightProperty().bind(getMainBox().heightProperty()); // Sets treeView to fill mainBox.
     }
 
     private TreeItem<String> generateTreeItem(String text, TreeItem<String> parent) {
@@ -70,25 +73,13 @@ public class MainSideBar extends SideBar {
         return treeItem;
     }
 
-    private ObservableList<Credential> generateObservableList(Type type) {
-
-        List<Credential> encryptedList = verifiedUser.getCredentialCollection().get(type);
-        List<Credential> decryptedList = new ArrayList<>();
-
-        for (Credential c : encryptedList) {
-
-            try {
-                c.setDecryptedPassword(encryptionHandler.decryptCredentialPassword(c));
-                decryptedList.add(c);
-            } catch (IOException | GeneralSecurityException ex) {
-                new ExceptionDialog(ex);
-            }
-        }
-        return FXCollections.observableArrayList(decryptedList);
-    }
-
     public void setVerifiedUser(User user) {
 
         verifiedUser = user;
+    }
+
+    public TreeView<String> getTreeView() {
+
+        return treeView;
     }
 }

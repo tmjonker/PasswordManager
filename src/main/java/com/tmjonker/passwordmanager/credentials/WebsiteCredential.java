@@ -12,7 +12,7 @@ public class WebsiteCredential implements Credential, Serializable {
     private byte[] password;
     private Type type;
     private String identifier;
-    private String decryptedPassword;
+    private String decryptedPassword = null;
 
     public WebsiteCredential(String url, String username, String password) {
 
@@ -63,7 +63,9 @@ public class WebsiteCredential implements Credential, Serializable {
     @Override
     public void setDecryptedPassword(byte[] password) {
 
-        decryptedPassword = convertUtf8(password);
+        if (password != null)
+            decryptedPassword = convertUtf8(password);
+        else decryptedPassword = null;
     }
 
     @Override

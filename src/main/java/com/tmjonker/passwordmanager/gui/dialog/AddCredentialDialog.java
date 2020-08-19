@@ -5,6 +5,7 @@ import com.tmjonker.passwordmanager.credentials.CredentialHandler;
 import com.tmjonker.passwordmanager.credentials.Type;
 import com.tmjonker.passwordmanager.credentials.WebsiteCredential;
 import com.tmjonker.passwordmanager.encryption.EncryptionHandler;
+import com.tmjonker.passwordmanager.gui.window.MainWindow;
 import com.tmjonker.passwordmanager.properties.PropertiesHandler;
 import com.tmjonker.passwordmanager.users.User;
 import com.tmjonker.passwordmanager.users.UserHandler;
@@ -23,6 +24,8 @@ import java.util.Optional;
 
 public class AddCredentialDialog {
 
+    private final MainWindow mainWindow;
+
     private UserHandler userHandler;
     private CredentialHandler credentialHandler;
 
@@ -33,9 +36,10 @@ public class AddCredentialDialog {
 
     private ButtonType addButtonType;
 
-    private boolean added = false;
+    public AddCredentialDialog(MainWindow mainWindow) {
 
-    public AddCredentialDialog(User user) {
+        verifiedUser = mainWindow.getVerifiedUser();
+        this.mainWindow = mainWindow;
 
         try {
             userHandler = new UserHandler();
@@ -43,8 +47,6 @@ public class AddCredentialDialog {
         } catch (IOException | GeneralSecurityException ex) {
             new ExceptionDialog(ex);
         }
-
-        verifiedUser = user;
 
         showChoiceDialog();
     }
@@ -147,20 +149,9 @@ public class AddCredentialDialog {
         result.ifPresent(wc -> {
             try {
                 userHandler.storeCredential(verifiedUser, credentialHandler.finalizeCredential(wc));
-                added = true;
             } catch (IOException | GeneralSecurityException ex) {
                 new ExceptionDialog(ex);
             }
         });
-    }
-
-    public boolean addedSuccessfully() {
-
-        return added;
-    }
-
-    public User getVerifiedUser() {
-
-        return verifiedUser;
     }
 }
