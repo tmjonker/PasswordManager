@@ -7,6 +7,7 @@ import com.tmjonker.passwordmanager.gui.sidebar.MainSideBar;
 import com.tmjonker.passwordmanager.gui.toolbar.ButtonCreator;
 import com.tmjonker.passwordmanager.gui.toolbar.ToolBarHandler;
 import com.tmjonker.passwordmanager.users.User;
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -17,36 +18,40 @@ import org.controlsfx.control.StatusBar;
 
 public class MainWindow implements WindowShell{
 
-    protected final String DEFAULT_TITLE = "Password Manager - ";
+    private final String DEFAULT_TITLE = "Password Manager - ";
 
-    protected final MenuBar menuBar = new MenuBar();
+    private final MenuBar menuBar = new MenuBar();
 
-    protected final Menu fileMenu = new Menu("_File");
-    protected final Menu editMenu = new Menu("_Edit");
-    protected final Menu accountMenu = new Menu("_Account");
-    protected final Menu helpMenu = new Menu("_Help");
+    private final Menu fileMenu = new Menu("_File");
+    private final Menu editMenu = new Menu("_Edit");
+    private final Menu accountMenu = new Menu("_Account");
+    private final Menu helpMenu = new Menu("_Help");
 
-    protected final MenuItem newAccountItem = new MenuItem("_New Account");
-    protected final MenuItem logInMenuItem = new MenuItem("Log _In");
-    protected final MenuItem logOutMenuItem = new MenuItem("_Log Out");
-    protected final MenuItem exitMenuItem = new MenuItem("E_xit Program");
+    private final MenuItem newAccountItem = new MenuItem("_New Account");
+    private final MenuItem logInMenuItem = new MenuItem("Log _In");
+    private final MenuItem logOutMenuItem = new MenuItem("_Log Out");
+    private final MenuItem exitMenuItem = new MenuItem("E_xit Program");
 
-    protected Button addButton;
-    protected Button editButton;
-    protected Button removeButton;
+    private Button addButton;
+    private Button editButton;
+    private Button removeButton;
 
-    protected final ToolBar toolBar = new ToolBar();
-    protected final StatusBar statusBar = new StatusBar();
-    protected MainSideBar sideBar = new MainSideBar(this);
+    private final ToolBar toolBar = new ToolBar();
+    private final StatusBar statusBar = new StatusBar();
+    private MainSideBar sideBar = new MainSideBar(this);
 
-    protected final VBox topVbox = new VBox();
-    protected final BorderPane borderPane = new BorderPane();
+    private final VBox topVbox = new VBox();
+    private final BorderPane borderPane = new BorderPane();
 
-    protected Stage stage = new Stage();
+    private Stage stage = new Stage();
 
-    protected User verifiedUser;
+    private User verifiedUser;
 
-    protected InnerContainer innerContainer;
+    private InnerContainer innerContainer;
+
+    private boolean loggedIn;
+
+    private final Thread focusGetter = new Thread(new FocusGetter());
 
     public MainWindow() {
 
@@ -55,7 +60,7 @@ public class MainWindow implements WindowShell{
 
     private Scene generateStructure(int width, int height) {
 
-        innerContainer = new InnerContainer();
+        innerContainer = new InnerContainer(this);
         menuBar.getMenus().addAll(fileMenu, editMenu, accountMenu, helpMenu);
         fileMenu.getItems().addAll(exitMenuItem);
         accountMenu.getItems().addAll(logInMenuItem,newAccountItem,logOutMenuItem);
@@ -87,7 +92,7 @@ public class MainWindow implements WindowShell{
         addButton.setOnMouseExited(e -> setStatusBarText(""));
 
         editButton = ButtonCreator.generateButton(new Image("edit_file_24px.png"));
-        editButton.setOnAction(e -> ToolBarHandler.onEditButtonClick());
+        editButton.setOnAction(e -> ToolBarHandler.onEditButtonClick(this));
         editButton.setOnMouseEntered(e -> setStatusBarText("Edit the selected credential"));
         editButton.setOnMouseExited(e -> setStatusBarText(""));
 
@@ -144,17 +149,20 @@ public class MainWindow implements WindowShell{
 
     protected void setLoggedInConfig(boolean result) {
 
+        loggedIn = result;
+
         logInMenuItem.setDisable(result);
         newAccountItem.setDisable(result);
         logOutMenuItem.setDisable(!result);
 
-        addButton.setDisable(!result);
         editButton.setDisable(!result);
         removeButton.setDisable(!result);
+        addButton.setDisable(!result);
 
-        if (result)
+        if (result) {
+            focusGetter.start(); // starts thread that checks for selected table entry to enable/disable edit & remove buttons.
             setStageTitle(verifiedUser.getUsername());
-        else
+        } else
             setStageTitle("");
     }
 
@@ -206,5 +214,26 @@ public class MainWindow implements WindowShell{
     public void onStageCloseRequest() {
 
         System.exit(0);
+    }
+
+    /**
+     * Runnable class that is created when focusGetter thread is started.  Checks to see if a row is selected on the
+     * table in InnerContainer.  If a row is selected, then the edit and remove buttons are enabled.  If no button is
+     * selected, then those buttons are disabled.
+     */
+    public class FocusGetter implements Runnable {
+
+        @Override
+        public void run() {
+            while (loggedIn) {
+                if (innerContainer.getSelectedRow() == null) {
+                    editButton.setDisable(true);
+                    removeButton.setDisable(true);
+                } else {
+                    editButton.setDisable(false);
+                    removeButton.setDisable(false);
+                }
+            }
+        }
     }
 }

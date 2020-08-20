@@ -11,12 +11,16 @@ import java.net.URI;
 
 public class InnerContainer {
 
-    ScrollPane scrollPane;
+    private MainWindow mainWindow;
+    private ScrollPane scrollPane;
 
-    protected TableView<Credential> table;
+    private TableView<Credential> table;
 
-    public InnerContainer() {
+    private int focusedIndex;
 
+    public InnerContainer(MainWindow mainWindow) {
+
+        this.mainWindow = mainWindow;
         generateInnerContainer();
     }
 
@@ -70,6 +74,11 @@ public class InnerContainer {
 
     public Credential getSelectedRow() {
 
-       return table.getSelectionModel().getSelectedItem();
+        return table.getSelectionModel().getSelectedItem();
+    }
+
+    public void setFocusedIndex(int index) {
+
+        focusedIndex = index;
     }
 }

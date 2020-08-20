@@ -4,9 +4,7 @@ import com.tmjonker.passwordmanager.credentials.Credential;
 import com.tmjonker.passwordmanager.credentials.CredentialHandler;
 import com.tmjonker.passwordmanager.credentials.Type;
 import com.tmjonker.passwordmanager.credentials.WebsiteCredential;
-import com.tmjonker.passwordmanager.encryption.EncryptionHandler;
 import com.tmjonker.passwordmanager.gui.window.MainWindow;
-import com.tmjonker.passwordmanager.properties.PropertiesHandler;
 import com.tmjonker.passwordmanager.users.User;
 import com.tmjonker.passwordmanager.users.UserHandler;
 import javafx.event.ActionEvent;
@@ -18,11 +16,9 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
-public class AddCredentialDialog {
+public class EditCredentialDialog {
 
     private final MainWindow mainWindow;
 
@@ -34,12 +30,18 @@ public class AddCredentialDialog {
     private GridPane gridPane;
     private Dialog<Credential> inputDialog;
 
-    private ButtonType addButtonType;
+    private PasswordField passwordField;
+    private TextField passwordTextField;
 
-    public AddCredentialDialog(MainWindow mainWindow) {
+    private Button toggleButton;
+
+    private boolean hide = true;
+
+    public EditCredentialDialog(MainWindow mainWindow) {
 
         verifiedUser = mainWindow.getVerifiedUser();
         this.mainWindow = mainWindow;
+        Credential selectedCredential = mainWindow.getInnerContainer().getSelectedRow();
 
         try {
             userHandler = new UserHandler();
@@ -48,40 +50,22 @@ public class AddCredentialDialog {
             new ExceptionDialog(ex);
         }
 
-        showChoiceDialog();
+        showEditDialog(selectedCredential);
     }
 
-    private void showChoiceDialog() {
+    private void showEditDialog(Credential selectedCredential) {
 
-        List<Type> typeList = new ArrayList<>();
-        typeList.add(Type.WEBSITE);
-
-        ChoiceDialog<Type> choiceDialog = new ChoiceDialog<>(Type.WEBSITE, typeList);
-
-        Stage stage = (Stage) choiceDialog.getDialogPane().getScene().getWindow();
-        stage.getIcons().add(new Image("password_16px.png"));
-
-        choiceDialog.setTitle("Select a type");
-        choiceDialog.setHeaderText("What kind of password do you want to add?");
-        choiceDialog.setGraphic(new ImageView(new Image("question_mark_48px.png")));
-
-        Optional<Type> result = choiceDialog.showAndWait();
-
-        result.ifPresent(type -> showAddDialog(type));
-    }
-
-    private void showAddDialog(Type type) {
+        Type type = selectedCredential.getType();
 
         inputDialog = new Dialog<>();
 
         Stage stage = (Stage) inputDialog.getDialogPane().getScene().getWindow();
         stage.getIcons().add(new Image("password_16px.png"));
 
-        inputDialog.setTitle("Add a new " + type);
-        inputDialog.setHeaderText("Add a new " + type);
+        inputDialog.setTitle("Edit existing " + type + " credential");
+        inputDialog.setHeaderText("Edit existing " + type + " credential");
 
-        addButtonType = new ButtonType("Add", ButtonBar.ButtonData.OK_DONE);
-        inputDialog.getDialogPane().getButtonTypes().addAll(addButtonType, ButtonType.CANCEL);
+        inputDialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
 
         gridPane = new GridPane();
         gridPane.setHgap(10);
@@ -89,27 +73,31 @@ public class AddCredentialDialog {
 
         switch (type) {
             case WEBSITE:
-                        addWebsite();
-                        break;
+                WebsiteCredential websiteCredential = (WebsiteCredential) selectedCredential;
+                editWebsite(websiteCredential);
+                break;
             case APPLICATION:
-                        break;
+                break;
             case GAME:
-                        break;
+                break;
             case EMAIL:
-                        break;
+                break;
         }
 
     }
 
-    private void addWebsite() {
+    private void editWebsite(WebsiteCredential websiteCredential) {
 
         inputDialog.setGraphic(new ImageView(new Image("website_48px.png")));
 
-        TextField urlField = new TextField();
+        toggleButton = new Button("Show");
+
+        TextField urlField = new TextField(websiteCredential.getUrl().toString());
         urlField.setPromptText("URL");
-        TextField usernameField = new TextField();
+        TextField usernameField = new TextField(websiteCredential.getUsername());
         usernameField.setPromptText("Username");
-        PasswordField passwordField = new PasswordField();
+        passwordField = new PasswordField();
+        passwordField.setText(websiteCredential.getDecryptedPassword());
         passwordField.setPromptText("Password");
 
         gridPane.add(new Label("URL:"), 0, 0);
@@ -118,11 +106,23 @@ public class AddCredentialDialog {
         gridPane.add(usernameField, 1, 1);
         gridPane.add(new Label("Password:"), 0, 2);
         gridPane.add(passwordField, 1, 2);
+        gridPane.add(toggleButton, 2, 2);
+
+
+        toggleButton.setOnAction(e -> {
+                generateComponents(websiteCredential);
+        });
 
         inputDialog.getDialogPane().setContent(gridPane);
 
-        Button addButton = (Button) inputDialog.getDialogPane().lookupButton(addButtonType);
-        addButton.addEventFilter(ActionEvent.ACTION, ae -> {
+        Button okButton = (Button) inputDialog.getDialogPane().lookupButton(ButtonType.OK);
+        okButton.addEventFilter(ActionEvent.ACTION, ae -> {
+
+            String password;
+            if (passwordField != null)
+                password = passwordField.getText().trim();
+            else
+                password = passwordTextField.getText().trim();
 
             if (urlField.getText().trim().isEmpty()) {
                 new ErrorDialog("URL field can't be empty.", "Error");
@@ -130,16 +130,23 @@ public class AddCredentialDialog {
             } else if (usernameField.getText().trim().isEmpty()) {
                 new ErrorDialog("Username field can't empty.", "Error");
                 ae.consume();
-            } else if (passwordField.getText().trim().isEmpty()) {
+            } else if (password.isEmpty()) {
                 new ErrorDialog("Password field can't be empty.", "Error");
                 ae.consume();
             }
         });
 
         inputDialog.setResultConverter(inputButton -> {
-            if (inputButton == addButtonType) {
+            if (inputButton == ButtonType.OK) {
+
+                String password;
+                if (passwordField != null)
+                    password = passwordField.getText();
+                else
+                    password = passwordTextField.getText();
+
                 return new WebsiteCredential(urlField.getText().trim(), usernameField.getText().trim(),
-                        passwordField.getText());
+                        password);
             }
             return null;
         });
@@ -149,9 +156,29 @@ public class AddCredentialDialog {
         result.ifPresent(wc -> {
             try {
                 userHandler.storeCredential(verifiedUser, credentialHandler.finalizeCredential(wc));
+                System.out.println(wc.getKeysetHandleString());
             } catch (IOException | GeneralSecurityException ex) {
                 new ExceptionDialog(ex);
             }
         });
+    }
+
+    private void generateComponents(WebsiteCredential websiteCredential) {
+        if (!hide) {
+            passwordField = new PasswordField();
+            passwordField.setText(passwordTextField.getText());
+            passwordField.setPromptText("Password");
+            gridPane.add(passwordField, 1, 2);
+            passwordTextField = null;
+            toggleButton.setText("Show");
+            hide = true;
+        } else {
+            passwordTextField = new TextField(passwordField.getText());
+            passwordTextField.setPromptText("Password");
+            gridPane.add(passwordTextField, 1, 2);
+            passwordField = null;
+            toggleButton.setText("Hide");
+            hide = false;
+        }
     }
 }
