@@ -3,7 +3,9 @@ package com.tmjonker.passwordmanager.users;
 import com.tmjonker.passwordmanager.credentials.Credential;
 import com.tmjonker.passwordmanager.credentials.Type;
 import com.tmjonker.passwordmanager.encryption.EncryptionHandler;
+import com.tmjonker.passwordmanager.encryption.StringEncoder;
 import com.tmjonker.passwordmanager.properties.PropertiesHandler;
+import org.apache.commons.lang3.SerializationUtils;
 
 import java.io.*;
 import java.security.GeneralSecurityException;
@@ -48,6 +50,13 @@ public class UserHandler {
 
         userHashMap.put(user.getUsername(), user);
         saveUserFile(userHashMap);
+    }
+
+    private void saveUserFile(Map<String, User> userHashMap) throws IOException {
+
+        FileOutputStream outputStream = new FileOutputStream(USER_FILE);
+        ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
+        objectOutputStream.writeObject(userHashMap);
     }
 
     public User createUser(String username, byte[] password) throws GeneralSecurityException, IOException {
@@ -113,16 +122,9 @@ public class UserHandler {
         EncryptionHandler encryptionHandler = new EncryptionHandler();
         user.setPassword(encryptionHandler.encryptCredentials(user.getUsername(),
                 unencryptedPassword,
-                user.getIdentifier())); // re-encrypts password and generates a new Keyset Handle.
+                user.getIdentifier())); // generates a new keyset handle and re-encrypts password.
         user.setKeysetHandleString(encryptionHandler.getKeysetFileString());
         storeUser(user);
-    }
-
-    private void saveUserFile(Map<String, User> userHashMap) throws IOException {
-
-        FileOutputStream outputStream = new FileOutputStream(USER_FILE);
-        ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
-        objectOutputStream.writeObject(userHashMap);
     }
 
     public void storeCredential(User user, Credential credential) throws IOException {
@@ -132,7 +134,6 @@ public class UserHandler {
         credentialList.add(credential);
         credentialCollection.put(credential.getType(), credentialList);
         user.setCredentialCollection(credentialCollection);
-
         storeUser(user);
     }
 
@@ -152,11 +153,8 @@ public class UserHandler {
         if (toBeRemoved != null)
             credentialList.remove(toBeRemoved);
 
-        encryptionHandler.deleteKeysetHandle(credential.getIdentifier()); // removed keysethandle file from computer.
-
         credentialCollection.put(credential.getType(), credentialList);
         user.setCredentialCollection(credentialCollection);
-
         storeUser(user);
     }
 }

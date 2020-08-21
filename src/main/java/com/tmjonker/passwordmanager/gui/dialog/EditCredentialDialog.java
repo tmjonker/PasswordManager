@@ -15,6 +15,7 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.security.GeneralSecurityException;
 import java.util.Optional;
 
@@ -110,7 +111,7 @@ public class EditCredentialDialog {
 
 
         toggleButton.setOnAction(e -> {
-                generateComponents(websiteCredential);
+                generateComponents();
         });
 
         inputDialog.getDialogPane().setContent(gridPane);
@@ -138,15 +139,28 @@ public class EditCredentialDialog {
 
         inputDialog.setResultConverter(inputButton -> {
             if (inputButton == ButtonType.OK) {
-
                 String password;
                 if (passwordField != null)
                     password = passwordField.getText();
                 else
                     password = passwordTextField.getText();
 
-                return new WebsiteCredential(urlField.getText().trim(), usernameField.getText().trim(),
-                        password);
+                websiteCredential.setUsername(usernameField.getText().trim());
+                websiteCredential.setPassword(password.getBytes());
+
+                try {
+                    credentialHandler.encryptCredential(websiteCredential);
+                } catch (GeneralSecurityException | IOException ex) {
+                    new ExceptionDialog(ex);
+                }
+
+                try {
+                    websiteCredential.setUrl(urlField.getText());
+                } catch (URISyntaxException ex) {
+                    new ExceptionDialog(ex);
+                }
+
+                return websiteCredential;
             }
             return null;
         });
@@ -155,15 +169,14 @@ public class EditCredentialDialog {
 
         result.ifPresent(wc -> {
             try {
-                userHandler.storeCredential(verifiedUser, credentialHandler.finalizeCredential(wc));
-                System.out.println(wc.getKeysetHandleString());
-            } catch (IOException | GeneralSecurityException ex) {
+                userHandler.storeCredential(verifiedUser, wc);
+            } catch (IOException ex) {
                 new ExceptionDialog(ex);
             }
         });
     }
 
-    private void generateComponents(WebsiteCredential websiteCredential) {
+    private void generateComponents() {
         if (!hide) {
             passwordField = new PasswordField();
             passwordField.setText(passwordTextField.getText());

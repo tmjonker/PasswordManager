@@ -1,9 +1,8 @@
 package com.tmjonker.passwordmanager.credentials;
 
+import com.tmjonker.passwordmanager.encryption.StringEncoder;
+
 import java.io.Serializable;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.charset.StandardCharsets;
 
 public class GameCredential implements Credential, Serializable {
 
@@ -48,10 +47,10 @@ public class GameCredential implements Credential, Serializable {
     }
 
     @Override
-    public void setDecryptedPassword(byte[] password) {
+    public void setDecryptedPassword(String password) {
 
         if (password != null)
-            decryptedPassword = convertUtf8(password);
+            decryptedPassword = password;
         else decryptedPassword = null;
     }
 
@@ -60,7 +59,6 @@ public class GameCredential implements Credential, Serializable {
         this.keysetHandleString = keysetHandleString;
     }
 
-    @Override
     public void setDisplay(String display) {
 
         this.display = display;
@@ -96,14 +94,8 @@ public class GameCredential implements Credential, Serializable {
         return keysetHandleString;
     }
 
-    @Override
     public String getDisplay() {
         
         return display;
-    }
-
-    private String convertUtf8(byte[] input) {
-
-        return new String(input, StandardCharsets.UTF_8);
     }
 }

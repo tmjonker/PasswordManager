@@ -50,7 +50,6 @@ public class RemoveCredentialDialog {
         Optional<ButtonType> result = alert.showAndWait();
 
         if (result.get() == ButtonType.OK) {
-            selectedCredential.setDecryptedPassword(null); //so selectedCredential matches the credential stored in the collection in verifiedUser.
             try {
                 userHandler.removeCredential(verifiedUser, selectedCredential); //removes credential from collection in verifiedUser.
                 mainWindow.getInnerContainer().setTableContent(credentialHandler

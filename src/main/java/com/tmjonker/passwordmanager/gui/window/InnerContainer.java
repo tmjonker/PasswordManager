@@ -7,16 +7,12 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import com.tmjonker.passwordmanager.credentials.Credential;
 import com.tmjonker.passwordmanager.credentials.Type;
 
-import java.net.URI;
-
 public class InnerContainer {
 
     private MainWindow mainWindow;
     private ScrollPane scrollPane;
 
     private TableView<Credential> table;
-
-    private int focusedIndex;
 
     public InnerContainer(MainWindow mainWindow) {
 

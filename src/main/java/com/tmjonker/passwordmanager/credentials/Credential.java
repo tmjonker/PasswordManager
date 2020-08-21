@@ -10,11 +10,9 @@ public interface Credential {
 
  void setIdentifier(int identifier);
 
- void setDecryptedPassword(byte[] password);
+ void setDecryptedPassword(String password);
 
  void setKeysetHandleString(String keysetHandleString);
-
- void setDisplay(String display);
 
  String getUsername();
 
@@ -27,6 +25,4 @@ public interface Credential {
  String getDecryptedPassword();
 
  String getKeysetHandleString();
-
- String getDisplay();
 }

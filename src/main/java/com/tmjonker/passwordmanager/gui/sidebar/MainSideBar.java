@@ -21,7 +21,7 @@ public class MainSideBar extends SideBar {
 
     private CredentialHandler credentialHandler;
 
-    private TreeItem<String> websites, applications, email, financial, games;
+    private TreeItem<String> websites, applications, games;
     private final TreeItem<String> root = new TreeItem<>("All Passwords");
 
     private TreeView<String> treeView;
@@ -70,6 +70,7 @@ public class MainSideBar extends SideBar {
             }
         });
         addToMainBox(treeView);
+        setHeight(mainWindow.getInnerContainer().getScrollPane().getHeight() * 0.50); // sets height of sidebar to be 1/2 the height of the innercontainer.
     }
 
     private TreeItem<String> generateTreeItem(String text, TreeItem<String> parent) {

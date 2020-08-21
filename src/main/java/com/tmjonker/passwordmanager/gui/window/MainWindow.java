@@ -7,6 +7,7 @@ import com.tmjonker.passwordmanager.gui.sidebar.MainSideBar;
 import com.tmjonker.passwordmanager.gui.toolbar.ButtonCreator;
 import com.tmjonker.passwordmanager.gui.toolbar.ToolBarHandler;
 import com.tmjonker.passwordmanager.users.User;
+import com.tmjonker.passwordmanager.users.UserHandler;
 import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -42,16 +43,13 @@ public class MainWindow implements WindowShell{
 
     private final VBox topVbox = new VBox();
     private final BorderPane borderPane = new BorderPane();
+    private InnerContainer innerContainer;
 
-    private Stage stage = new Stage();
+    private final Stage stage = new Stage();
 
     private User verifiedUser;
 
-    private InnerContainer innerContainer;
-
     private boolean loggedIn;
-
-    private final Thread focusGetter = new Thread(new FocusGetter());
 
     public MainWindow() {
 
@@ -125,7 +123,7 @@ public class MainWindow implements WindowShell{
         stage.getIcons().add(new Image("password_16px.png"));
         centerStage();
         stage.show();
-        stage.setResizable(true);
+        stage.setResizable(false);
         stage.setOnCloseRequest(e -> onStageCloseRequest());
     }
 
@@ -160,6 +158,7 @@ public class MainWindow implements WindowShell{
         addButton.setDisable(!result);
 
         if (result) {
+            Thread focusGetter = new Thread(new FocusGetter());
             focusGetter.start(); // starts thread that checks for selected table entry to enable/disable edit & remove buttons.
             setStageTitle(verifiedUser.getUsername());
         } else

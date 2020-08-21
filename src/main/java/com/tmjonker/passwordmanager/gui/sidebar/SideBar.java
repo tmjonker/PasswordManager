@@ -16,4 +16,9 @@ public class SideBar {
 
         return mainBox;
     }
+
+    public void setHeight(double heightProperty) {
+
+        mainBox.setMaxHeight(heightProperty);
+    }
 }

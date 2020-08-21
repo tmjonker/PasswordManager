@@ -14,6 +14,7 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
@@ -137,8 +138,12 @@ public class AddCredentialDialog {
 
         inputDialog.setResultConverter(inputButton -> {
             if (inputButton == addButtonType) {
-                return new WebsiteCredential(urlField.getText().trim(), usernameField.getText().trim(),
-                        passwordField.getText());
+                try {
+                    return new WebsiteCredential(urlField.getText().trim(), usernameField.getText().trim(),
+                            passwordField.getText());
+                } catch (URISyntaxException ex) {
+                    new ExceptionDialog(ex);
+                }
             }
             return null;
         });
@@ -147,7 +152,8 @@ public class AddCredentialDialog {
 
         result.ifPresent(wc -> {
             try {
-                userHandler.storeCredential(verifiedUser, credentialHandler.finalizeCredential(wc));
+                credentialHandler.finalizeCredential(wc);
+                userHandler.storeCredential(verifiedUser, wc);
             } catch (IOException | GeneralSecurityException ex) {
                 new ExceptionDialog(ex);
             }
@@ -201,7 +207,8 @@ public class AddCredentialDialog {
 
         result.ifPresent(wc -> {
             try {
-                userHandler.storeCredential(verifiedUser, credentialHandler.finalizeCredential(wc));
+                credentialHandler.finalizeCredential(wc);
+                userHandler.storeCredential(verifiedUser, wc);
             } catch (IOException | GeneralSecurityException ex) {
                 new ExceptionDialog(ex);
             }
@@ -255,7 +262,8 @@ public class AddCredentialDialog {
 
         result.ifPresent(wc -> {
             try {
-                userHandler.storeCredential(verifiedUser, credentialHandler.finalizeCredential(wc));
+                credentialHandler.finalizeCredential(wc);
+                userHandler.storeCredential(verifiedUser, wc);
             } catch (IOException | GeneralSecurityException ex) {
                 new ExceptionDialog(ex);
             }

@@ -1,6 +1,7 @@
 package com.tmjonker.passwordmanager.credentials;
 
 import com.tmjonker.passwordmanager.encryption.EncryptionHandler;
+import com.tmjonker.passwordmanager.encryption.StringEncoder;
 import com.tmjonker.passwordmanager.gui.dialog.ExceptionDialog;
 import com.tmjonker.passwordmanager.properties.PropertiesHandler;
 import com.tmjonker.passwordmanager.users.User;
@@ -21,22 +22,18 @@ public class CredentialHandler {
         encryptionHandler = new EncryptionHandler();
     }
 
-    public Credential finalizeCredential(Credential credential) throws GeneralSecurityException, IOException{
+    public void finalizeCredential(Credential credential) throws GeneralSecurityException, IOException{
 
         PropertiesHandler.incrementCredentialsNum();
         credential.setIdentifier(PropertiesHandler.getCredentialsNum());
-        credential = encryptCredential(credential);
-
-        return credential;
+        encryptCredential(credential);
     }
 
-    public Credential encryptCredential(Credential credential) throws GeneralSecurityException, IOException{
+    public void encryptCredential(Credential credential) throws GeneralSecurityException, IOException{
 
         credential.setPassword(encryptionHandler.encryptCredentials(credential.getUsername(),
                 credential.getPassword(), credential.getIdentifier()));
         credential.setKeysetHandleString(encryptionHandler.getKeysetFileString());
-
-        return credential;
     }
 
     public ObservableList<Credential> generateObservableList(Type type, User user) {
@@ -55,7 +52,7 @@ public class CredentialHandler {
 
         for (Credential c : encryptedList) {
             try {
-                c.setDecryptedPassword(encryptionHandler.decryptCredentialPassword(c));
+                c.setDecryptedPassword(StringEncoder.convertUtf8(encryptionHandler.decryptCredentialPassword(c)));
                 decryptedList.add(c);
             } catch (IOException | GeneralSecurityException ex) {
                 new ExceptionDialog(ex);

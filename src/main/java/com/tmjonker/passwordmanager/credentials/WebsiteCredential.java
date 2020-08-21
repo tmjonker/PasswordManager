@@ -1,9 +1,10 @@
 package com.tmjonker.passwordmanager.credentials;
 
+import com.tmjonker.passwordmanager.encryption.StringEncoder;
+
 import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.charset.StandardCharsets;
 
 public class WebsiteCredential implements Credential, Serializable {
 
@@ -16,14 +17,10 @@ public class WebsiteCredential implements Credential, Serializable {
     private String decryptedPassword = null;
     private String keysetHandleString;
 
-    public WebsiteCredential(String url, String username, String password) {
+    public WebsiteCredential(String url, String username, String password) throws URISyntaxException {
 
-        try {
-            this.url = new URI(url);
-        } catch (URISyntaxException ex) {
-            ex.printStackTrace();
-        }
-        display = url.toString();
+        this.url = new URI(url);
+        display = url;
         this.username = username;
         this.password = password.getBytes();
         this.type = Type.WEBSITE;
@@ -32,6 +29,7 @@ public class WebsiteCredential implements Credential, Serializable {
     public void setUrl(String url) throws URISyntaxException {
 
         this.url = new URI(url);
+        display = url;
     }
 
     public URI getUrl() {
@@ -64,10 +62,10 @@ public class WebsiteCredential implements Credential, Serializable {
     }
 
     @Override
-    public void setDecryptedPassword(byte[] password) {
+    public void setDecryptedPassword(String password) {
 
         if (password != null)
-            decryptedPassword = convertUtf8(password);
+            decryptedPassword = password;
         else decryptedPassword = null;
     }
 
@@ -76,7 +74,6 @@ public class WebsiteCredential implements Credential, Serializable {
         this.keysetHandleString = keysetHandleString;
     }
 
-    @Override
     public void setDisplay(String display) {
 
         this.display = display;
@@ -112,13 +109,8 @@ public class WebsiteCredential implements Credential, Serializable {
         return keysetHandleString;
     }
 
-    @Override
     public String getDisplay() {
+
         return display;
-    }
-
-    private String convertUtf8(byte[] input) {
-
-        return new String(input, StandardCharsets.UTF_8);
     }
 }
