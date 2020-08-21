@@ -46,8 +46,6 @@ public class MainSideBar extends SideBar {
 
         websites = generateTreeItem("Website Passwords", root);
         applications = generateTreeItem("Application Passwords", root);
-        email = generateTreeItem("Email Passwords", root);
-        financial = generateTreeItem("Financial Passwords", root);
         games = generateTreeItem("Game Passwords", root);
 
         root.setExpanded(true);
@@ -58,6 +56,15 @@ public class MainSideBar extends SideBar {
             if (newValue.equals(websites)) {
                 mainWindow.getInnerContainer()
                         .setTableContent(credentialHandler.generateObservableList(Type.WEBSITE, verifiedUser));
+            } else if (newValue.equals(applications)) {
+                mainWindow.getInnerContainer()
+                        .setTableContent(credentialHandler.generateObservableList(Type.APPLICATION, verifiedUser));
+            } else if (newValue.equals(games)) {
+                mainWindow.getInnerContainer()
+                        .setTableContent(credentialHandler.generateObservableList(Type.GAME, verifiedUser));
+            } else if (newValue.equals(root)) {
+                mainWindow.getInnerContainer()
+                        .setTableContent(credentialHandler.generateObservableList(null, verifiedUser));
             } else {
                 mainWindow.getInnerContainer().setTableContent(null);
             }
@@ -71,15 +78,5 @@ public class MainSideBar extends SideBar {
         treeItem.setExpanded(true);
         parent.getChildren().add(treeItem);
         return treeItem;
-    }
-
-    public void setVerifiedUser(User user) {
-
-        verifiedUser = user;
-    }
-
-    public TreeView<String> getTreeView() {
-
-        return treeView;
     }
 }

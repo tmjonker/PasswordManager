@@ -1,9 +1,6 @@
 package com.tmjonker.passwordmanager.gui.dialog;
 
-import com.tmjonker.passwordmanager.credentials.Credential;
-import com.tmjonker.passwordmanager.credentials.CredentialHandler;
-import com.tmjonker.passwordmanager.credentials.Type;
-import com.tmjonker.passwordmanager.credentials.WebsiteCredential;
+import com.tmjonker.passwordmanager.credentials.*;
 import com.tmjonker.passwordmanager.encryption.EncryptionHandler;
 import com.tmjonker.passwordmanager.gui.window.MainWindow;
 import com.tmjonker.passwordmanager.properties.PropertiesHandler;
@@ -55,6 +52,8 @@ public class AddCredentialDialog {
 
         List<Type> typeList = new ArrayList<>();
         typeList.add(Type.WEBSITE);
+        typeList.add(Type.APPLICATION);
+        typeList.add(Type.GAME);
 
         ChoiceDialog<Type> choiceDialog = new ChoiceDialog<>(Type.WEBSITE, typeList);
 
@@ -92,10 +91,10 @@ public class AddCredentialDialog {
                         addWebsite();
                         break;
             case APPLICATION:
+                        addApplication();
                         break;
             case GAME:
-                        break;
-            case EMAIL:
+                        addGame();
                         break;
         }
 
@@ -139,6 +138,114 @@ public class AddCredentialDialog {
         inputDialog.setResultConverter(inputButton -> {
             if (inputButton == addButtonType) {
                 return new WebsiteCredential(urlField.getText().trim(), usernameField.getText().trim(),
+                        passwordField.getText());
+            }
+            return null;
+        });
+
+        Optional<Credential> result = inputDialog.showAndWait();
+
+        result.ifPresent(wc -> {
+            try {
+                userHandler.storeCredential(verifiedUser, credentialHandler.finalizeCredential(wc));
+            } catch (IOException | GeneralSecurityException ex) {
+                new ExceptionDialog(ex);
+            }
+        });
+    }
+
+    private void addApplication() {
+
+        inputDialog.setGraphic(new ImageView(new Image("website_48px.png")));
+
+        TextField display = new TextField();
+        display.setPromptText("Application");
+        TextField usernameField = new TextField();
+        usernameField.setPromptText("Username");
+        PasswordField passwordField = new PasswordField();
+        passwordField.setPromptText("Password");
+
+        gridPane.add(new Label("Application:"), 0, 0);
+        gridPane.add(display, 1, 0);
+        gridPane.add(new Label("Username:"), 0, 1);
+        gridPane.add(usernameField, 1, 1);
+        gridPane.add(new Label("Password:"), 0, 2);
+        gridPane.add(passwordField, 1, 2);
+
+        inputDialog.getDialogPane().setContent(gridPane);
+
+        Button addButton = (Button) inputDialog.getDialogPane().lookupButton(addButtonType);
+        addButton.addEventFilter(ActionEvent.ACTION, ae -> {
+
+            if (display.getText().trim().isEmpty()) {
+                new ErrorDialog("Application field can't be empty.", "Error");
+                ae.consume();
+            } else if (usernameField.getText().trim().isEmpty()) {
+                new ErrorDialog("Username field can't empty.", "Error");
+                ae.consume();
+            } else if (passwordField.getText().trim().isEmpty()) {
+                new ErrorDialog("Password field can't be empty.", "Error");
+                ae.consume();
+            }
+        });
+
+        inputDialog.setResultConverter(inputButton -> {
+            if (inputButton == addButtonType) {
+                return new ApplicationCredential(display.getText().trim(), usernameField.getText().trim(),
+                        passwordField.getText());
+            }
+            return null;
+        });
+
+        Optional<Credential> result = inputDialog.showAndWait();
+
+        result.ifPresent(wc -> {
+            try {
+                userHandler.storeCredential(verifiedUser, credentialHandler.finalizeCredential(wc));
+            } catch (IOException | GeneralSecurityException ex) {
+                new ExceptionDialog(ex);
+            }
+        });
+    }
+
+    private void addGame() {
+
+        inputDialog.setGraphic(new ImageView(new Image("website_48px.png")));
+
+        TextField display = new TextField();
+        display.setPromptText("Game Title");
+        TextField usernameField = new TextField();
+        usernameField.setPromptText("Username");
+        PasswordField passwordField = new PasswordField();
+        passwordField.setPromptText("Password");
+
+        gridPane.add(new Label("Application:"), 0, 0);
+        gridPane.add(display, 1, 0);
+        gridPane.add(new Label("Username:"), 0, 1);
+        gridPane.add(usernameField, 1, 1);
+        gridPane.add(new Label("Password:"), 0, 2);
+        gridPane.add(passwordField, 1, 2);
+
+        inputDialog.getDialogPane().setContent(gridPane);
+
+        Button addButton = (Button) inputDialog.getDialogPane().lookupButton(addButtonType);
+        addButton.addEventFilter(ActionEvent.ACTION, ae -> {
+
+            if (display.getText().trim().isEmpty()) {
+                new ErrorDialog("Game Title field can't be empty.", "Error");
+                ae.consume();
+            } else if (usernameField.getText().trim().isEmpty()) {
+                new ErrorDialog("Username field can't empty.", "Error");
+                ae.consume();
+            } else if (passwordField.getText().trim().isEmpty()) {
+                new ErrorDialog("Password field can't be empty.", "Error");
+                ae.consume();
+            }
+        });
+
+        inputDialog.setResultConverter(inputButton -> {
+            if (inputButton == addButtonType) {
+                return new GameCredential(display.getText().trim(), usernameField.getText().trim(),
                         passwordField.getText());
             }
             return null;

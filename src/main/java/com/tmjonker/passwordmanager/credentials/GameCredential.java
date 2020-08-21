@@ -5,9 +5,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 
-public class WebsiteCredential implements Credential, Serializable {
+public class GameCredential implements Credential, Serializable {
 
-    private URI url;
     private String display;
     private String username;
     private byte[] password;
@@ -16,27 +15,12 @@ public class WebsiteCredential implements Credential, Serializable {
     private String decryptedPassword = null;
     private String keysetHandleString;
 
-    public WebsiteCredential(String url, String username, String password) {
+    public GameCredential(String display, String username, String password) {
 
-        try {
-            this.url = new URI(url);
-        } catch (URISyntaxException ex) {
-            ex.printStackTrace();
-        }
-        display = url.toString();
+        this.display = display;
         this.username = username;
         this.password = password.getBytes();
-        this.type = Type.WEBSITE;
-    }
-
-    public void setUrl(String url) throws URISyntaxException {
-
-        this.url = new URI(url);
-    }
-
-    public URI getUrl() {
-
-        return url;
+        this.type = Type.GAME;
     }
 
     @Override
@@ -114,6 +98,7 @@ public class WebsiteCredential implements Credential, Serializable {
 
     @Override
     public String getDisplay() {
+        
         return display;
     }
 

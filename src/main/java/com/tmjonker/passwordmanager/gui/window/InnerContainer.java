@@ -32,9 +32,9 @@ public class InnerContainer {
         typeColumn.prefWidthProperty().bind(table.widthProperty().multiply(0.20));
         typeColumn.setCellValueFactory(new PropertyValueFactory<Credential, Type>("type"));
 
-        TableColumn<Credential, URI> uriColumn = new TableColumn<>("URL");
+        TableColumn<Credential, String> uriColumn = new TableColumn<>("For");
         uriColumn.prefWidthProperty().bind(table.widthProperty().multiply(0.40));
-        uriColumn.setCellValueFactory(new PropertyValueFactory<Credential, URI>("url"));
+        uriColumn.setCellValueFactory(new PropertyValueFactory<Credential, String>("display"));
 
         TableColumn<Credential, String> usernameColumn = new TableColumn<>("Username");
         usernameColumn.prefWidthProperty().bind(table.widthProperty().multiply(0.20));
@@ -52,19 +52,9 @@ public class InnerContainer {
         scrollPane.setFitToWidth(true);
     }
 
-    public TableView<Credential> getTable() {
-
-        return table;
-    }
-
     public void setTableContent(ObservableList<Credential> list) {
 
         table.setItems(list);
-    }
-
-    public InnerContainer getMainAccountWindow() {
-
-        return this;
     }
 
     public ScrollPane getScrollPane() {
@@ -75,10 +65,5 @@ public class InnerContainer {
     public Credential getSelectedRow() {
 
         return table.getSelectionModel().getSelectedItem();
-    }
-
-    public void setFocusedIndex(int index) {
-
-        focusedIndex = index;
     }
 }

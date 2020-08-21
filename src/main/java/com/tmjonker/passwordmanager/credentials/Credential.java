@@ -14,6 +14,8 @@ public interface Credential {
 
  void setKeysetHandleString(String keysetHandleString);
 
+ void setDisplay(String display);
+
  String getUsername();
 
  byte[] getPassword();
@@ -25,4 +27,6 @@ public interface Credential {
  String getDecryptedPassword();
 
  String getKeysetHandleString();
+
+ String getDisplay();
 }

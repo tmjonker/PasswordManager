@@ -41,11 +41,19 @@ public class CredentialHandler {
 
     public ObservableList<Credential> generateObservableList(Type type, User user) {
 
-        List<Credential> encryptedList = user.getCredentialCollection().get(type);
+        List<Credential> encryptedList;
+        List<Credential> finalEncryptedList = new ArrayList<>();
+
+        if (type != null) // null indicates that "All Passwords" need to be displayed.
+            encryptedList = user.getCredentialCollection().get(type);
+        else {
+            user.getCredentialCollection().forEach((type1, credentials) -> finalEncryptedList.addAll(credentials));
+            encryptedList = finalEncryptedList;
+        }
+
         List<Credential> decryptedList = new ArrayList<>();
 
         for (Credential c : encryptedList) {
-
             try {
                 c.setDecryptedPassword(encryptionHandler.decryptCredentialPassword(c));
                 decryptedList.add(c);

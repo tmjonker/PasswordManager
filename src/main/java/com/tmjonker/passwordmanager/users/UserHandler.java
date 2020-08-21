@@ -22,7 +22,7 @@ public class UserHandler {
 
     private final Logger UH_LOGGER = Logger.getLogger(UserHandler.class.getName());
 
-    private final String USER_FILE_NAME = System.getProperty("user.dir") + "/users/user.pm";
+    private final String USER_FILE_NAME = System.getProperty("user.dir") + "/user.pm";
     private final File USER_FILE = new File(USER_FILE_NAME);
 
     private Map<String, User> userHashMap = new HashMap<>();
