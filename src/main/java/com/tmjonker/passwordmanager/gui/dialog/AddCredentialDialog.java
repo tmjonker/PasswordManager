@@ -162,7 +162,7 @@ public class AddCredentialDialog {
 
     private void addApplication() {
 
-        inputDialog.setGraphic(new ImageView(new Image("website_48px.png")));
+        inputDialog.setGraphic(new ImageView(new Image("application_shield_48px.png")));
 
         TextField display = new TextField();
         display.setPromptText("Application");
@@ -217,7 +217,7 @@ public class AddCredentialDialog {
 
     private void addGame() {
 
-        inputDialog.setGraphic(new ImageView(new Image("website_48px.png")));
+        inputDialog.setGraphic(new ImageView(new Image("game_controller_48px.png")));
 
         TextField display = new TextField();
         display.setPromptText("Game Title");

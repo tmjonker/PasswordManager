@@ -3,12 +3,11 @@ package com.tmjonker.passwordmanager.gui.window;
 import com.tmjonker.passwordmanager.gui.dialog.LoginDialog;
 import com.tmjonker.passwordmanager.gui.dialog.NewUserDialog;
 import com.tmjonker.passwordmanager.gui.dialog.SuccessDialog;
-import com.tmjonker.passwordmanager.gui.sidebar.MainSideBar;
+import com.tmjonker.passwordmanager.gui.sidebar.SideBar;
+import com.tmjonker.passwordmanager.gui.sidebar.TreeBar;
 import com.tmjonker.passwordmanager.gui.toolbar.ButtonCreator;
 import com.tmjonker.passwordmanager.gui.toolbar.ToolBarHandler;
 import com.tmjonker.passwordmanager.users.User;
-import com.tmjonker.passwordmanager.users.UserHandler;
-import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -36,10 +35,11 @@ public class MainWindow implements WindowShell{
     private Button addButton;
     private Button editButton;
     private Button removeButton;
+    private Button refreshButton;
 
     private final ToolBar toolBar = new ToolBar();
     private final StatusBar statusBar = new StatusBar();
-    private MainSideBar sideBar = new MainSideBar(this);
+    private SideBar sideBar = new SideBar(this);
 
     private final VBox topVbox = new VBox();
     private final BorderPane borderPane = new BorderPane();
@@ -99,9 +99,14 @@ public class MainWindow implements WindowShell{
         removeButton.setOnMouseEntered(e -> setStatusBarText("Remove the selected credential"));
         removeButton.setOnMouseExited(e -> setStatusBarText(""));
 
+        refreshButton = ButtonCreator.generateButton(new Image("refresh_24px.png"));
+        refreshButton.setOnAction(e -> ToolBarHandler.onAddButtonClick(this));
+        refreshButton.setOnMouseEntered(e -> setStatusBarText("Refresh table data"));
+        refreshButton.setOnMouseExited(e -> setStatusBarText(""));
+
         setLoggedInConfig(false);
 
-        toolBar.getItems().addAll(addButton, editButton, removeButton);
+        toolBar.getItems().addAll(addButton, editButton, removeButton, refreshButton);
 
         topVbox.getChildren().add(toolBar);
     }
@@ -138,7 +143,7 @@ public class MainWindow implements WindowShell{
 
         if (loginDialog.getLoggedIn()) {
             setVerifiedUser(loginDialog.getVerifiedUser());
-            sideBar.generateMainSideBar();
+            sideBar.generateSideBar();
             setLoggedInConfig(true);
 
             new SuccessDialog(verifiedUser.getUsername() + " has been logged in.", "Success");
@@ -156,6 +161,7 @@ public class MainWindow implements WindowShell{
         editButton.setDisable(!result);
         removeButton.setDisable(!result);
         addButton.setDisable(!result);
+        refreshButton.setDisable(!result);
 
         if (result) {
             Thread focusGetter = new Thread(new FocusGetter());
@@ -171,7 +177,7 @@ public class MainWindow implements WindowShell{
 
         if (newUserDialog.newUserCreated()) {
             setVerifiedUser(newUserDialog.getVerifiedUser());
-            sideBar.generateMainSideBar();
+            sideBar.generateSideBar();
             setLoggedInConfig(true);
 
             new SuccessDialog("An account for " + verifiedUser.getUsername() + " has been created.",
@@ -182,7 +188,7 @@ public class MainWindow implements WindowShell{
     protected void onLogOut() {
 
         verifiedUser = null;
-        sideBar = new MainSideBar(this);
+        sideBar = new SideBar(this);
         borderPane.setLeft(sideBar.getMainBox());
         innerContainer.setTableContent(null);
         setLoggedInConfig(false);

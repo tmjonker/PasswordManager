@@ -3,9 +3,7 @@ package com.tmjonker.passwordmanager.users;
 import com.tmjonker.passwordmanager.credentials.Credential;
 import com.tmjonker.passwordmanager.credentials.Type;
 import com.tmjonker.passwordmanager.encryption.EncryptionHandler;
-import com.tmjonker.passwordmanager.encryption.StringEncoder;
 import com.tmjonker.passwordmanager.properties.PropertiesHandler;
-import org.apache.commons.lang3.SerializationUtils;
 
 import java.io.*;
 import java.security.GeneralSecurityException;

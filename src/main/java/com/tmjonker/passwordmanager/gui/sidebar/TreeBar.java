@@ -1,36 +1,25 @@
 package com.tmjonker.passwordmanager.gui.sidebar;
 
-import com.tmjonker.passwordmanager.credentials.Credential;
 import com.tmjonker.passwordmanager.credentials.CredentialHandler;
 import com.tmjonker.passwordmanager.credentials.Type;
-import com.tmjonker.passwordmanager.encryption.EncryptionHandler;
 import com.tmjonker.passwordmanager.gui.dialog.ExceptionDialog;
 import com.tmjonker.passwordmanager.gui.window.MainWindow;
 import com.tmjonker.passwordmanager.users.User;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 
-import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.util.ArrayList;
-import java.util.List;
 
-public class MainSideBar extends SideBar {
+public class TreeBar {
 
     private CredentialHandler credentialHandler;
-
     private TreeItem<String> websites, applications, games;
     private final TreeItem<String> root = new TreeItem<>("All Passwords");
-
     private TreeView<String> treeView;
-
     private User verifiedUser;
-
     private final MainWindow mainWindow;
 
-    public MainSideBar(MainWindow window) {
+    public TreeBar(MainWindow window) {
 
         try {
             credentialHandler= new CredentialHandler();
@@ -40,7 +29,7 @@ public class MainSideBar extends SideBar {
         mainWindow = window;
     }
 
-    public void generateMainSideBar() {
+    public void display() {
 
         verifiedUser = mainWindow.getVerifiedUser();
 
@@ -69,8 +58,8 @@ public class MainSideBar extends SideBar {
                 mainWindow.getInnerContainer().setTableContent(null);
             }
         });
-        addToMainBox(treeView);
-        setHeight(mainWindow.getInnerContainer().getScrollPane().getHeight() * 0.50); // sets height of sidebar to be 1/2 the height of the innercontainer.
+
+        treeView.setPrefHeight(mainWindow.getInnerContainer().getScrollPane().getHeight() * 0.50); // sets height of sidebar to be 1/2 the height of the innercontainer.
     }
 
     private TreeItem<String> generateTreeItem(String text, TreeItem<String> parent) {
@@ -79,5 +68,10 @@ public class MainSideBar extends SideBar {
         treeItem.setExpanded(true);
         parent.getChildren().add(treeItem);
         return treeItem;
+    }
+
+    public TreeView<String> getTreeView() {
+
+        return treeView;
     }
 }
