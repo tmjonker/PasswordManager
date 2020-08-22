@@ -8,6 +8,7 @@ import com.tmjonker.passwordmanager.properties.PropertiesHandler;
 import java.io.*;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -22,7 +23,8 @@ public class UserHandler {
 
     private final Logger UH_LOGGER = Logger.getLogger(UserHandler.class.getName());
 
-    private final String USER_FILE_NAME = System.getProperty("user.dir") + "/user.pm";
+    private final String USER_DIRECTORY = System.getProperty("user.dir") + "/user";
+    private final String USER_FILE_NAME = USER_DIRECTORY + "/user.pm";
     private final File USER_FILE = new File(USER_FILE_NAME);
 
     private Map<String, User> userHashMap = new HashMap<>();
@@ -30,8 +32,8 @@ public class UserHandler {
     private EncryptionHandler encryptionHandler = new EncryptionHandler();
 
     /**
-     * Creates instance of UserHandler and loads the user file from the hard drive.  If file doesn't exist, it
-     * creates one.
+     * Creates instance of UserHandler. Creates user directory if it doesn't exist and also creates the user.pm file
+     * if it doesn't exist.
      *
      * @throws IOException      if there is an issue loading USER_FILE.
      */
@@ -40,6 +42,7 @@ public class UserHandler {
         if (!USER_FILE.exists()) {
             FileOutputStream fileOutputStream = new FileOutputStream(USER_FILE);
             fileOutputStream.flush();
+            fileOutputStream.close();
         } else
             loadUserFile();
     }
@@ -52,9 +55,46 @@ public class UserHandler {
 
     private void saveUserFile(Map<String, User> userHashMap) throws IOException {
 
+        //converts Map<String,User> to byte[].
+        ByteArrayOutputStream bo = new ByteArrayOutputStream();
+        ObjectOutputStream os = new ObjectOutputStream(bo);
+        os.writeObject(userHashMap);
+        os.flush();
+        os.close();
+
+        //encodes Map byte[] to a readable String using Base64.
+        String userFile = new String(Base64.getEncoder().encode(bo.toByteArray()));
+
+        //Writes String to file on hard drive.
         FileOutputStream outputStream = new FileOutputStream(USER_FILE);
         ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
-        objectOutputStream.writeObject(userHashMap);
+        objectOutputStream.writeObject(userFile);
+        objectOutputStream.close();
+    }
+
+    private void loadUserFile() throws IOException {
+
+        FileInputStream inputStream = new FileInputStream(USER_FILE);
+
+        try {
+            if (USER_FILE.length() != 0) {
+                //loads String from user file.
+                ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
+                String userFile = (String) objectInputStream.readObject();
+                objectInputStream.close();
+
+                //decodes the String from Base64 into default UTF encoding.
+                byte[] utf = Base64.getDecoder().decode(userFile.getBytes());
+
+                //casts the byte[] into a HashMap<String,User>
+                ByteArrayInputStream bi = new ByteArrayInputStream(utf);
+                ObjectInputStream oi = new ObjectInputStream(bi);
+                userHashMap = (HashMap<String, User>) oi.readObject();
+                oi.close();
+            }
+        } catch (EOFException | ClassNotFoundException ex) {
+            UH_LOGGER.log(Level.SEVERE, ex.toString(), ex);
+        }
     }
 
     public User createUser(String username, byte[] password) throws GeneralSecurityException, IOException {
@@ -84,21 +124,6 @@ public class UserHandler {
     public boolean checkUsernameExists(String username) {
 
         return userHashMap.containsKey(username);
-    }
-
-    private void loadUserFile() throws IOException {
-
-        FileInputStream inputStream = new FileInputStream(USER_FILE);
-        ObjectInputStream objectInputStream;
-
-        try {
-            if (USER_FILE.length() != 0) {
-                objectInputStream = new ObjectInputStream(inputStream);
-                userHashMap = (HashMap<String, User>) objectInputStream.readObject();
-            }
-        } catch (EOFException | ClassNotFoundException ex) {
-            UH_LOGGER.log(Level.SEVERE, ex.toString(), ex);
-        }
     }
 
     public boolean validateReturningUser(User desiredUser, byte[] attemptedPassword) throws GeneralSecurityException,

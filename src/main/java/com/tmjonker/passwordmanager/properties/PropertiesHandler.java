@@ -10,7 +10,8 @@ public class PropertiesHandler {
 
     static Properties configFile = new Properties();
 
-    private static final String CONFIG_FILE_NAME = "config/config.properties";
+    private static final String CONFIG_DIRECTORY = System.getProperty("user.dir") + "/config";
+    private static final String CONFIG_FILE_NAME = CONFIG_DIRECTORY + "/config.properties";
     private static final File CONFIG_FILE = new File(CONFIG_FILE_NAME);
 
     private static void loadProperties() {
@@ -18,6 +19,7 @@ public class PropertiesHandler {
         try {
             FileInputStream fileStream = new FileInputStream(CONFIG_FILE);
             configFile.load(fileStream);
+            fileStream.close();
         } catch (IOException ex) {
             ex.printStackTrace();
         }
@@ -44,6 +46,7 @@ public class PropertiesHandler {
         try {
             FileOutputStream outputStream = new FileOutputStream(CONFIG_FILE);
             configFile.store(outputStream, null);
+            outputStream.close();
         } catch (IOException ex) {
             ex.printStackTrace();
         }
