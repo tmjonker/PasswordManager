@@ -35,7 +35,7 @@ public class SideBar {
 
         treeBar.display(); // generates TreeView object and all associated TreeItems.
 
-        mainBox.getChildren().addAll(header, treeBar.getTreeView(), imageBox);
+        mainBox.getChildren().addAll(treeBar.getTreeView(), imageBox);
         mainBox.setAlignment(Pos.TOP_CENTER);
     }
 

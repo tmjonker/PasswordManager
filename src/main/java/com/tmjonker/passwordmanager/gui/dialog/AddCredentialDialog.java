@@ -22,13 +22,9 @@ import java.util.Optional;
 
 public class AddCredentialDialog {
 
-    private final MainWindow mainWindow;
-
     private UserHandler userHandler;
     private CredentialHandler credentialHandler;
-
     private final User verifiedUser;
-
     private GridPane gridPane;
     private Dialog<Credential> inputDialog;
 
@@ -37,7 +33,6 @@ public class AddCredentialDialog {
     public AddCredentialDialog(MainWindow mainWindow) {
 
         verifiedUser = mainWindow.getVerifiedUser();
-        this.mainWindow = mainWindow;
 
         try {
             userHandler = new UserHandler();

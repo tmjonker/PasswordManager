@@ -21,28 +21,21 @@ import java.util.Optional;
 
 public class EditCredentialDialog {
 
-    private final MainWindow mainWindow;
-
     private UserHandler userHandler;
     private CredentialHandler credentialHandler;
-
+    private Credential selectedCredential;
     private final User verifiedUser;
-
     private GridPane gridPane;
     private Dialog<Credential> inputDialog;
-
     private PasswordField passwordField;
     private TextField passwordTextField;
-
     private Button toggleButton;
-
     private boolean hide = true;
 
     public EditCredentialDialog(MainWindow mainWindow) {
 
         verifiedUser = mainWindow.getVerifiedUser();
-        this.mainWindow = mainWindow;
-        Credential selectedCredential = mainWindow.getInnerContainer().getSelectedRow();
+        selectedCredential = mainWindow.getInnerContainer().getSelectedRow();
 
         try {
             userHandler = new UserHandler();
@@ -51,10 +44,10 @@ public class EditCredentialDialog {
             new ExceptionDialog(ex);
         }
 
-        showEditDialog(selectedCredential);
+        showEditDialog();
     }
 
-    private void showEditDialog(Credential selectedCredential) {
+    private void showEditDialog() {
 
         Type type = selectedCredential.getType();
 
@@ -169,8 +162,9 @@ public class EditCredentialDialog {
 
         result.ifPresent(wc -> {
             try {
+                userHandler.removeCredential(verifiedUser, selectedCredential);
                 userHandler.storeCredential(verifiedUser, wc);
-            } catch (IOException ex) {
+            } catch (IOException | GeneralSecurityException ex) {
                 new ExceptionDialog(ex);
             }
         });

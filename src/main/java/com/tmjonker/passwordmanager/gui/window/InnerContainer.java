@@ -9,14 +9,11 @@ import com.tmjonker.passwordmanager.credentials.Type;
 
 public class InnerContainer {
 
-    private MainWindow mainWindow;
     private ScrollPane scrollPane;
-
     private TableView<Credential> table;
 
-    public InnerContainer(MainWindow mainWindow) {
+    public InnerContainer() {
 
-        this.mainWindow = mainWindow;
         generateInnerContainer();
     }
 

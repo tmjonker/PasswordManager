@@ -77,7 +77,7 @@ public class LoginDialog {
 
         inputDialog.setResultConverter(okButton -> {
             if (okButton == addButtonType) {
-                return new User(usernameField.getText().trim(), passwordField.getText());
+                return new User(usernameField.getText().trim().toLowerCase(), passwordField.getText());
             }
             return null;
         });

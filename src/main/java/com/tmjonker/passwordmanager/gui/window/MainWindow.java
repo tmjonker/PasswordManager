@@ -58,7 +58,7 @@ public class MainWindow implements WindowShell{
 
     private Scene generateStructure(int width, int height) {
 
-        innerContainer = new InnerContainer(this);
+        innerContainer = new InnerContainer();
         menuBar.getMenus().addAll(fileMenu, editMenu, accountMenu, helpMenu);
         fileMenu.getItems().addAll(exitMenuItem);
         accountMenu.getItems().addAll(logInMenuItem,newAccountItem,logOutMenuItem);
