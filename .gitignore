@@ -5,3 +5,5 @@
 /out/
 /users/
 /credentials/
+user.pm
+passwordmanager.iml
