@@ -36,6 +36,11 @@ public class CredentialHandler {
         credential.setKeysetHandleString(encryptionHandler.getKeysetFileString());
     }
 
+    public void clearDecryptedPassword(Credential credential) {
+
+        credential.setDecryptedPassword(null);
+    }
+
     public ObservableList<Credential> generateObservableList(Type type, User user) {
 
         List<Credential> encryptedList;

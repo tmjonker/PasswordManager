@@ -1,12 +1,13 @@
-package com.tmjonker.passwordmanager.encryption;
+package com.tmjonker.passwordmanager.generator;
 
 import java.util.Random;
 
 public class PasswordGenerator {
 
-    private final String CHARACTERS = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    private static final String CHARACTERS =
+            "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
-    public String generatePassword() {
+    public static String generatePassword() {
 
         Random random = new Random();
         StringBuilder password = new StringBuilder();

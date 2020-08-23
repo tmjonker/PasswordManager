@@ -4,6 +4,9 @@ import com.tmjonker.passwordmanager.credentials.Credential;
 import com.tmjonker.passwordmanager.credentials.Type;
 import com.tmjonker.passwordmanager.encryption.EncryptionHandler;
 import com.tmjonker.passwordmanager.properties.PropertiesHandler;
+import org.apache.log4j.FileAppender;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 
 import java.io.*;
 import java.security.GeneralSecurityException;
@@ -11,8 +14,6 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * The class used to manipulate User objects.
@@ -21,7 +22,7 @@ import java.util.logging.Logger;
  */
 public class UserHandler {
 
-    private final Logger UH_LOGGER = Logger.getLogger(UserHandler.class.getName());
+    private Logger logger = LogManager.getLogger(UserHandler.class);
 
     private final String USER_DIRECTORY = System.getProperty("user.dir") + "/user";
     private final String USER_FILE_NAME = USER_DIRECTORY + "/user.pm";
@@ -83,7 +84,7 @@ public class UserHandler {
                 String userFile = (String) objectInputStream.readObject();
                 objectInputStream.close();
 
-                //decodes the String from Base64 into default UTF encoding.
+                //decodes the String from Base64 into default encoding.
                 byte[] utf = Base64.getDecoder().decode(userFile.getBytes());
 
                 //casts the byte[] into a HashMap<String,User>
@@ -93,7 +94,8 @@ public class UserHandler {
                 oi.close();
             }
         } catch (EOFException | ClassNotFoundException ex) {
-            UH_LOGGER.log(Level.SEVERE, ex.toString(), ex);
+            logger.error(ex);
+            logger.addAppender(new FileAppender());
         }
     }
 
