@@ -6,7 +6,7 @@ public class PasswordGenerator {
 
     // 0-9 are included twice to increase likelihood of a numbers being included in generated password.
     private static final String CHARACTERS =
-            "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            "0123456789!@&$abcdefghijklmnopqrstuvwxyz!@&$ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@&$";
 
     public static String generatePassword() {
 
