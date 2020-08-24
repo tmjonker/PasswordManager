@@ -94,6 +94,7 @@ public class GameCredential implements Credential, Serializable {
         return keysetHandleString;
     }
 
+    @Override
     public String getDisplay() {
         
         return display;

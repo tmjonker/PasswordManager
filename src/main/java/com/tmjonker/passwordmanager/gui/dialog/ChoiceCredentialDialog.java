@@ -24,34 +24,37 @@ import java.util.Optional;
 
 public class ChoiceCredentialDialog {
 
-    private Choice choice;
+    private final MainWindow mainWindow;
+
+    private final Choice choice;
     private Type type;
 
     private UserHandler userHandler;
     private CredentialHandler credentialHandler;
 
-    private User verifiedUser;
+    private final User verifiedUser;
     private Credential credential;
 
     private Dialog<Credential> inputDialog;
     private Optional<Credential> result;
 
     private GridPane gridPane;
-    private TextField uniqueField = new TextField();
-    private Label uniqueLabel = new Label();
-    private TextField usernameField = new TextField();
+    private final TextField uniqueField = new TextField();
+    private final Label uniqueLabel = new Label();
+    private final TextField usernameField = new TextField();
     private PasswordField passwordField = new PasswordField();
     private TextField passwordTextField;
     private ButtonType choiceButtonType;
-    private Button toggleButton = new Button("Show");
-    private Hyperlink generateLink = new Hyperlink("Generate Password");
+    private final Button toggleButton = new Button("Show");
+    private final Hyperlink generateLink = new Hyperlink("Generate Password");
 
-    private boolean hide = true;
+    private boolean hide = true; // to determine if user wants password to be visible or not.
 
     public ChoiceCredentialDialog(Choice choice, MainWindow mainWindow) {
 
         this.choice = choice;
         this.verifiedUser = mainWindow.getVerifiedUser();
+        this.mainWindow = mainWindow;
 
         try {
             userHandler = new UserHandler();
@@ -132,6 +135,7 @@ public class ChoiceCredentialDialog {
             try {
                 credentialHandler.finalizeCredential(wc);
                 userHandler.storeCredential(verifiedUser, wc);
+                refreshTableContent(wc);
             } catch (IOException | GeneralSecurityException ex) {
                 new ExceptionDialog(ex);
             }
@@ -182,8 +186,8 @@ public class ChoiceCredentialDialog {
         result.ifPresent(cred -> {
             try {
                 userHandler.removeCredential(verifiedUser, credential);
-                credentialHandler.clearDecryptedPassword(cred);
                 userHandler.storeCredential(verifiedUser, cred);
+                refreshTableContent(cred);
             } catch (IOException | GeneralSecurityException ex) {
                 new ExceptionDialog(ex);
             }
@@ -318,6 +322,16 @@ public class ChoiceCredentialDialog {
             passwordField = null;
             toggleButton.setText("Hide");
             hide = false;
+        }
+    }
+
+    private void refreshTableContent(Credential credential) {
+
+        try {
+            mainWindow.getInnerContainer().setTableContent(credentialHandler
+                    .generateObservableList(credential.getType(), verifiedUser.getCredentialCollection())); //updates table to reflect the updates to the credential list.
+        } catch (IOException | GeneralSecurityException ex) {
+            new ExceptionDialog(ex);
         }
     }
 }

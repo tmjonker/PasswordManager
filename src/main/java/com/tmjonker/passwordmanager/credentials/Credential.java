@@ -25,4 +25,6 @@ public interface Credential {
  String getDecryptedPassword();
 
  String getKeysetHandleString();
+
+ String getDisplay();
 }

@@ -22,10 +22,6 @@ public class SideBar {
 
     public void generateSideBar() {
 
-        Text header = new Text("Password Manager");
-        header.setFont(Font.font("verdana", FontWeight.NORMAL, FontPosture.REGULAR, 20));
-        header.setTextAlignment(TextAlignment.CENTER);
-
         Image emblem = new Image("security_lock_112px.png");
         ImageView imageView = new ImageView(emblem);
         VBox imageBox = new VBox(10);

@@ -53,7 +53,7 @@ public class RemoveCredentialDialog {
             try {
                 userHandler.removeCredential(verifiedUser, selectedCredential); //removes credential from collection in verifiedUser.
                 mainWindow.getInnerContainer().setTableContent(credentialHandler
-                        .generateObservableList(selectedCredential.getType(), verifiedUser)); //updates table to reflect removal of credential.
+                        .generateObservableList(selectedCredential.getType(), verifiedUser.getCredentialCollection())); //updates table to reflect removal of credential.
                 new SuccessDialog("That entry has successfully been removed",
                         "Credential has been removed");
             } catch (IOException | GeneralSecurityException ex) {

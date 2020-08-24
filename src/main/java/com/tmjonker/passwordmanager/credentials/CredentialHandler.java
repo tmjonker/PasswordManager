@@ -11,7 +11,9 @@ import javafx.collections.ObservableList;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class CredentialHandler {
 
@@ -36,32 +38,34 @@ public class CredentialHandler {
         credential.setKeysetHandleString(encryptionHandler.getKeysetFileString());
     }
 
-    public void clearDecryptedPassword(Credential credential) {
+    public void clearDecryptedPasswords(Map<Type, ArrayList<Credential>> credMap) {
 
-        credential.setDecryptedPassword(null);
+        credMap.forEach((type, list) -> {
+            for (Credential c : list) {
+                c.setDecryptedPassword(null);
+            }
+        });
     }
 
-    public ObservableList<Credential> generateObservableList(Type type, User user) {
+    public ObservableList<Credential> generateObservableList(Type type, Map<Type, ArrayList<Credential>> credMap) throws IOException,
+            GeneralSecurityException {
 
         List<Credential> encryptedList;
         List<Credential> finalEncryptedList = new ArrayList<>();
 
         if (type != null) // null indicates that "All Passwords" need to be displayed.
-            encryptedList = user.getCredentialCollection().get(type);
+            encryptedList = credMap.get(type);
         else {
-            user.getCredentialCollection().forEach((type1, credentials) -> finalEncryptedList.addAll(credentials));
+            credMap.forEach((type1, credentials) -> finalEncryptedList.addAll(credentials));
             encryptedList = finalEncryptedList;
         }
 
         List<Credential> decryptedList = new ArrayList<>();
 
         for (Credential c : encryptedList) {
-            try {
-                c.setDecryptedPassword(StringEncoder.convertUtf8(encryptionHandler.decryptCredentialPassword(c)));
-                decryptedList.add(c);
-            } catch (IOException | GeneralSecurityException ex) {
-                new ExceptionDialog(ex);
-            }
+            String password = StringEncoder.convertUtf8(encryptionHandler.decryptCredentialPassword(c));
+            c.setDecryptedPassword(password);
+            decryptedList.add(c);
         }
         return FXCollections.observableArrayList(decryptedList);
     }

@@ -1,5 +1,7 @@
 package com.tmjonker.passwordmanager.gui.window;
 
+import com.tmjonker.passwordmanager.credentials.CredentialHandler;
+import com.tmjonker.passwordmanager.gui.dialog.ExceptionDialog;
 import com.tmjonker.passwordmanager.gui.dialog.LoginDialog;
 import com.tmjonker.passwordmanager.gui.dialog.NewUserDialog;
 import com.tmjonker.passwordmanager.gui.dialog.SuccessDialog;
@@ -15,6 +17,9 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.controlsfx.control.StatusBar;
+
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 
 public class MainWindow implements WindowShell{
 
@@ -63,10 +68,10 @@ public class MainWindow implements WindowShell{
         fileMenu.getItems().addAll(exitMenuItem);
         accountMenu.getItems().addAll(logInMenuItem,newAccountItem,logOutMenuItem);
 
-        exitMenuItem.setOnAction(e -> onExit());
-        logInMenuItem.setOnAction(e -> onLogIn());
-        newAccountItem.setOnAction(e -> onNewAccount());
-        logOutMenuItem.setOnAction(e -> onLogOut());
+        exitMenuItem.setOnAction(e -> exit());
+        logInMenuItem.setOnAction(e -> logIn());
+        newAccountItem.setOnAction(e -> newAccount());
+        logOutMenuItem.setOnAction(e -> logOut());
 
         topVbox.getChildren().add(menuBar);
 
@@ -137,7 +142,7 @@ public class MainWindow implements WindowShell{
         stage.setTitle(DEFAULT_TITLE + text);
     }
 
-    protected void onLogIn() {
+    protected void logIn() {
 
         LoginDialog loginDialog = new LoginDialog();
 
@@ -171,7 +176,7 @@ public class MainWindow implements WindowShell{
             setStageTitle("");
     }
 
-    protected void onNewAccount() {
+    protected void newAccount() {
 
         NewUserDialog newUserDialog = new NewUserDialog();
 
@@ -185,7 +190,7 @@ public class MainWindow implements WindowShell{
         }
     }
 
-    protected void onLogOut() {
+    protected void logOut() {
 
         verifiedUser = null;
         sideBar = new SideBar(this);
@@ -206,7 +211,7 @@ public class MainWindow implements WindowShell{
         return innerContainer;
     }
 
-    protected void onExit() {
+    protected void exit() {
         System.exit(0);
     }
 
@@ -218,6 +223,7 @@ public class MainWindow implements WindowShell{
     @Override
     public void onStageCloseRequest() {
 
+        logOut();
         System.exit(0);
     }
 

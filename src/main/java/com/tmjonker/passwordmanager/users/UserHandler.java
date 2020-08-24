@@ -1,8 +1,10 @@
 package com.tmjonker.passwordmanager.users;
 
 import com.tmjonker.passwordmanager.credentials.Credential;
+import com.tmjonker.passwordmanager.credentials.CredentialHandler;
 import com.tmjonker.passwordmanager.credentials.Type;
 import com.tmjonker.passwordmanager.encryption.EncryptionHandler;
+import com.tmjonker.passwordmanager.gui.dialog.ExceptionDialog;
 import com.tmjonker.passwordmanager.properties.PropertiesHandler;
 import org.apache.log4j.FileAppender;
 import org.apache.log4j.LogManager;
@@ -50,6 +52,14 @@ public class UserHandler {
 
     public void storeUser(User user) throws IOException {
 
+        // makes sure that no decrypted passwords are stored on the hard drive.
+        try {
+            CredentialHandler credentialHandler = new CredentialHandler();
+            credentialHandler.clearDecryptedPasswords(user.getCredentialCollection());
+        } catch (GeneralSecurityException ex) {
+            new ExceptionDialog(ex);
+        }
+        // adds user to Map and then saves the map to the hard drive.
         userHashMap.put(user.getUsername(), user);
         saveUserFile(userHashMap);
     }
@@ -152,17 +162,17 @@ public class UserHandler {
         storeUser(user);
     }
 
-    public void storeCredential(User user, Credential credential) throws IOException {
+    public void storeCredential(User user, Credential credential) throws IOException, GeneralSecurityException {
 
-        Map<Type, ArrayList<Credential>> credentialCollection = user.getCredentialCollection();
-        ArrayList<Credential> credentialList = credentialCollection.get(credential.getType());
+        Map<Type, ArrayList<Credential>> credentialMap = user.getCredentialCollection();
+        ArrayList<Credential> credentialList = credentialMap.get(credential.getType());
         credentialList.add(credential);
-        credentialCollection.put(credential.getType(), credentialList);
-        user.setCredentialCollection(credentialCollection);
+        credentialMap.put(credential.getType(), credentialList);
+        user.setCredentialCollection(credentialMap);
         storeUser(user);
     }
 
-    public void removeCredential(User user, Credential credential) throws IOException, GeneralSecurityException {
+    public void removeCredential(User user, Credential credential) throws IOException {
 
         Map<Type, ArrayList<Credential>> credentialCollection = user.getCredentialCollection();
         ArrayList<Credential> credentialList = credentialCollection.get(credential.getType());
