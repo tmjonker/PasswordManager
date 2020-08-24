@@ -1,13 +1,10 @@
 # Password Manager
 
-This is a project utilizing the Google Tink library.  I made this to experiment with encryption and to get a feel for incorporating more inheritance and polymorphism into my work.  Right now, the program will allow you to create a new user and then log in as that user. When you create a new user, that user is assigned a unique identifier which corresponds with the total number of accounts that have been established. The program then encrypts your password and stores it in a HashMap that contains all active Users of the program.  The HashMap is then serialized and stored as a .pm file on your computer.  The keyset that was used to encrypt your password is also stored on your computer (this isn't ideal.  Ideally, you would probably want to store this on a server somewhere).  When you login, the HashMap object is loaded along with the stored Keyset. The password associated with the username that is typed in is compared to the encrypted password that was stored on the computer to see if there's a match.  The passwords that you store for websites, email, etc. will be stored in a similar manner.  The unique identifier for the user that you created will be used to link up with the website/email/etc passwords that you store.  Everything is done locally. 
-
-Soon, you will be able to store website and application credentials.
 
 
 ## Description
 
-Coming soon.
+This is a basic password manager.  It allows you to create multiple users, in case you and you significant other want to store your passwords separately.  When you log in, you have the ability to add passwords to your local password database. Currently, you have the ability to create passwords for WEBSITES, APPLICATIONS, OR GAMES.  Once you create a password it is encrypted and stored in an encoded file on your hard drive in the /user folder that is created when you first run the program.  No decrypted password information is stored on your computer. All of the passwords that you create are linked to your user profile.  If a different user logs in, they will not be able to access your passwords.  This program uses Google Tink AES-GCM encryption for all passwords.
 
 ## Getting Started
 
@@ -15,19 +12,19 @@ Coming soon.
 
 * Google Tink
 * JavaFX 14
-* Jasypt
+* Maven
 
 ### Installing
 
 * It can be unzipped into any folder on your computer.
-* Maven is the build tool.  The POM.xml is included with this repository.
-* Build it with whicher IDE you choose.
-  * If you're using IntelliJ, make sure to include 
+* run 'mvn clean compile assembly:single' 
 
 
 ### Executing program
 
-* Build the project with your IDE of choice.
+* cd into the 'target' directory
+* Run 'java -jar passwordmanager-1.0-SNAPSHOT-jar-with-dependencies.jar'
+ * When you start the program, it will create two folders in whatever folder you execute it from.  Those folders are /user and /config.  These folders will house your user and config files.
 
 
 ## Authors
