@@ -16,12 +16,28 @@ public class PropertiesHandler {
 
     private static void loadProperties() {
 
-        try {
-            FileInputStream fileStream = new FileInputStream(CONFIG_FILE);
-            configFile.load(fileStream);
-            fileStream.close();
-        } catch (IOException ex) {
-            ex.printStackTrace();
+        if (CONFIG_FILE.exists()) { // if config.properties exists, then load it into memory.
+            try {
+                FileInputStream fileStream = new FileInputStream(CONFIG_FILE);
+                configFile.load(fileStream);
+                fileStream.close();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            if (configFile.isEmpty()) { // if config file is empty, initialize it with default values.
+                configFile.put("credentials", Integer.toString(0));
+                configFile.put("accounts", Integer.toString(0));
+                saveProperties();
+            }
+        } else { // if config.properties doesn't exist, create a new version and then load it into memory.
+            try {
+                FileOutputStream outputStream = new FileOutputStream(CONFIG_FILE);
+                outputStream.flush();
+                outputStream.close();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            loadProperties();
         }
     }
 

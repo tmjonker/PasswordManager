@@ -22,19 +22,19 @@ public class InnerContainer {
         table = new TableView<>();
 
         TableColumn<Credential, Type> typeColumn = new TableColumn<>("Type");
-        typeColumn.prefWidthProperty().bind(table.widthProperty().multiply(0.20));
+        typeColumn.prefWidthProperty().bind(table.widthProperty().multiply(0.19));
         typeColumn.setCellValueFactory(new PropertyValueFactory<Credential, Type>("type"));
 
         TableColumn<Credential, String> uriColumn = new TableColumn<>("For");
-        uriColumn.prefWidthProperty().bind(table.widthProperty().multiply(0.40));
+        uriColumn.prefWidthProperty().bind(table.widthProperty().multiply(0.27));
         uriColumn.setCellValueFactory(new PropertyValueFactory<Credential, String>("display"));
 
         TableColumn<Credential, String> usernameColumn = new TableColumn<>("Username");
-        usernameColumn.prefWidthProperty().bind(table.widthProperty().multiply(0.20));
+        usernameColumn.prefWidthProperty().bind(table.widthProperty().multiply(0.27));
         usernameColumn.setCellValueFactory(new PropertyValueFactory<Credential, String>("username"));
 
         TableColumn<Credential, String> passwordColumn = new TableColumn<>("Password");
-        passwordColumn.prefWidthProperty().bind(table.widthProperty().multiply(0.20));
+        passwordColumn.prefWidthProperty().bind(table.widthProperty().multiply(0.27));
         passwordColumn.setCellValueFactory(new PropertyValueFactory<Credential, String>("decryptedPassword"));
 
         table.getColumns().addAll(typeColumn, uriColumn, usernameColumn, passwordColumn);

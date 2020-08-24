@@ -58,7 +58,7 @@ public class MainWindow implements WindowShell{
 
     public MainWindow() {
 
-        prepareStage(generateStructure(1000, 600));
+        prepareStage(generateStructure(1150, 600));
     }
 
     private Scene generateStructure(int width, int height) {
