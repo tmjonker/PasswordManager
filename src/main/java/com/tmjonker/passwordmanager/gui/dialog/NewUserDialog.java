@@ -32,7 +32,7 @@ public class NewUserDialog {
         }
 
         Stage stage = (Stage) inputDialog.getDialogPane().getScene().getWindow();
-        stage.getIcons().add(new Image("password_16px.png"));
+        stage.getIcons().add(new Image("images/password_16px.png"));
 
         inputDialog.setTitle("Create new user");
         inputDialog.setHeaderText("Create new user");

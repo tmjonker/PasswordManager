@@ -1,7 +1,5 @@
 package com.tmjonker.passwordmanager.gui.dialog;
 
-import com.tmjonker.passwordmanager.credentials.Credential;
-import com.tmjonker.passwordmanager.credentials.Type;
 import com.tmjonker.passwordmanager.users.User;
 import com.tmjonker.passwordmanager.users.UserHandler;
 import javafx.event.ActionEvent;
@@ -34,7 +32,7 @@ public class LoginDialog {
         }
 
         Stage stage = (Stage) inputDialog.getDialogPane().getScene().getWindow();
-        stage.getIcons().add(new Image("password_16px.png"));
+        stage.getIcons().add(new Image("images/password_16px.png"));
 
         inputDialog.setTitle("Login");
         inputDialog.setHeaderText("Login");
@@ -114,13 +112,6 @@ public class LoginDialog {
             userHandler.updateEncryption(user, password);
             verifiedUser = user;
             successful = true;
-
-            var arrayList = verifiedUser.getCredentialCollection().get(Type.WEBSITE);
-
-            for (Credential w : arrayList) {
-
-                System.out.println(w.getDecryptedPassword());
-            }
         } catch (IOException | GeneralSecurityException ex) {
             new ExceptionDialog(ex);
         }

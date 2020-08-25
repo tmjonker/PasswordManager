@@ -3,7 +3,6 @@ package com.tmjonker.passwordmanager.gui.dialog;
 import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.stage.Stage;
 
 public class SuccessDialog {
 
@@ -13,7 +12,7 @@ public class SuccessDialog {
         success.setTitle(title);
         success.setHeaderText(title);
         success.setContentText(message);
-        success.setGraphic(new ImageView(new Image("thumbs_up_48px.png")));
+        success.setGraphic(new ImageView(new Image("images/thumbs_up_48px.png")));
 
         //Stage stage = (Stage) success.getDialogPane().getScene().getWindow();
         //stage.getIcons().add(new Image("checked_16px.png"));

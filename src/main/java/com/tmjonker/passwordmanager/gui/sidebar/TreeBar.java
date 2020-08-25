@@ -19,6 +19,7 @@ public class TreeBar {
     private TreeView<String> treeView;
     private User verifiedUser;
     private final MainWindow mainWindow;
+    private Type selected;
 
     public TreeBar(MainWindow window) {
 
@@ -45,15 +46,19 @@ public class TreeBar {
         treeView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             try {
                 if (newValue.equals(websites)) {
+                    selected = Type.WEBSITE;
                     mainWindow.getInnerContainer()
                             .setTableContent(credentialHandler.generateObservableList(Type.WEBSITE, verifiedUser.getCredentialCollection()));
                 } else if (newValue.equals(applications)) {
+                    selected = Type.APPLICATION;
                     mainWindow.getInnerContainer()
                             .setTableContent(credentialHandler.generateObservableList(Type.APPLICATION, verifiedUser.getCredentialCollection()));
                 } else if (newValue.equals(games)) {
+                    selected = Type.GAME;
                     mainWindow.getInnerContainer()
                             .setTableContent(credentialHandler.generateObservableList(Type.GAME, verifiedUser.getCredentialCollection()));
                 } else if (newValue.equals(root)) {
+                    selected = null;
                     mainWindow.getInnerContainer()
                             .setTableContent(credentialHandler.generateObservableList(null, verifiedUser.getCredentialCollection()));
                 } else {
@@ -77,5 +82,10 @@ public class TreeBar {
     public TreeView<String> getTreeView() {
 
         return treeView;
+    }
+
+    public Type getSelected() {
+
+        return selected;
     }
 }

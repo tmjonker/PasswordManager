@@ -21,7 +21,7 @@ public class ExceptionDialog {
         exception.setContentText("There has been an error.");
 
         Stage stage = (Stage) exception.getDialogPane().getScene().getWindow();
-        stage.getIcons().add(new Image("error_16px.png"));
+        stage.getIcons().add(new Image("images/error_16px.png"));
 
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);

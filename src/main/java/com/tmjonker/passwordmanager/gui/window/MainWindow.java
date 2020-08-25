@@ -1,25 +1,31 @@
 package com.tmjonker.passwordmanager.gui.window;
 
-import com.tmjonker.passwordmanager.credentials.CredentialHandler;
 import com.tmjonker.passwordmanager.gui.dialog.ExceptionDialog;
 import com.tmjonker.passwordmanager.gui.dialog.LoginDialog;
 import com.tmjonker.passwordmanager.gui.dialog.NewUserDialog;
 import com.tmjonker.passwordmanager.gui.dialog.SuccessDialog;
+import com.tmjonker.passwordmanager.gui.refresh.RefreshHandler;
 import com.tmjonker.passwordmanager.gui.sidebar.SideBar;
-import com.tmjonker.passwordmanager.gui.sidebar.TreeBar;
 import com.tmjonker.passwordmanager.gui.toolbar.ButtonCreator;
 import com.tmjonker.passwordmanager.gui.toolbar.ToolBarHandler;
 import com.tmjonker.passwordmanager.users.User;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import org.controlsfx.control.StatusBar;
 
+import java.awt.*;
+import java.io.File;
 import java.io.IOException;
-import java.security.GeneralSecurityException;
 
 public class MainWindow implements WindowShell{
 
@@ -32,10 +38,13 @@ public class MainWindow implements WindowShell{
     private final Menu accountMenu = new Menu("_Account");
     private final Menu helpMenu = new Menu("_Help");
 
+    private final MenuItem addMenuItem = new MenuItem("A_dd");
+    private final MenuItem deleteMenuItem = new MenuItem("_Delete");
     private final MenuItem newAccountItem = new MenuItem("_New Account");
     private final MenuItem logInMenuItem = new MenuItem("Log _In");
     private final MenuItem logOutMenuItem = new MenuItem("_Log Out");
     private final MenuItem exitMenuItem = new MenuItem("E_xit Program");
+    private final MenuItem tutorialItem = new MenuItem("_View Tutorial");
 
     private Button addButton;
     private Button editButton;
@@ -66,12 +75,17 @@ public class MainWindow implements WindowShell{
         innerContainer = new InnerContainer();
         menuBar.getMenus().addAll(fileMenu, editMenu, accountMenu, helpMenu);
         fileMenu.getItems().addAll(exitMenuItem);
+        editMenu.getItems().addAll(addMenuItem, deleteMenuItem);
         accountMenu.getItems().addAll(logInMenuItem,newAccountItem,logOutMenuItem);
+        helpMenu.getItems().addAll(tutorialItem);
 
+        addMenuItem.setOnAction(e -> ToolBarHandler.onAddButtonClick(this)); //uses same handler as toolbar buttons. functions exactly the same.
+        deleteMenuItem.setOnAction(e -> ToolBarHandler.onRemoveButtonClick(this)); //uses same handler as toolbar buttons. functions exactly the same.
         exitMenuItem.setOnAction(e -> exit());
         logInMenuItem.setOnAction(e -> logIn());
         newAccountItem.setOnAction(e -> newAccount());
         logOutMenuItem.setOnAction(e -> logOut());
+        tutorialItem.setOnAction(e -> showTutorial());
 
         topVbox.getChildren().add(menuBar);
 
@@ -89,23 +103,23 @@ public class MainWindow implements WindowShell{
 
     private void implementToolBar() {
 
-        addButton = ButtonCreator.generateButton(new Image("add_24px.png"));
+        addButton = ButtonCreator.generateButton(new Image("images/add_24px.png"));
         addButton.setOnAction(e -> ToolBarHandler.onAddButtonClick(this));
         addButton.setOnMouseEntered(e -> setStatusBarText("Add a new credential"));
         addButton.setOnMouseExited(e -> setStatusBarText(""));
 
-        editButton = ButtonCreator.generateButton(new Image("edit_file_24px.png"));
+        editButton = ButtonCreator.generateButton(new Image("images/edit_file_24px.png"));
         editButton.setOnAction(e -> ToolBarHandler.onEditButtonClick(this));
         editButton.setOnMouseEntered(e -> setStatusBarText("Edit the selected credential"));
         editButton.setOnMouseExited(e -> setStatusBarText(""));
 
-        removeButton = ButtonCreator.generateButton(new Image("delete_24px.png"));
+        removeButton = ButtonCreator.generateButton(new Image("images/delete_24px.png"));
         removeButton.setOnAction(e -> ToolBarHandler.onRemoveButtonClick(this));
         removeButton.setOnMouseEntered(e -> setStatusBarText("Remove the selected credential"));
         removeButton.setOnMouseExited(e -> setStatusBarText(""));
 
-        refreshButton = ButtonCreator.generateButton(new Image("refresh_24px.png"));
-        refreshButton.setOnAction(e -> ToolBarHandler.onAddButtonClick(this));
+        refreshButton = ButtonCreator.generateButton(new Image("images/refresh_24px.png"));
+        refreshButton.setOnAction(e -> RefreshHandler.refresh(this));
         refreshButton.setOnMouseEntered(e -> setStatusBarText("Refresh table data"));
         refreshButton.setOnMouseExited(e -> setStatusBarText(""));
 
@@ -116,33 +130,33 @@ public class MainWindow implements WindowShell{
         topVbox.getChildren().add(toolBar);
     }
 
-    protected void setStatusBarText(String text) {
+    private void setStatusBarText(String text) {
 
         statusBar.setText(text);
     }
 
-    protected void centerStage() {
+    private void centerStage() {
 
         stage.centerOnScreen();
     }
 
-    protected void prepareStage(Scene scene) {
+    private void prepareStage(Scene scene) {
 
         stage.setScene(scene);
         setStageTitle(DEFAULT_TITLE);
-        stage.getIcons().add(new Image("password_16px.png"));
+        stage.getIcons().add(new Image("images/password_16px.png"));
         centerStage();
         stage.show();
         stage.setResizable(true);
         stage.setOnCloseRequest(e -> onStageCloseRequest());
     }
 
-    protected void setStageTitle(String text) {
+    private void setStageTitle(String text) {
 
         stage.setTitle(DEFAULT_TITLE + text);
     }
 
-    protected void logIn() {
+    private void logIn() {
 
         LoginDialog loginDialog = new LoginDialog();
 
@@ -155,10 +169,11 @@ public class MainWindow implements WindowShell{
         }
     }
 
-    protected void setLoggedInConfig(boolean result) {
+    private void setLoggedInConfig(boolean result) {
 
         loggedIn = result;
 
+        editMenu.setDisable(!result);
         logInMenuItem.setDisable(result);
         newAccountItem.setDisable(result);
         logOutMenuItem.setDisable(!result);
@@ -176,7 +191,7 @@ public class MainWindow implements WindowShell{
             setStageTitle("");
     }
 
-    protected void newAccount() {
+    private void newAccount() {
 
         NewUserDialog newUserDialog = new NewUserDialog();
 
@@ -190,13 +205,26 @@ public class MainWindow implements WindowShell{
         }
     }
 
-    protected void logOut() {
+    private void logOut() {
 
         verifiedUser = null;
         sideBar = new SideBar(this);
         borderPane.setLeft(sideBar.getMainBox());
         innerContainer.setTableContent(null);
         setLoggedInConfig(false);
+    }
+
+    private void showTutorial() {
+
+        WebView webView = new WebView();
+        WebEngine webEngine = webView.getEngine();
+        webEngine.load(getClass().getResource("/help.html").toString());
+
+        Scene webScene = new Scene(webView);
+        Stage webStage = new Stage();
+        webStage.setScene(webScene);
+        webStage.setTitle("Password Manager Tutorial");
+        webStage.show();
     }
 
     public User getVerifiedUser() {
@@ -207,6 +235,11 @@ public class MainWindow implements WindowShell{
     public InnerContainer getInnerContainer() {
 
         return innerContainer;
+    }
+
+    public SideBar getSideBar() {
+
+        return sideBar;
     }
 
     protected void exit() {
@@ -238,9 +271,11 @@ public class MainWindow implements WindowShell{
                 if (innerContainer.getSelectedRow() == null) {
                     editButton.setDisable(true);
                     removeButton.setDisable(true);
+                    deleteMenuItem.setDisable(true);
                 } else {
                     editButton.setDisable(false);
                     removeButton.setDisable(false);
+                    deleteMenuItem.setDisable(false);
                 }
             }
         }

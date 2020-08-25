@@ -1,10 +1,9 @@
 package com.tmjonker.passwordmanager.gui.dialog;
 
 import com.tmjonker.passwordmanager.credentials.*;
-import com.tmjonker.passwordmanager.encryption.EncryptionHandler;
 import com.tmjonker.passwordmanager.generator.PasswordGenerator;
+import com.tmjonker.passwordmanager.gui.refresh.RefreshHandler;
 import com.tmjonker.passwordmanager.gui.window.MainWindow;
-import com.tmjonker.passwordmanager.properties.PropertiesHandler;
 import com.tmjonker.passwordmanager.users.User;
 import com.tmjonker.passwordmanager.users.UserHandler;
 import javafx.event.ActionEvent;
@@ -85,11 +84,11 @@ public class ChoiceCredentialDialog {
         ChoiceDialog<Type> choiceDialog = new ChoiceDialog<>(Type.WEBSITE, typeList);
 
         Stage stage = (Stage) choiceDialog.getDialogPane().getScene().getWindow();
-        stage.getIcons().add(new Image("password_16px.png"));
+        stage.getIcons().add(new Image("images/password_16px.png"));
 
         choiceDialog.setTitle("Select a type");
         choiceDialog.setHeaderText("What kind of password do you want to add?");
-        choiceDialog.setGraphic(new ImageView(new Image("question_mark_48px.png")));
+        choiceDialog.setGraphic(new ImageView(new Image("images/question_mark_48px.png")));
 
         Optional<Type> result = choiceDialog.showAndWait();
 
@@ -135,7 +134,7 @@ public class ChoiceCredentialDialog {
             try {
                 credentialHandler.finalizeCredential(wc);
                 userHandler.storeCredential(verifiedUser, wc);
-                refreshTableContent(wc);
+                RefreshHandler.refresh(mainWindow); // updates table to reflect addition of credential.
             } catch (IOException | GeneralSecurityException ex) {
                 new ExceptionDialog(ex);
             }
@@ -187,7 +186,7 @@ public class ChoiceCredentialDialog {
             try {
                 userHandler.removeCredential(verifiedUser, credential);
                 userHandler.storeCredential(verifiedUser, cred);
-                refreshTableContent(cred);
+                RefreshHandler.refresh(mainWindow); //updates table to reflrect edited credential.
             } catch (IOException | GeneralSecurityException ex) {
                 new ExceptionDialog(ex);
             }
@@ -199,7 +198,7 @@ public class ChoiceCredentialDialog {
         inputDialog = new Dialog<>();
 
         Stage stage = (Stage) inputDialog.getDialogPane().getScene().getWindow();
-        stage.getIcons().add(new Image("password_16px.png"));
+        stage.getIcons().add(new Image("images/password_16px.png"));
 
         if (choice == Choice.ADD) {
             inputDialog.setTitle("Add a new " + type);
@@ -220,17 +219,17 @@ public class ChoiceCredentialDialog {
             case WEBSITE:
                 uniqueField.setPromptText("URL");
                 uniqueLabel.setText("URL:");
-                inputDialog.setGraphic(new ImageView(new Image("website_48px.png")));
+                inputDialog.setGraphic(new ImageView(new Image("images/website_48px.png")));
                 break;
             case APPLICATION:
                 uniqueField.setPromptText("Application");
                 uniqueLabel.setText("Application:");
-                inputDialog.setGraphic(new ImageView(new Image("application_shield_48px.png")));
+                inputDialog.setGraphic(new ImageView(new Image("images/application_shield_48px.png")));
                 break;
             case GAME:
                 uniqueField.setPromptText("Game");
                 uniqueLabel.setText("Game:");
-                inputDialog.setGraphic(new ImageView(new Image("game_controller_48px.png")));
+                inputDialog.setGraphic(new ImageView(new Image("images/game_controller_48px.png")));
                 break;
         }
 
@@ -322,16 +321,6 @@ public class ChoiceCredentialDialog {
             passwordField = null;
             toggleButton.setText("Hide");
             hide = false;
-        }
-    }
-
-    private void refreshTableContent(Credential credential) {
-
-        try {
-            mainWindow.getInnerContainer().setTableContent(credentialHandler
-                    .generateObservableList(credential.getType(), verifiedUser.getCredentialCollection())); //updates table to reflect the updates to the credential list.
-        } catch (IOException | GeneralSecurityException ex) {
-            new ExceptionDialog(ex);
         }
     }
 }

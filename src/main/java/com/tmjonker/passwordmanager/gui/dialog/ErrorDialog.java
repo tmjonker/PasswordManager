@@ -14,7 +14,7 @@ public class ErrorDialog {
         error.setContentText(message);
 
         Stage stage = (Stage) error.getDialogPane().getScene().getWindow();
-        stage.getIcons().add(new Image("error_16px.png"));
+        stage.getIcons().add(new Image("images/error_16px.png"));
 
         error.showAndWait();
     }

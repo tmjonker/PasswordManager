@@ -2,6 +2,7 @@ package com.tmjonker.passwordmanager.gui.dialog;
 
 import com.tmjonker.passwordmanager.credentials.Credential;
 import com.tmjonker.passwordmanager.credentials.CredentialHandler;
+import com.tmjonker.passwordmanager.gui.refresh.RefreshHandler;
 import com.tmjonker.passwordmanager.gui.window.MainWindow;
 import com.tmjonker.passwordmanager.users.User;
 import com.tmjonker.passwordmanager.users.UserHandler;
@@ -52,11 +53,10 @@ public class RemoveCredentialDialog {
         if (result.get() == ButtonType.OK) {
             try {
                 userHandler.removeCredential(verifiedUser, selectedCredential); //removes credential from collection in verifiedUser.
-                mainWindow.getInnerContainer().setTableContent(credentialHandler
-                        .generateObservableList(selectedCredential.getType(), verifiedUser.getCredentialCollection())); //updates table to reflect removal of credential.
+                RefreshHandler.refresh(mainWindow); // updates table to reflect removal of credential.
                 new SuccessDialog("That entry has successfully been removed",
                         "Credential has been removed");
-            } catch (IOException | GeneralSecurityException ex) {
+            } catch (IOException ex) {
                 new ExceptionDialog(ex);
             }
         }

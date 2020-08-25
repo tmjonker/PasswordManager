@@ -48,6 +48,7 @@ public class InnerContainer {
     public void setTableContent(ObservableList<Credential> list) {
 
         table.setItems(list);
+        table.refresh();
     }
 
     public ScrollPane getScrollPane() {
