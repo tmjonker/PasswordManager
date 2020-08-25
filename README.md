@@ -34,5 +34,3 @@ Contributors names and contact info
 * Tim Jonker
   - tmjonker1@outlook.com
 
-## Version History
-
