@@ -133,7 +133,7 @@ public class MainWindow implements WindowShell{
         stage.getIcons().add(new Image("password_16px.png"));
         centerStage();
         stage.show();
-        stage.setResizable(false);
+        stage.setResizable(true);
         stage.setOnCloseRequest(e -> onStageCloseRequest());
     }
 
@@ -197,8 +197,6 @@ public class MainWindow implements WindowShell{
         borderPane.setLeft(sideBar.getMainBox());
         innerContainer.setTableContent(null);
         setLoggedInConfig(false);
-
-        new SuccessDialog("You have successfully logged out.", "Success");
     }
 
     public User getVerifiedUser() {
