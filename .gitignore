@@ -8,7 +8,6 @@
 user.pm
 passwordmanager.iml
 /.gradle/
-/Images/
 /config/
 /user/
 local.properties
