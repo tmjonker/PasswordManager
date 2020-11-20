@@ -3,6 +3,7 @@ package com.tmjonker.passwordmanager.gui.sidebar;
 import com.tmjonker.passwordmanager.credentials.CredentialHandler;
 import com.tmjonker.passwordmanager.credentials.Type;
 import com.tmjonker.passwordmanager.gui.dialog.ExceptionDialog;
+import com.tmjonker.passwordmanager.gui.toggle.ToggleHandler;
 import com.tmjonker.passwordmanager.gui.window.MainWindow;
 import com.tmjonker.passwordmanager.users.User;
 import javafx.scene.control.TreeItem;
@@ -33,6 +34,8 @@ public class TreeBar {
 
     public void display() {
 
+        ToggleHandler toggleHandler = mainWindow.getToggleHandler();
+
         verifiedUser = mainWindow.getVerifiedUser();
 
         websites = generateTreeItem("Website Passwords", root);
@@ -48,19 +51,23 @@ public class TreeBar {
                 if (newValue.equals(websites)) {
                     selected = Type.WEBSITE;
                     mainWindow.getInnerContainer()
-                            .setTableContent(credentialHandler.generateObservableList(Type.WEBSITE, verifiedUser.getCredentialCollection()));
+                            .setTableContent(credentialHandler.generateObservableList(toggleHandler.isShown(),
+                                    Type.WEBSITE, verifiedUser));
                 } else if (newValue.equals(applications)) {
                     selected = Type.APPLICATION;
                     mainWindow.getInnerContainer()
-                            .setTableContent(credentialHandler.generateObservableList(Type.APPLICATION, verifiedUser.getCredentialCollection()));
+                            .setTableContent(credentialHandler.generateObservableList(toggleHandler.isShown(),
+                                    Type.APPLICATION, verifiedUser));
                 } else if (newValue.equals(games)) {
                     selected = Type.GAME;
                     mainWindow.getInnerContainer()
-                            .setTableContent(credentialHandler.generateObservableList(Type.GAME, verifiedUser.getCredentialCollection()));
+                            .setTableContent(credentialHandler.generateObservableList(toggleHandler.isShown(),
+                                    Type.GAME, verifiedUser));
                 } else if (newValue.equals(root)) {
                     selected = null;
                     mainWindow.getInnerContainer()
-                            .setTableContent(credentialHandler.generateObservableList(null, verifiedUser.getCredentialCollection()));
+                            .setTableContent(credentialHandler.generateObservableList(toggleHandler.isShown(),
+                                    null, verifiedUser));
                 } else {
                     mainWindow.getInnerContainer().setTableContent(null);
                 }

@@ -53,6 +53,8 @@ public class MainWindow implements WindowShell{
     private Button refreshButton;
     private Button toggleButton;
 
+    private ToggleHandler toggleHandler = new ToggleHandler();
+
     private final ToolBar toolBar = new ToolBar();
     private final StatusBar statusBar = new StatusBar();
     private SideBar sideBar = new SideBar(this);
@@ -127,6 +129,13 @@ public class MainWindow implements WindowShell{
 
         toggleButton = ButtonCreator.generateButton(new Image("images/eye_24px.png"));
         toggleButton.setOnAction(e -> setToggleButton());
+        toggleButton.setOnMouseEntered(e -> {
+            if (toggleHandler.isShown())
+                setStatusBarText("Hide your passwords");
+            else
+                setStatusBarText("Show your passwords");
+        });
+        toggleButton.setOnMouseExited(e -> setStatusBarText(""));
 
         setLoggedInConfig(false);
 
@@ -212,7 +221,6 @@ public class MainWindow implements WindowShell{
     }
 
     private void setToggleButton() {
-        ToggleHandler toggleHandler = new ToggleHandler();
 
         toggleHandler.toggle(this);
 
@@ -258,6 +266,10 @@ public class MainWindow implements WindowShell{
     public SideBar getSideBar() {
 
         return sideBar;
+    }
+
+    public ToggleHandler getToggleHandler() {
+        return toggleHandler;
     }
 
     protected void exit() {

@@ -21,6 +21,11 @@ public class ToggleHandler {
         Type selected = mainWindow.getSideBar().getTreeBar().getSelected();
         CredentialHandler credentialHandler;
 
+        if (shown)
+            shown = false;
+        else
+            shown = true;
+
         try {
             credentialHandler = new CredentialHandler();
 

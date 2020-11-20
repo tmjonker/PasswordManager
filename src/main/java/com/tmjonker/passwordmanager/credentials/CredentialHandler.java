@@ -47,38 +47,34 @@ public class CredentialHandler {
         });
     }
 
-    public ObservableList<Credential> generateObservableList(Type type, Map<Type, ArrayList<Credential>> credMap) throws IOException,
-            GeneralSecurityException {
+    public ObservableList<Credential> generateObservableList(boolean shown, Type type, User verifiedUser)
+            throws IOException, GeneralSecurityException {
 
+        Map<Type, ArrayList<Credential>> userCollection = verifiedUser.getCredentialCollection();
         List<Credential> encryptedList;
         List<Credential> finalEncryptedList = new ArrayList<>();
 
         if (type != null) // null indicates that "All Passwords" need to be displayed.
-            encryptedList = credMap.get(type);
+            encryptedList = userCollection.get(type);
         else {
-            credMap.forEach((type1, credentials) -> finalEncryptedList.addAll(credentials));
+            userCollection.forEach((type1, credentials) -> finalEncryptedList.addAll(credentials));
             encryptedList = finalEncryptedList;
         }
 
         List<Credential> decryptedList = new ArrayList<>();
 
-        for (Credential c : encryptedList) {
-            String password = StringEncoder.convertUtf8(encryptionHandler.decryptCredentialPassword(c));
-            c.setDecryptedPassword(password);
-            decryptedList.add(c);
+        if (shown) {
+            for (Credential c : encryptedList) {
+                String password = StringEncoder.convertUtf8(encryptionHandler.decryptCredentialPassword(c));
+                c.setDecryptedPassword(password);
+                decryptedList.add(c);
+            }
+        } else {
+            for (Credential c : encryptedList) {
+                c.setDecryptedPassword("***************");
+                decryptedList.add(c);
+            }
         }
         return FXCollections.observableArrayList(decryptedList);
-    }
-
-    public ObservableList<Credential> generateObservableList(boolean shown, Type type, User verifiedUser)
-            throws IOException, GeneralSecurityException {
-
-        List<Credential> encryptedList;
-        List<Credential> finalEncryptedList = new ArrayList<>();
-
-        // Alter verified user to store masked passwords or visible passwords in decryptedPassword field.
-
-
-        return FXCollections.observableArrayList(finalEncryptedList);
     }
 }
