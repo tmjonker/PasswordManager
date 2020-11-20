@@ -69,4 +69,16 @@ public class CredentialHandler {
         }
         return FXCollections.observableArrayList(decryptedList);
     }
+
+    public ObservableList<Credential> generateObservableList(boolean shown, Type type, User verifiedUser)
+            throws IOException, GeneralSecurityException {
+
+        List<Credential> encryptedList;
+        List<Credential> finalEncryptedList = new ArrayList<>();
+
+        // Alter verified user to store masked passwords or visible passwords in decryptedPassword field.
+
+
+        return FXCollections.observableArrayList(finalEncryptedList);
+    }
 }

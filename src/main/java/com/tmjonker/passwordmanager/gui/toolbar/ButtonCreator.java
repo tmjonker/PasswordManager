@@ -29,4 +29,8 @@ public class ButtonCreator {
         cancelButton.setMinWidth(60);
         return cancelButton;
     }
+
+    public static void changeButtonImage(Button button, Image image) {
+        button.setGraphic(new ImageView(image));
+    }
 }

@@ -13,13 +13,15 @@ public class RefreshHandler {
 
     public static void refresh(MainWindow mainWindow) {
 
+        // determines which tree item is selected and refreshes the list of credentials associated with it.
         Type selected = mainWindow.getSideBar().getTreeBar().getSelected();
         User verifiedUser = mainWindow.getVerifiedUser();
 
         try {
             CredentialHandler credentialHandler = new CredentialHandler();
+            //updates table to reflect the updates to the credential list.
             mainWindow.getInnerContainer().setTableContent(credentialHandler
-                    .generateObservableList(selected, verifiedUser.getCredentialCollection())); //updates table to reflect the updates to the credential list.
+                    .generateObservableList(selected, verifiedUser.getCredentialCollection()));
         } catch (IOException | GeneralSecurityException ex) {
             new ExceptionDialog(ex);
         }

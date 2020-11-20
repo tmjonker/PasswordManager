@@ -6,6 +6,7 @@ import com.tmjonker.passwordmanager.gui.dialog.NewUserDialog;
 import com.tmjonker.passwordmanager.gui.dialog.SuccessDialog;
 import com.tmjonker.passwordmanager.gui.refresh.RefreshHandler;
 import com.tmjonker.passwordmanager.gui.sidebar.SideBar;
+import com.tmjonker.passwordmanager.gui.toggle.ToggleHandler;
 import com.tmjonker.passwordmanager.gui.toolbar.ButtonCreator;
 import com.tmjonker.passwordmanager.gui.toolbar.ToolBarHandler;
 import com.tmjonker.passwordmanager.users.User;
@@ -50,6 +51,7 @@ public class MainWindow implements WindowShell{
     private Button editButton;
     private Button removeButton;
     private Button refreshButton;
+    private Button toggleButton;
 
     private final ToolBar toolBar = new ToolBar();
     private final StatusBar statusBar = new StatusBar();
@@ -123,9 +125,12 @@ public class MainWindow implements WindowShell{
         refreshButton.setOnMouseEntered(e -> setStatusBarText("Refresh table data"));
         refreshButton.setOnMouseExited(e -> setStatusBarText(""));
 
+        toggleButton = ButtonCreator.generateButton(new Image("images/eye_24px.png"));
+        toggleButton.setOnAction(e -> setToggleButton());
+
         setLoggedInConfig(false);
 
-        toolBar.getItems().addAll(addButton, editButton, removeButton, refreshButton);
+        toolBar.getItems().addAll(addButton, editButton, removeButton, refreshButton, toggleButton);
 
         topVbox.getChildren().add(toolBar);
     }
@@ -179,6 +184,7 @@ public class MainWindow implements WindowShell{
         logOutMenuItem.setDisable(!result);
 
         editButton.setDisable(!result);
+        toggleButton.setDisable(!result);
         removeButton.setDisable(!result);
         addButton.setDisable(!result);
         refreshButton.setDisable(!result);
@@ -202,6 +208,18 @@ public class MainWindow implements WindowShell{
 
             new SuccessDialog("An account for " + verifiedUser.getUsername() + " has been created.",
                     "Success");
+        }
+    }
+
+    private void setToggleButton() {
+        ToggleHandler toggleHandler = new ToggleHandler();
+
+        toggleHandler.toggle(this);
+
+        if (toggleHandler.isShown()) {
+            ButtonCreator.changeButtonImage(toggleButton, new Image("images/hide_24px.png"));
+        } else {
+            ButtonCreator.changeButtonImage(toggleButton, new Image("images/eye_24px.png"));
         }
     }
 
