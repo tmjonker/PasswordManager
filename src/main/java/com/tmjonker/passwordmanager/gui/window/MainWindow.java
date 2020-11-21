@@ -10,6 +10,7 @@ import com.tmjonker.passwordmanager.gui.toggle.ToggleHandler;
 import com.tmjonker.passwordmanager.gui.toolbar.ButtonCreator;
 import com.tmjonker.passwordmanager.gui.toolbar.ToolBarHandler;
 import com.tmjonker.passwordmanager.users.User;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
@@ -127,7 +128,7 @@ public class MainWindow implements WindowShell{
         refreshButton.setOnMouseEntered(e -> setStatusBarText("Refresh table data"));
         refreshButton.setOnMouseExited(e -> setStatusBarText(""));
 
-        toggleButton = ButtonCreator.generateButton(new Image("images/eye_24px.png"));
+        toggleButton = ButtonCreator.generateButton(new Image("images/hide_24px.png"));
         toggleButton.setOnAction(e -> setToggleButton());
         toggleButton.setOnMouseEntered(e -> {
             if (toggleHandler.isShown())
@@ -157,7 +158,6 @@ public class MainWindow implements WindowShell{
     private void prepareStage(Scene scene) {
 
         stage.setScene(scene);
-        setStageTitle(DEFAULT_TITLE);
         stage.getIcons().add(new Image("images/password_16px.png"));
         centerStage();
         stage.show();
