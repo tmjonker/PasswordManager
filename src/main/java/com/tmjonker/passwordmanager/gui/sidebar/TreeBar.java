@@ -21,6 +21,7 @@ public class TreeBar {
     private User verifiedUser;
     private final MainWindow mainWindow;
     private Type selected;
+    private ToggleHandler toggleHandler;
 
     public TreeBar(MainWindow window) {
 
@@ -34,7 +35,7 @@ public class TreeBar {
 
     public void display() {
 
-        ToggleHandler toggleHandler = mainWindow.getToggleHandler();
+        toggleHandler = mainWindow.getToggleHandler();
 
         verifiedUser = mainWindow.getVerifiedUser();
 
@@ -45,6 +46,11 @@ public class TreeBar {
         root.setExpanded(true);
 
         treeView = new TreeView<>(root);
+
+        treeView.requestFocus();
+        treeView.getSelectionModel().select(0);
+        treeView.getFocusModel().focus(0);
+        setTypeAll(); // Sets default view to display all available passwords.
 
         treeView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             try {
@@ -64,10 +70,7 @@ public class TreeBar {
                             .setTableContent(credentialHandler.generateObservableList(toggleHandler.isShown(),
                                     Type.GAME, verifiedUser));
                 } else if (newValue.equals(root)) {
-                    selected = null;
-                    mainWindow.getInnerContainer()
-                            .setTableContent(credentialHandler.generateObservableList(toggleHandler.isShown(),
-                                    null, verifiedUser));
+                    setTypeAll();
                 } else {
                     mainWindow.getInnerContainer().setTableContent(null);
                 }
@@ -94,5 +97,17 @@ public class TreeBar {
     public Type getSelected() {
 
         return selected;
+    }
+
+    private void setTypeAll() {
+
+        selected = null;
+        try {
+            mainWindow.getInnerContainer()
+                    .setTableContent(credentialHandler.generateObservableList(toggleHandler.isShown(),
+                            null, verifiedUser));
+        } catch (IOException | GeneralSecurityException ex) {
+            new ExceptionDialog(ex);
+        }
     }
 }

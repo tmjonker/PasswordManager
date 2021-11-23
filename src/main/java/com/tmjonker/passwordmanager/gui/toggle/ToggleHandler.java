@@ -32,6 +32,8 @@ public class ToggleHandler {
             mainWindow.getInnerContainer().setTableContent(credentialHandler
                     .generateObservableList(shown, selected, mainWindow.getVerifiedUser()));
 
+            mainWindow.getInnerContainer().setShown(shown);
+
         } catch (Exception ex) {
             new ExceptionDialog(ex);
         }

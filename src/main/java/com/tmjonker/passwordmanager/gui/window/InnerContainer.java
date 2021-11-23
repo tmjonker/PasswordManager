@@ -6,11 +6,16 @@ import javafx.scene.control.cell.PropertyValueFactory;
 
 import com.tmjonker.passwordmanager.credentials.Credential;
 import com.tmjonker.passwordmanager.credentials.Type;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 
 public class InnerContainer {
 
     private ScrollPane scrollPane;
     private TableView<Credential> table;
+    private final Clipboard clipboard = Clipboard.getSystemClipboard();
+    private final ClipboardContent content = new ClipboardContent();
+    private boolean shown;
 
     public InnerContainer() {
 
@@ -20,6 +25,8 @@ public class InnerContainer {
     private void generateInnerContainer() {
 
         table = new TableView<>();
+
+        setupRightClickMenu();
 
         TableColumn<Credential, Type> typeColumn = new TableColumn<>("Type");
         typeColumn.prefWidthProperty().bind(table.widthProperty().multiply(0.19));
@@ -59,5 +66,28 @@ public class InnerContainer {
     public Credential getSelectedRow() {
 
         return table.getSelectionModel().getSelectedItem();
+    }
+
+    private void setupRightClickMenu() {
+
+        ContextMenu rightClickMenu = new ContextMenu();
+        MenuItem copyPasswordItem = new MenuItem("Copy Password");
+        rightClickMenu.getItems().addAll(copyPasswordItem);
+        table.setContextMenu(rightClickMenu);
+
+        if (!shown)
+            copyPasswordItem.setDisable(true);
+
+        copyPasswordItem.setOnAction(e -> {
+            if (getSelectedRow() != null) {
+                content.putString(getSelectedRow().getDecryptedPassword());
+                clipboard.setContent(content);
+            }
+        });
+    }
+
+    public void setShown(boolean choice) {
+        shown = choice;
+        setupRightClickMenu();
     }
 }
